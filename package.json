@@ -1,0 +1,30 @@
+{
+  "name": "newonlyfans-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "index": "env-cmd -f environments/.env-dev ts-node-dev src/index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/async": "^3.2.3",
+    "@types/bluebird": "^3.5.32",
+    "@types/validator": "^13.1.0",
+    "aws-sdk": "^2.717.0",
+    "colors": "^1.4.0",
+    "env-cmd": "^10.1.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.1.0",
+    "reflect-metadata": "^0.1.13",
+    "sequelize": "5.21.10",
+    "sequelize-typescript": "^1.1.0",
+    "ts-node-dev": "^1.0.0-pre.50",
+    "typescript": "^3.9.6"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.19"
+  }
+}
