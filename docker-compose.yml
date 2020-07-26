@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  # Redis
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+
+  # Mongo
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
