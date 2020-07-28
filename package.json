@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "@types/async": "^3.2.3",
     "@types/bluebird": "^3.5.32",
     "@types/ioredis": "^4.17.2",

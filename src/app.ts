@@ -10,6 +10,7 @@ import http from "http";
 import { logger as serviceLogger } from "./infrastructure/logger";
 
 const { HTTPS_PORT } = process.env;
+const cors = require("@koa/cors");
 
 async function bootstrap() {
   await dbConnect();
@@ -20,7 +21,9 @@ async function bootstrap() {
   /** Middlewares */
   app.use(logger());
   app.use(bodyParser());
-
+  app.use(cors({
+    "credentials": true
+  }));
   app.use(serve("./static"));
 
   /** Routes */
@@ -28,13 +31,16 @@ async function bootstrap() {
 
   // websocket
   const server = http.createServer(app.callback());
-  const io = new socket(server);
+  const io = socket(server);
 
   io.on("connection", function(socket){
     console.log("a user connected");
+    socket.on("chatMessage", (msg) => {
+      io.emit("chatMessage", msg);
+    });
   });
 
-  app.listen( Number(HTTPS_PORT), "0.0.0.0", () => serviceLogger.info( `Server started at http://localhost:${HTTPS_PORT}` ) );
+  server.listen( Number(HTTPS_PORT), "0.0.0.0", () => serviceLogger.info( `Server started at http://localhost:${HTTPS_PORT}` ) );
 
 }
 
