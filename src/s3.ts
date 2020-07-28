@@ -1,4 +1,3 @@
-import * as async from "async";
 import { S3 } from "aws-sdk";
 
 const s3: S3 = new S3({
