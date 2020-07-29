@@ -1,10 +1,9 @@
 import Koa from "koa";
 import logger from "koa-logger";
 import bodyParser from "koa-bodyparser";
-import KoaRouter from "koa-router";
 import serve from "koa-static";
-import { Router } from "./router";
-import { dbConnect } from "./infrastructure/db";
+import { routerLoader } from "@src/infrastructure/router/loader";
+import { dbConnect } from "./infrastructure/mongo";
 import socket from "socket.io";
 import http from "http";
 import { logger as serviceLogger } from "./infrastructure/logger";
@@ -15,9 +14,7 @@ const cors = require("@koa/cors");
 async function bootstrap() {
   await dbConnect();
   const app = new Koa();
-  const router = new KoaRouter({prefix: "/api"});
-
-  Router(router);
+  
   /** Middlewares */
   app.use(logger());
   app.use(bodyParser());
@@ -25,10 +22,7 @@ async function bootstrap() {
     "credentials": true
   }));
   app.use(serve("./static"));
-
-  /** Routes */
-  app.use(router.routes()).use(router.allowedMethods());
-
+  routerLoader(app);
   // websocket
   const server = http.createServer(app.callback());
   const io = socket(server);
