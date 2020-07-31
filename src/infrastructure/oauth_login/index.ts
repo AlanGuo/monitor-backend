@@ -5,7 +5,7 @@ import {OAuth2Strategy as GoogleStrategy} from "passport-google-oauth"
 import {Strategy as TwitterStrategy} from "passport-twitter"
 
 import passport from "koa-passport"
-import {OAUTH} from '../utils/constants'
+import {OAUTH} from "../utils/constants"
 
 
 export function loaderPassport(oauthList: OAUTH[]) {
@@ -40,7 +40,7 @@ function addFaceBookStrategy() {
       {
         clientID: config.FACEBOOK.Client_Id,
         clientSecret: config.FACEBOOK.Client_Secret,
-        callbackURL:  `${config.HOST}/oauth/facebook/callback`
+        callbackURL:  `${config.HOST}/oauth/facebook/callback`,
       },
       (accessToken, refreshToken, profile, cb) => {
 
@@ -70,8 +70,8 @@ function addTwitterStrategy() {
   passport.use(
     new TwitterStrategy(
       {
-        consumerKey: '213',
-        consumerSecret: '123',
+        consumerKey: "213",
+        consumerSecret: "123",
         callbackURL: `${config.HOST}/oauth/twitter/callback`
       },
       (accessToken, refreshToken, profile, cb) => {

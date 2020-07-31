@@ -8,11 +8,11 @@ const router = new KoaRouter();
 
 export function OAuthRouter(app: any) {
   // Google
-  router.get('/oauth/google', passport.authenticate('google', {scope: ['openid', 'profile', 'email']}));
-  router.get('/oauth/google/callback',
+  router.get("/oauth/google", passport.authenticate("google", {scope: ["openid", "profile", "email"]}));
+  router.get("/oauth/google/callback",
     passport.authenticate(
-      'google',
-      {failureRedirect: '/oauth/fail'}
+      "google",
+      {failureRedirect: "/oauth/fail"}
     ),
     (ctx, next) => {
       ctx.redirect(`/oauth/success?id=${ctx.state.user.id}`)
@@ -20,21 +20,21 @@ export function OAuthRouter(app: any) {
   );
 
   // Facebook
-  router.get('/oauth/facebook', passport.authenticate('facebook', {scope: ['public_profile', 'email']}));
-  router.get('/oauth/facebook/callback',
+  router.get("/oauth/facebook", passport.authenticate("facebook", {scope: ["public_profile", "email"]}));
+  router.get("/oauth/facebook/callback",
     passport.authenticate(
-      'facebook',
-      {failureRedirect: '/oauth/fail'}
+      "facebook",
+      {failureRedirect: "/oauth/fail"}
     ),
     (ctx, next) => {
       ctx.redirect(`/oauth/success?id=${ctx.state.user.id}`)
     }
   );
 
-  router.get('/oauth/fail', () => {
-    return 'auth error'
+  router.get("/oauth/fail", () => {
+    return "auth error"
   });
-  router.get('/oauth/success', async (ctx, next) => {
+  router.get("/oauth/success", async (ctx, next) => {
     ctx.body = `hello ${ctx.query.id}`
   });
 

@@ -1,5 +1,5 @@
 // @ts-ignore
-import config from 'config';
+import config from "config";
 import {S3} from "aws-sdk";
 import {newUniqId} from "@src/infrastructure/utils/uuid";
 import path from "path";

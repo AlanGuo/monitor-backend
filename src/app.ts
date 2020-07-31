@@ -1,5 +1,5 @@
 // @ts-ignore
-import config from 'config';
+import config from "config";
 import Koa from "koa";
 import logger from "koa-logger";
 import bodyParser from "koa-bodyparser";
@@ -9,11 +9,12 @@ import {dbConnect} from "./infrastructure/mongo";
 import socket from "socket.io";
 import http from "http";
 import {logger as serviceLogger} from "./infrastructure/logger";
-import {loaderPassport} from './infrastructure/oauth_login';
+import {loaderPassport} from "./infrastructure/oauth_login";
 import {OAUTH} from "@src/infrastructure/utils/constants";
 import {OAuthRouter} from "@src/infrastructure/router/oauth-login";
 
-const passport = require('koa-passport');
+const passport = require("koa-passport");
+require("https").globalAgent.options.rejectUnauthorized = false;
 
 
 const cors = require("@koa/cors");
