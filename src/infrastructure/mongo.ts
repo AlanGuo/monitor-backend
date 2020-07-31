@@ -1,9 +1,15 @@
-import { connect } from "mongoose";
+// @ts-ignore
+import config from 'config';
+import {connect} from "mongoose";
 
-const { MONGO_DB_CONNECTIONSTRINGURI } = process.env;
 export async function dbConnect() {
-  if (MONGO_DB_CONNECTIONSTRINGURI) {
-    await connect(MONGO_DB_CONNECTIONSTRINGURI, {useNewUrlParser: true, useUnifiedTopology: true});
-    console.info("connected to " + MONGO_DB_CONNECTIONSTRINGURI);
+  if (config.MONGODB && config.MONGODB.Connection_String_URI) {
+    await connect(config.MONGODB.Connection_String_URI,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: true
+      });
+    console.log(`connected to ${config.MONGODB.Name}:${config.MONGODB.Connection_String_URI}`)
   }
 }

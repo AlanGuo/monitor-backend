@@ -1,6 +1,6 @@
 import log4js from "log4js";
 
-const isDev = process.env.NODE_ENV === "dev"
+const isDev = process.env.NODE_ENV === "dev";
 const globalLevel = isDev ? "TRACE" : "INFO";
 
 const logConfig = {

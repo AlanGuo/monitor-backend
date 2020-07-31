@@ -4,3 +4,9 @@ export enum REQUEST_METHOD {
   PUT = "put",
   DELETE = "delete"
 }
+
+export enum OAUTH {
+  FACEBOOK = 'facebook',
+  GOOGLE = 'GOOGLE',
+  TWITTER = 'twitter'
+}

@@ -17,7 +17,7 @@ const routerLoader = (App:any) => {
           //如果是文件就使用require 导入，（controller下文件都是对外导出的class),在使用 @controller 装饰函数的时候,将koa-router 的实例作为装饰对象class 的静态属性
           // eslint-disable-next-line @typescript-eslint/no-var-requires
           const r = require(filePath).default;
-          if (r && r.router && r.router.routes) { //如果有koa-routr 的实例说明装饰成功，直接调用app.use()
+          if (r && r.router && r.router.routes) { //如果有koa-router 的实例说明装饰成功，直接调用app.use()
             try {
               App.use(r.router.routes());
               App.use(r.router.allowedMethods());
