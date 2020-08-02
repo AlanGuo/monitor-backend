@@ -34,5 +34,5 @@ module.exports = {
     Consumer_Secret: ""
   },
 
-  HOST: "http://47.75.119.206"
+  HOST: "http://justfans.bitapp.net.cn"
 };
