@@ -34,5 +34,5 @@ module.exports = {
     Consumer_Secret: ""
   },
 
-  HOST: "http://localhost:3010"
+  HOST: "http://47.75.119.206"
 };
