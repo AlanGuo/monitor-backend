@@ -12,7 +12,9 @@ export interface IUser extends Document {
   self_desc: string,
   self_web: string,
 
-  google_id: string,
+  google_id: Types.ObjectId,
+  twitter_id: Types.ObjectId,
+  facebook_id: Types.ObjectId
 
 }
 
@@ -21,7 +23,13 @@ const UserModel: Schema = new Schema({
   name: {type: String, required: false, unique},
   show_name: {type: String, required: false, unique},
   email: {type: String, required: false, unique},
+  sub_price: {type: Number, required: false},
+  self_desc: {type: String, required: false},
+  self_web: {type: String, required: false},
 
+  google_id: {type: Types.ObjectId, required: false, unique},
+  twitter_id: {type: Types.ObjectId, required: false, unique},
+  facebook_id: {type: Types.ObjectId, required: false, unique}
 
 }, {
   timestamps: true

@@ -11,10 +11,14 @@ import {OAUTH} from "../utils/constants"
 export function loaderPassport(oauthList: OAUTH[]) {
 
   passport.serializeUser((user: any, cb) => {
+    console.log('4')
+
     cb(null, user.id)
   });
 
   passport.deserializeUser(() => {
+    console.log('5')
+
   });
 
   oauthList.forEach(item => {
@@ -40,10 +44,15 @@ function addFaceBookStrategy() {
       {
         clientID: config.FACEBOOK.Client_Id,
         clientSecret: config.FACEBOOK.Client_Secret,
-        callbackURL:  `${config.HOST}/oauth/facebook/callback`,
+        callbackURL: `${config.HOST}/oauth/facebook/callback`,
+        passReqToCallback: true
       },
-      (accessToken, refreshToken, profile, cb) => {
-
+      (req, accessToken, refreshToken, profile, cb) => {
+        if (!req.user) {
+          // TODO Not logged-in
+        } else {
+          // TODO  Logged in. Associate Facebook account with user
+        }
         return cb(null, profile)
       }
     )
@@ -56,10 +65,17 @@ function addGoogleStrategy() {
       {
         clientID: config.GOOGLE.Client_Id,
         clientSecret: config.GOOGLE.Client_Secret,
-        callbackURL: `${config.HOST}/oauth/google/callback`
+        callbackURL: `${config.HOST}/oauth/google/callback`,
+        passReqToCallback: true
       },
-      (accessToken, refreshToken, profile, cb) => {
-
+      (req, accessToken, refreshToken, profile, cb) => {
+        console.log('3')
+        console.log(req)
+        if (!req.user) {
+          // TODO Not logged-in
+        } else {
+          // TODO  Logged in. Associate Google account with user
+        }
         return cb(null, profile)
       }
     )
@@ -72,9 +88,15 @@ function addTwitterStrategy() {
       {
         consumerKey: "213",
         consumerSecret: "123",
-        callbackURL: `${config.HOST}/oauth/twitter/callback`
+        callbackURL: `${config.HOST}/oauth/twitter/callback`,
+        passReqToCallback: true
       },
-      (accessToken, refreshToken, profile, cb) => {
+      (req, token, tokenSecret, profile, cb) => {
+        if (!req.user) {
+          // TODO Not logged-in
+        } else {
+          // TODO  Logged in. Associate Twitter account with user
+        }
         return cb(null, profile)
       }
     )
@@ -82,5 +104,5 @@ function addTwitterStrategy() {
 }
 
 function createUser(provider: OAUTH, profile: any) {
-
+  // TODO
 }
