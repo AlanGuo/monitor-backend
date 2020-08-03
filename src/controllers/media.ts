@@ -1,5 +1,5 @@
 import config from "config";
-import { Controller, GET } from "@src/infrastructure/decorators/koa";
+import { Controller, GET, POST } from "@src/infrastructure/decorators/koa";
 import KoaRouter, { IRouterContext } from "koa-router";
 import { prepareUploadMedia } from "@src/infrastructure/amazon/s3";
 import { createMediaConvertJob, getJob } from "@src/infrastructure/amazon/mediaConvert";
@@ -48,5 +48,12 @@ export default class MediaController {
         hd: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.hd_suffix,
       }
     });
+  }
+
+  @POST("/mediaconvertcomplete/notification")
+  async notify(ctx: IRouterContext) {
+    const body = ctx.body;
+    console.log(body);
+    ctx.body = body;
   }
 }

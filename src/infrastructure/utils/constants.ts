@@ -6,7 +6,7 @@ export enum REQUEST_METHOD {
 }
 
 export enum OAUTH {
-  FACEBOOK = 'facebook',
-  GOOGLE = 'GOOGLE',
-  TWITTER = 'twitter'
+  FACEBOOK = "facebook",
+  GOOGLE = "GOOGLE",
+  TWITTER = "twitter"
 }

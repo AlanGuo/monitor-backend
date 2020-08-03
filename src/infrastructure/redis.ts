@@ -1,5 +1,5 @@
 // @ts-ignore
-import config from 'config';
+import config from "config";
 import Redis from "ioredis";
 
 export const redis = config.REDIS.Password ? new Redis({

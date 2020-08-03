@@ -1,5 +1,5 @@
 // @ts-ignore
-import config from 'config';
+import config from "config";
 import Koa from "koa";
 import logger from "koa-logger";
 import bodyParser from "koa-bodyparser";
@@ -9,12 +9,11 @@ import {dbConnect} from "./infrastructure/mongo";
 import socket from "socket.io";
 import http from "http";
 import {logger as serviceLogger} from "./infrastructure/logger";
-import {loaderPassport} from './infrastructure/oauth_login';
+import {loaderPassport} from "./infrastructure/oauth_login";
 import {OAUTH} from "@src/infrastructure/utils/constants";
-import {OAuthRouter} from "@src/infrastructure/router/oauth-login";
+import {OAuthRouter} from "@src/router/oauth-login";
 
-const passport = require('koa-passport');
-
+const passport = require("koa-passport");
 
 const cors = require("@koa/cors");
 
@@ -47,7 +46,7 @@ async function bootstrap() {
       io.emit("chatMessage", msg);
     });
   });
-
+  app.proxy = true
   server.listen(Number(config.HTTPS_PORT), "0.0.0.0", () => serviceLogger.info(`Server started at http://localhost:${config.HTTPS_PORT}`));
 
 }
