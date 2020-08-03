@@ -8,7 +8,7 @@
     "test": "jest",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint --fix . --ext .ts,.tsx",
-    "test:backend": "pm2 reload ecosystem.json --only govern-backend --watch"
+    "test:backend": "pm2 reload ecosystem.json --only newonlyfans-backend --watch"
   },
   "author": "",
   "license": "ISC",
