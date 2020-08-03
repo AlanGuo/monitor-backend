@@ -19,15 +19,15 @@ export default class MediaController {
   @GET("/convert/:filename")
   async convert(ctx: IRouterContext) {
     const filename = ctx.params.filename;
-    const fileNameWithoutExt = filename.split(".")[0];
+    // const fileNameWithoutExt = filename.split(".")[0];
     const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + filename;
     const jobData: any = await createMediaConvertJob(s3FilePath);
     ctx.body = jsonResponse({
       data: {
         jobId: jobData.Job.Id,
-        screenshot: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.screenshot_suffix,
-        low: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.low_suffix,
-        hd: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.hd_suffix,
+        // screenshot: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.screenshot_suffix,
+        // low: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.low_suffix,
+        // hd: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.hd_suffix,
       }
     });
   }

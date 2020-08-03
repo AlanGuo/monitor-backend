@@ -6,12 +6,13 @@ import bodyParser from "koa-bodyparser";
 import serve from "koa-static";
 import {routerLoader} from "@src/infrastructure/router/loader";
 import {dbConnect} from "./infrastructure/mongo";
-import socket from "socket.io";
 import http from "http";
 import {logger as serviceLogger} from "./infrastructure/logger";
 import {loaderPassport} from "./infrastructure/oauth_login";
 import {OAUTH} from "@src/infrastructure/utils/constants";
 import {OAuthRouter} from "@src/router/oauth-login";
+import { createSocket } from "./infrastructure/socket";
+import { loadSocketService } from "./services/socket";
 
 const passport = require("koa-passport");
 
@@ -45,14 +46,8 @@ async function bootstrap() {
 
   // websocket
   const server = http.createServer(app.callback());
-  const io = socket(server);
+  loadSocketService(createSocket(server));
 
-  io.on("connection", function (socket) {
-    console.log("a user connected");
-    socket.on("chatMessage", (msg) => {
-      io.emit("chatMessage", msg);
-    });
-  });
   app.proxy = true
   server.listen(Number(config.HTTPS_PORT), "0.0.0.0", () => serviceLogger.info(`Server started at http://localhost:${config.HTTPS_PORT}`));
 

@@ -8,6 +8,10 @@ export default class CallbackController {
   @POST("/mediaconvertcomplete/notification")
   async notify(ctx: IRouterContext) {
     const body = ctx.request.body;
-    console.log(body.MessageId, body.Type, body.Message, body.TopicArn, body.Timestamp, body.MessageAttributes);
+    console.log(body.MessageId, body.Type, body.Message, body.TopicArn, body.Timestamp);
+    const records = body.Message.Records;
+    for(let recordItem of records){
+      const key = recordItem.object.key;
+    }
   }
 }
