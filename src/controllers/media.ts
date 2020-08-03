@@ -53,7 +53,7 @@ export default class MediaController {
 
   @POST("/mediaconvertcomplete/notification")
   async notify(ctx: IRouterContext) {
-    const body = ctx.body;
+    const body = ctx.request.body;
     console.log(body);
     ctx.body = body;
   }
