@@ -23,6 +23,7 @@ async function bootstrap() {
 
   /** Middlewares */
   app.use(logger());
+  // parse messages for amazon sns
   app.use(async (ctx, next) => {
     if (ctx.request.get("x-amz-sns-message-type")) {
       ctx.request.headers["content-type"] = "application/json";

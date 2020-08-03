@@ -50,12 +50,4 @@ export default class MediaController {
       }
     });
   }
-
-  @POST("/mediaconvertcomplete/notification")
-  async notify(ctx: IRouterContext) {
-    const req = ctx.request;
-    const body = ctx.request.body;
-    console.log(req, body);
-    ctx.body = {};
-  }
 }
