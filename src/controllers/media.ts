@@ -55,7 +55,7 @@ export default class MediaController {
   async notify(ctx: IRouterContext) {
     const req = ctx.request;
     const body = ctx.request.body;
-    console.log(req, body);
+    console.log(req, body, ctx.url, ctx.req);
     ctx.body = req;
   }
 }
