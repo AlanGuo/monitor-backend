@@ -2,7 +2,6 @@
 import config from "config";
 import KoaRouter, {IRouterContext} from "koa-router";
 import {REQUEST_METHOD} from "@src/infrastructure/utils/constants";
-
 const router = new KoaRouter({prefix: config.API_PREFIX});
 
 function Controller({prefix}: { prefix: string }) {

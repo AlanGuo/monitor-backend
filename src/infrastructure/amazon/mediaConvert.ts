@@ -1,3 +1,4 @@
+// @ts-ignore
 import config from "config";
 import { MediaConvert } from "aws-sdk";
 import { job } from "@config/mediaconvert/job";

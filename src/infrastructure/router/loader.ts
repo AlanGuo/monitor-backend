@@ -30,8 +30,7 @@ const routerLoader = (App:any) => {
         }
       })
     } catch (error) {
-      console.error(error);
-      console.error("no such file or dir :---- " + rootPaths)
+      console.error("no such file or dir :---- " + rootPaths, error)
     }
   };
   //调用自动加载路由

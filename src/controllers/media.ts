@@ -1,3 +1,4 @@
+// @ts-ignore
 import config from "config";
 import { Controller, GET, POST } from "@src/infrastructure/decorators/koa";
 import KoaRouter, { IRouterContext } from "koa-router";
