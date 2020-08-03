@@ -1,4 +1,6 @@
 module.exports = {
+  HTTPS_PORT: 3010,
+  API_PREFIX: "/api",
   AWS_ACCESS_KEY_ID: "AKIAIDTAHVMP7FT52J7A",
   AWS_SECRET_ACCESS_KEY: "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",
   AWS_REGION: "ap-southeast-1",
@@ -45,5 +47,5 @@ module.exports = {
     Consumer_Secret: ""
   },
 
-  HOST: "http://justfans.bitapp.net.cn"
+  HOST: "https://test-justfans.bitapp.net/"
 };
