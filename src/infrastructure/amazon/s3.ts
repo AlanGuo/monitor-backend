@@ -1,5 +1,5 @@
 // @ts-ignore
-import config from 'config';
+import config from "config";
 import {S3} from "aws-sdk";
 import {newUniqId} from "@src/infrastructure/utils/uuid";
 import path from "path";
@@ -7,8 +7,8 @@ import path from "path";
 const s3: S3 = new S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
   secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
-  region: "ap-southeast-1",
-  signatureVersion: "v4",
+  region: config.AWS_REGION,
+  signatureVersion: config.AWS_SIGNATURE_VERSION,
 });
 
 export async function prepareUploadMedia(filename: string) {
@@ -18,7 +18,7 @@ export async function prepareUploadMedia(filename: string) {
       Bucket: config.SOURCE_MEDIA_BUCKET,
       Fields: {
         key: config.MEDIA_FOLDER + `${id}`,
-        success_action_status: "201"
+        success_action_status: config.AWS_S3.success_action_status
       }
     }, (err, data) => {
       if (err) {
