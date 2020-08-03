@@ -8,6 +8,6 @@ export default class CallbackController {
     const req = ctx.request;
     const body = ctx.request.body;
     console.log(req, body);
-    ctx.body = req;
+    ctx.body = {};
   }
 }
