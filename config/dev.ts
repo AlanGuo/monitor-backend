@@ -11,6 +11,7 @@ module.exports = {
   },
   AWS_S3: {
     prefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/medias/",
+    chat_media_folder: "/media/chat/",
     screenshot_suffix: "_screenshot.0000000.jpg",
     low_suffix: "_generic_low_mp4_800kbps.mp4",
     hd_suffix: "_generic_hd_mp4_4000kbps.mp4",

@@ -10,3 +10,12 @@ export enum OAUTH {
   GOOGLE = "GOOGLE",
   TWITTER = "twitter"
 }
+
+export enum MEDIA_PURPOSE {
+  CHAT = "chat",
+  POST = "post"
+}
+
+export enum SOCKET_CHANNEL {
+  MEDIA_CONVERTED = "media converted"
+}
