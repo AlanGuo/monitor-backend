@@ -5,6 +5,7 @@ import { IRouterContext } from "koa-router";
 import { redis } from "@src/infrastructure/redis";
 import { getSocketIO } from "@src/infrastructure/socket";
 import { SOCKET_CHANNEL } from "@src/infrastructure/utils/constants";
+import { jsonResponse } from "@src/infrastructure/utils/helper";
 
 
 // todo: need to verity the signatures of Amazon SNS messages
@@ -34,16 +35,17 @@ export default class CallbackController {
             const fileNameWithoutExt = fileName.split(".")[0];
             
             for(let socketId of decodedData.subscribers){
-              io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, {
+              io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, JSON.stringify({
                 fileName,
                 screenshot: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.screenshot_suffix,
                 low: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.low_suffix,
                 hd: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.hd_suffix
-              });
+              }));
             }
           }
         }
       }
+      ctx.body = jsonResponse();
     }
   }
 }
