@@ -20,6 +20,7 @@ export default class CallbackController {
       const fileName = recordItem.s3.object.key;
       const key = fileName.split("_")[0];
       const data = await redis.get(key);
+      console.log(data, key)
       if (data) {
         const decodedData = JSON.parse(data);
         if (decodedData.fileCount > 0) {
