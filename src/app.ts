@@ -34,7 +34,6 @@ async function bootstrap() {
   app.use(bodyParser());
   app.use(cors({
     "origin": config.CORS.origin,
-    "credentials": false
   }));
   app.use(serve("./static"));
   routerLoader(app);

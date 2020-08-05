@@ -23,7 +23,7 @@ module.exports = {
     origin: "*"
   },
   WEBSOCKET:{
-    origins: "*"
+    origins: "*:*"
   },
 
   REDIS: {
