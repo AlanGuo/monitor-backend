@@ -12,11 +12,11 @@ export function loadSocketService(io: socket.Server) {
     // 媒体转换通知
     socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async ({socketId, key, purpose}: {socketId:string, key:string, purpose:string}) => {
       const fileNameWithoutExt = key.split(".")[0];
-      const data = await redis.get(config.AWS_S3[ purpose + "_media_folder" ] + fileNameWithoutExt);
+      const data = await redis.get(config.AWS_MEDIA_CONVERT[ purpose + "_media_folder" ] + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
         decodedData.subscribers.push(socketId);
-        await redis.set(config.AWS_S3[ purpose + "_media_folder" ] + fileNameWithoutExt, JSON.stringify(decodedData));
+        await redis.set(config.AWS_MEDIA_CONVERT[ purpose + "_media_folder" ] + fileNameWithoutExt, JSON.stringify(decodedData));
       }
     });
   });
