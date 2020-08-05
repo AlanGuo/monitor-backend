@@ -15,9 +15,9 @@ export async function prepareUploadMedia(filename: string) {
   const id = newUniqId() + path.extname(filename);
   return new Promise((res, rej) => {
     s3.createPresignedPost({
-      Bucket: config.SOURCE_MEDIA_BUCKET,
+      Bucket: config.AWS_MEDIA_CONVERT.sourceBucket,
       Fields: {
-        key: config.MEDIA_FOLDER + `${id}`,
+        key: config.AWS_MEDIA_CONVERT.sourceFolder + `${id}`,
         success_action_status: config.AWS_S3.success_action_status
       }
     }, (err, data) => {

@@ -6,20 +6,19 @@ module.exports = {
   AWS_REGION: "ap-southeast-1",
   AWS_SIGNATURE_VERSION: "v4",
   AWS_MEDIA_CONVERT: {
+    "sourceBucket": "newonlyfans",
     "endpoint": "https://xdwfvckxc.mediaconvert.ap-southeast-1.amazonaws.com",
     "sourcePath": "s3://newonlyfans/",
     "chat_media_folder": "/media/chat/",
+    "sourceFolder": "video/",
   },
   AWS_S3: {
     prefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/medias/",
     screenshot_suffix: "_screenshot.0000000.jpg",
     low_suffix: "_generic_low_mp4_800kbps.mp4",
     hd_suffix: "_generic_hd_mp4_4000kbps.mp4",
-    success_action_status: "201"
+    success_action_status: "201",
   },
-  SOURCE_MEDIA_BUCKET: "newonlyfans",
-
-  MEDIA_FOLDER: "video/",
 
   REDIS: {
     Host: "127.0.0.1",

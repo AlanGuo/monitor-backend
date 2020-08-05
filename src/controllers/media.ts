@@ -21,7 +21,7 @@ export default class MediaController {
   async convert(ctx: IRouterContext) {
     const key = decodeURIComponent(ctx.query.key);
     const purpose = ctx.query.purpose;
-    const fileNameWithoutExt = key.split(".")[0];
+    const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.sourceFolder, "");
     const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + key;
     const jobData: any = await createMediaConvertJob(s3FilePath, purpose);
     // media convertion job, three jobs
