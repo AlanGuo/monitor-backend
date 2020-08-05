@@ -20,6 +20,10 @@ module.exports = {
     success_action_status: "201",
   },
 
+  WEBSOCKET:{
+    origins: "*:*"
+  },
+
   REDIS: {
     Host: "127.0.0.1",
     Port: 6379,

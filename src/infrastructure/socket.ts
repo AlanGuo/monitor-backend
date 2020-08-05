@@ -1,10 +1,12 @@
+// @ts-ignore
+import config from "config";
 import socket from "socket.io";
 import { Server } from "http";
 
 let io:socket.Server;
 
 export function createSocket(server: Server){
-  io = socket(server, {origins: "*:*"});
+  io = socket(server, {origins: config.WEBSOCKET.origins});
   return io;
 }
 
