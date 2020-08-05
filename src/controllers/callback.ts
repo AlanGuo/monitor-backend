@@ -13,7 +13,7 @@ export default class CallbackController {
   @POST("/mediaconvertcomplete/notification")
   async notify(ctx: IRouterContext) {
     const body = ctx.request.body;
-    const records = body.Message.Records;
+    const records = JSON.parse(body.Message.Records);
     console.log(body.Message, records)
     for(let recordItem of records){
       const fileName = recordItem.object.key;
