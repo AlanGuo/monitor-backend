@@ -32,6 +32,7 @@ export default class CallbackController {
             const fileNameWithoutExt = fileName.split(".")[0];
             for(let socketId of decodedData.subscribers){
               io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, {
+                fileName,
                 screenshot: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.screenshot_suffix,
                 low: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.low_suffix,
                 hd: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.hd_suffix

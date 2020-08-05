@@ -17,15 +17,15 @@ export default class MediaController {
     ctx.body = await prepareUploadMedia(filename);
   }
 
-  @GET("/convert/:filename")
+  @GET("/convert")
   async convert(ctx: IRouterContext) {
-    const filename = ctx.params.filename;
-    const purpose = ctx.params.purpose;
-    const fileNameWithoutExt = filename.split(".")[0];
-    const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + filename;
+    const key = decodeURIComponent(ctx.query.key);
+    const purpose = ctx.query.purpose;
+    const fileNameWithoutExt = key.split(".")[0];
+    const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + key;
     const jobData: any = await createMediaConvertJob(s3FilePath);
     // media convertion job, three jobs
-    await redis.set(config.AWS_S3[ purpose + "_media_folder" ] + fileNameWithoutExt, JSON.stringify({fileCount: 3, fileName: filename, subscribers: []}));
+    await redis.set(config.AWS_S3[ purpose + "_media_folder" ] + fileNameWithoutExt, JSON.stringify({fileCount: 3, key, subscribers: []}));
 
     ctx.body = jsonResponse({
       data: {
@@ -42,8 +42,8 @@ export default class MediaController {
 
   @GET("/getconverted/:filename")
   async getConvertedFiles(ctx: IRouterContext) {
-    const filename = ctx.params.filename;
-    const fileNameWithoutExt = filename.split(".")[0];
+    const fileName = ctx.params.filename;
+    const fileNameWithoutExt = fileName.split(".")[0];
     ctx.body = jsonResponse({
       data: {
         screenshot: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.screenshot_suffix,

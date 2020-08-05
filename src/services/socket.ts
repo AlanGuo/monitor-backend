@@ -10,8 +10,8 @@ export function loadSocketService(io: socket.Server) {
       io.emit("chatMessage", msg);
     });
     // 媒体转换通知
-    socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async (socketId: string, fileName: string, purpose: string) => {
-      const fileNameWithoutExt = fileName.split(".")[0];
+    socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async ({socketId, key, purpose}: {socketId:string, key:string, purpose:string}) => {
+      const fileNameWithoutExt = key.split(".")[0];
       const data = await redis.get(config.AWS_S3[ purpose + "_media_folder" ] + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
