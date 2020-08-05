@@ -14,10 +14,9 @@ export default class CallbackController {
   async notify(ctx: IRouterContext) {
     const body = ctx.request.body;
     const message = JSON.parse(body.Message);
-    console.log(message)
     const records = message.Records;
     for(let recordItem of records){
-      const fileName = recordItem.object.key;
+      const fileName = recordItem.s3.object.key;
       const key = fileName.split("_")[0];
       const data = await redis.get(key);
       if (data) {
