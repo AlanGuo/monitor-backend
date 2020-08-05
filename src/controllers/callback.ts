@@ -14,6 +14,7 @@ export default class CallbackController {
   async notify(ctx: IRouterContext) {
     const body = ctx.request.body;
     const records = body.Message.Records;
+    console.log(body.Message, records)
     for(let recordItem of records){
       const fileName = recordItem.object.key;
       const key = fileName.split("_")[0];
