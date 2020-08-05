@@ -33,6 +33,7 @@ async function bootstrap() {
 });
   app.use(bodyParser());
   app.use(cors({
+    "origin": "*",
     "credentials": true
   }));
   app.use(serve("./static"));
