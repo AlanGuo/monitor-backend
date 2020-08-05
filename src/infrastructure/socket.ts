@@ -4,7 +4,7 @@ import { Server } from "http";
 let io:socket.Server;
 
 export function createSocket(server: Server){
-  io = socket(server);
+  io = socket(server, {origins: "*:*"});
   return io;
 }
 
