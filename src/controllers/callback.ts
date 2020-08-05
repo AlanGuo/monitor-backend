@@ -20,16 +20,16 @@ export default class CallbackController {
       const fileName = recordItem.s3.object.key;
       const key = fileName.split("_")[0];
       const data = await redis.get(key);
-      console.log(data, key)
       if (data) {
         const decodedData = JSON.parse(data);
         if (decodedData.fileCount > 0) {
           decodedData.fileCount --;
+          await redis.set(key, JSON.stringify(decodedData));
         } else {
           // all files have been converted successfully
           // 这里需要根据类型入库
           // 转换成功发送给订阅者
-          console.log(decodedData.subscribers);
+          console.log(decodedData);
           if (decodedData.subscribers.length) {
             const io = getSocketIO();
             const fileName = decodedData.fileName;
