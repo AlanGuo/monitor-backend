@@ -18,7 +18,6 @@ export default class CallbackController {
     for(let recordItem of records){
       const fileName = recordItem.s3.object.key;
       const key = fileName.split("_")[0];
-      console.log(key)
       const data = await redis.get(key);
       if (data) {
         const decodedData = JSON.parse(data);
@@ -28,10 +27,12 @@ export default class CallbackController {
           // all files have been converted successfully
           // 这里需要根据类型入库
           // 转换成功发送给订阅者
+          console.log(decodedData.subscribers);
           if (decodedData.subscribers.length) {
             const io = getSocketIO();
             const fileName = decodedData.fileName;
             const fileNameWithoutExt = fileName.split(".")[0];
+            
             for(let socketId of decodedData.subscribers){
               io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, {
                 fileName,
