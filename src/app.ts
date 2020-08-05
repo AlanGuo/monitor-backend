@@ -33,7 +33,7 @@ async function bootstrap() {
 });
   app.use(bodyParser());
   app.use(cors({
-    "origin": "*",
+    "origin": config.CORS.origin,
     "credentials": true
   }));
   app.use(serve("./static"));

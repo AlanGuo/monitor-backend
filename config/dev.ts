@@ -19,7 +19,9 @@ module.exports = {
     hd_suffix: "_generic_hd_mp4_4000kbps.mp4",
     success_action_status: "201",
   },
-
+  CORS: {
+    origin: "*"
+  },
   WEBSOCKET:{
     origins: "*:*"
   },
