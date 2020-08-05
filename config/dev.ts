@@ -7,7 +7,7 @@ module.exports = {
   AWS_SIGNATURE_VERSION: "v4",
   AWS_MEDIA_CONVERT: {
     "endpoint": "https://xdwfvckxc.mediaconvert.ap-southeast-1.amazonaws.com",
-    "sourcePath": "s3://newonlyfans"
+    "sourcePath": "s3://newonlyfans/"
   },
   AWS_S3: {
     prefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/medias/",
