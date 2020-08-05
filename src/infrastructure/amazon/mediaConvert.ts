@@ -11,8 +11,9 @@ const mediaConvert = new MediaConvert({
   endpoint: config.AWS_MEDIA_CONVERT.endpoint
 });
 
-export async function createMediaConvertJob(s3FilePath: string) {
+export async function createMediaConvertJob(s3FilePath: string, purpose: string) {
   job.Settings.Inputs[0].FileInput = s3FilePath;
+  job.Settings.OutputGroups[0].OutputGroupSettings.FileGroupSettings.Destination += (purpose + "/")
   return new Promise((res, rej) => {
     mediaConvert.createJob(job, (err, data) => {
       if (err) {

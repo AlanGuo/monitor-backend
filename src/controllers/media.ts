@@ -23,7 +23,7 @@ export default class MediaController {
     const purpose = ctx.query.purpose;
     const fileNameWithoutExt = key.split(".")[0];
     const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + key;
-    const jobData: any = await createMediaConvertJob(s3FilePath);
+    const jobData: any = await createMediaConvertJob(s3FilePath, purpose);
     // media convertion job, three jobs
     await redis.set(config.AWS_S3[ purpose + "_media_folder" ] + fileNameWithoutExt, JSON.stringify({fileCount: 3, key, subscribers: []}));
 
