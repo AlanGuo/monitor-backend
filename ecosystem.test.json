@@ -13,7 +13,7 @@
       "out_file"  :"logs/newonlyfans-backend.stdout.log",
       "log_date_format": "MM-DD HH:mm:ss",
       "env": {
-        "NODE_ENV": "dev"
+        "NODE_ENV": "test"
       }
     }
   ]
