@@ -1,8 +1,8 @@
 {
   "apps" : [
     {
-      "name"      : "newonlyfans-dev-backend",
-      "instance_var":"newonlyfans-dev-backend",
+      "name"      : "newonlyfans-test-backend",
+      "instance_var":"newonlyfans-test-backend",
       "script": "ts-node",
       "args": " -r tsconfig-paths/register ./src/app.ts",
       "instances" : 1,
