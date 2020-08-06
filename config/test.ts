@@ -34,7 +34,7 @@ module.exports = {
   },
 
   MONGODB: {
-    Name: "dev",
+    Name: "test",
     Connection_String_URI: "mongodb://127.0.0.1:27017/newonlyfans"
   },
 
