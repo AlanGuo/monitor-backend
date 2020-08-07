@@ -1,3 +1,7 @@
+export function isVideo(ext: string) {
+  ext = ext.replace(".", "");
+  return !!videoExtensions.find((item) => item === ext);
+}
 export const videoExtensions = [
 	"3g2",
 	"3gp",

@@ -3,8 +3,8 @@ import config from "config";
 import {S3} from "aws-sdk";
 import path from "path";
 import {newUniqId} from "@src/infrastructure/utils/uuid";
-import { imageExtensions } from "@src/infrastructure/utils/image";
-import { videoExtensions } from "@src/infrastructure/utils/video"
+import { isImage } from "@src/infrastructure/utils/image";
+import { isVideo } from "@src/infrastructure/utils/video"
 
 const s3: S3 = new S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -17,9 +17,9 @@ export async function prepareUploadMedia(filename: string) {
   const ext = path.extname(filename);
   const id = newUniqId() + ext;
   let sourcePath = config.AWS_MEDIA_CONVERT.otherSourceFolder;
-  if (imageExtensions.find((item) => { return ext === ("." + item) })) {
+  if (isImage(ext)) {
     sourcePath = config.AWS_MEDIA_CONVERT.imageSourceFolder;
-  } else if(videoExtensions.find((item) => { return ext === ("." + item) })) {
+  } else if(isVideo(ext)) {
     sourcePath = config.AWS_MEDIA_CONVERT.videoSourceFolder;
   }
   return new Promise((res, rej) => {

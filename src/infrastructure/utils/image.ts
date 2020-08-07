@@ -1,3 +1,7 @@
+export function isImage(ext: string) {
+	ext = ext.replace(".", "");
+  return !!imageExtensions.find((item) => item === ext);
+}
 export const imageExtensions = [
 	"ase",
 	"art",
