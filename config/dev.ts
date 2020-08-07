@@ -9,10 +9,11 @@ module.exports = {
     "sourceBucket": "newonlyfans",
     "endpoint": "https://xdwfvckxc.mediaconvert.ap-southeast-1.amazonaws.com",
     "sourcePath": "s3://newonlyfans/",
+    "videoDestination": "s3://newonlyfans-public/media/video/",
     "chat_video_folder": "media/video/chat/",
     "videoSourceFolder": "video/",
     "imageSourceFolder": "image/",
-    "otherSourceFolder": "other/"
+    "otherSourceFolder": "other/",
   },
   AWS_S3: {
     prefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/medias/",

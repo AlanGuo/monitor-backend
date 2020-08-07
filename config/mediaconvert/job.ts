@@ -202,7 +202,7 @@ export const job = {
         "OutputGroupSettings": {
           "Type": "FILE_GROUP_SETTINGS",
           "FileGroupSettings": {
-            "Destination": "s3://newonlyfans-public/media/video/"
+            "Destination": ""
           }
         }
       }
