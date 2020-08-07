@@ -11,7 +11,8 @@ export function loadSocketService(io: socket.Server) {
       io.emit("chatMessage", msg);
     });
     // 媒体转换通知
-    socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async ({socketId, key, purpose}: {socketId:string, key:string, purpose:string}) => {
+    socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async (msg: string) => {
+      const {socketId, key, purpose}: {socketId:string, key:string, purpose:string} = JSON.parse(msg);
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
       console.log("subscribe key", config.AWS_MEDIA_CONVERT[ purpose + "_video_folder" ] + fileNameWithoutExt);
       const data = await redis.get(config.AWS_MEDIA_CONVERT[ purpose + "_video_folder" ] + fileNameWithoutExt);
