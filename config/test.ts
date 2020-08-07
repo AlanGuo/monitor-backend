@@ -9,7 +9,7 @@ module.exports = {
     "sourceBucket": "newonlyfans",
     "endpoint": "https://xdwfvckxc.mediaconvert.ap-southeast-1.amazonaws.com",
     "sourcePath": "s3://newonlyfans/",
-    "chat_media_folder": "media/chat/",
+    "chat_video_folder": "media/video/chat/",
     "videoSourceFolder": "video/",
     "imageSourceFolder": "image/",
     "otherSourceFolder": "other/"

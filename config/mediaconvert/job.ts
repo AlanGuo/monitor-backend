@@ -202,7 +202,7 @@ export const job = {
         "OutputGroupSettings": {
           "Type": "FILE_GROUP_SETTINGS",
           "FileGroupSettings": {
-            "Destination": "s3://newonlyfans-public/media/"
+            "Destination": "s3://newonlyfans-public/media/video/"
           }
         }
       }
@@ -239,7 +239,7 @@ export const job = {
             }
           ]
         },
-        "FileInput": "s3://newonlyfans/video/sample.mp4"
+        "FileInput": ""
       }
     ]
   },
