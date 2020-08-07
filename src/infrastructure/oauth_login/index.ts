@@ -7,6 +7,8 @@ import UserModel from "../../models/user";
 import passport from "koa-passport"
 import {OAUTH} from "../utils/constants"
 import {GoogleProfile, User} from "@src/interface";
+import {Schema, Types, model, Document} from "mongoose";
+import {query} from "express";
 
 export function loaderPassport(oauthList: OAUTH[]) {
 
@@ -102,27 +104,50 @@ function addTwitterStrategy() {
   );
 }
 
-async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile) {
-  let user: User;
+export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile) {
+  let filter;
+  let update;
   switch (provider) {
     case OAUTH.GOOGLE:
-      user = await UserModel.findOneAndUpdate(
-        {google: provider},
-        {$setOnInsert: {uuid: 1}, $set: {}},
-        {new: true, upsert: true}
-        ) as User;
-      // TODO
+      filter = {google: profile.id};
+      update =  {$setOnInsert: {google: profile.id}, $set: {}};
+      // const oid = Types.ObjectId();
+      // const uuid = parseInt(oid.toHexString().substr(18), 16) + 10000000;
+      // const tmp = await UserModel.findOneAndUpdate(
+      //   {google: profile.id},
+      //   {$setOnInsert: {google: profile.id, uuid}, $set: {}},
+      //   {new: true, upsert: true, rawResult: true}
+      //   );
+      // user = tmp.value as User;
       break;
     case OAUTH.TWITTER:
-      user = {} as User;
+      filter = {google: profile.id};
+      update =  {$setOnInsert: {google: profile.id}, $set: {}};
       break;
     case OAUTH.FACEBOOK:
-      user = {} as User;
+      filter = {google: profile.id};
+      update =  {$setOnInsert: {google: profile.id}, $set: {}};
       break;
     default:
       throw Error('provider not exists')
   }
-  return user;
+
+  const session = await UserModel.db.startSession();
+  try {
+    await session.withTransaction(async (session) => {
+      const count = await UserModel.countDocuments().session(session);
+      const uuid = 10000000 + count;
+      const user = await UserModel.findOneAndUpdate(
+        {google: profile.id},
+        {$setOnInsert: {google: profile.id, uuid}, $set: {}},
+        {new: true, upsert: true, session}
+      ) as User;
+
+    });
+
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 async function bindUser(provider: OAUTH, profile: GoogleProfile, user: typeof UserModel) {
