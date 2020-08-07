@@ -1,36 +1,40 @@
-import { Schema, Types, model, Document } from "mongoose";
+import {Schema, Types, model, Document} from "mongoose";
+import {Profile} from "@src/interface";
 
 const required = true;
 const unique = true;
+const sparse = true;
 
 export interface IUser extends Document {
-  _id: string,
-  name: string,
-  show_name: string,
-  email: string
-  sub_price: number,
-  self_desc: string,
-  self_web: string,
+  uuid: number,
+  name?: string,
+  show_name?: string,
+  email?: string
+  sub_price?: number,
+  self_desc?: string,
+  self_web?: string,
 
-  google_id: Types.ObjectId,
-  twitter_id: Types.ObjectId,
-  facebook_id: Types.ObjectId
+  google?: string,
+  twitter?: Types.ObjectId,
+  facebook?: Types.ObjectId,
+  oauth_profile: Profile
+
 
 }
 
 const UserModel: Schema = new Schema({
-  _id: {type:String, required, unique},
-  name: {type: String, required: false, unique},
-  show_name: {type: String, required: false, unique},
-  email: {type: String, required: false, unique},
+  uuid: {type: Number, required, unique},
+  name: {type: String, required: false, unique, sparse},
+  show_name: {type: String, required: false, unique, sparse},
+  email: {type: String, required: false, unique, sparse},
   sub_price: {type: Number, required: false},
   self_desc: {type: String, required: false},
   self_web: {type: String, required: false},
 
-  google_id: {type: Types.ObjectId, required: false, unique},
-  twitter_id: {type: Types.ObjectId, required: false, unique},
-  facebook_id: {type: Types.ObjectId, required: false, unique}
-
+  google: {type: String, required: false, unique, sparse},
+  twitter: {type: String, required: false, unique, sparse},
+  facebook: {type: String, required: false, unique, sparse},
+  oauth_profile: {type: Types.Map, required: false}
 }, {
   timestamps: true
 });
