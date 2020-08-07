@@ -10,7 +10,9 @@ module.exports = {
     "endpoint": "https://xdwfvckxc.mediaconvert.ap-southeast-1.amazonaws.com",
     "sourcePath": "s3://newonlyfans/",
     "chat_media_folder": "media/chat/",
-    "sourceFolder": "video/",
+    "videoSourceFolder": "video/",
+    "imageSourceFolder": "image/",
+    "otherSourceFolder": "other/"
   },
   AWS_S3: {
     prefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/medias/",
