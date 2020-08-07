@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "local": "NODE_ENV=localhost ts-node-dev -r tsconfig-paths/register --respawn --transpile-only ./src/app.ts",
     "dev": "NODE_ENV=dev ts-node-dev -r tsconfig-paths/register --respawn --transpile-only ./src/app.ts",
     "test": "NODE_ENV=localhost jest",
     "lint": "eslint . --ext .ts,.tsx",

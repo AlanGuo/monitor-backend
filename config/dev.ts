@@ -38,7 +38,9 @@ module.exports = {
 
   MONGODB: {
     Name: "dev",
-    Connection_String_URI: "mongodb://127.0.0.1:27017/newonlyfans"
+    Connection_String_URI: "mongodb://127.0.0.1:27017/justfans",
+    Connection_String_URI_Test: "mongodb://127.0.0.1:27017/justfans_test"
+
   },
 
   FACEBOOK: {
@@ -56,5 +58,5 @@ module.exports = {
     Consumer_Secret: ""
   },
 
-  HOST: "https://test-justfans.bitapp.net/"
+  HOST: "http://localhost:3010"
 };
