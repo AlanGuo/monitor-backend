@@ -29,15 +29,13 @@ export default class CallbackController {
           // all files have been converted successfully
           // 这里需要根据类型入库
           // 转换成功发送给订阅者
-          console.log(decodedData);
           if (decodedData.subscribers.length) {
             const io = getSocketIO();
-            const fileName = decodedData.fileName;
-            const fileNameWithoutExt = fileName.split(".")[0];
+            const fileNameWithoutExt = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
             await redis.del(key);
             for(let socketId of decodedData.subscribers){
               io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, JSON.stringify({
-                fileName,
+                key: decodedData.key,
                 screenshot: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.screenshot_suffix,
                 low: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.low_suffix,
                 hd: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.hd_suffix
