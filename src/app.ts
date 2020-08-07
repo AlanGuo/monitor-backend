@@ -11,11 +11,11 @@ import {logger as serviceLogger} from "./infrastructure/logger";
 import {loaderPassport} from "./infrastructure/oauth_login";
 import {OAUTH} from "@src/infrastructure/utils/constants";
 import {OAuthRouter} from "@src/router/oauth-login";
-import { createSocket } from "./infrastructure/socket";
-import { loadSocketService } from "./services/socket";
+import {createSocket} from "./infrastructure/socket";
+import {loadSocketService} from "./services/socket";
+import passport from "koa-passport"
 
-const passport = require("koa-passport");
-
+import session from "koa-session";
 const cors = require("@koa/cors");
 
 async function bootstrap() {
@@ -30,7 +30,7 @@ async function bootstrap() {
       ctx.request.headers["content-type"] = "application/json";
     }
     await next();
-});
+  });
   app.use(bodyParser());
   app.use(cors({
     "origin": config.CORS.origin,
@@ -38,6 +38,8 @@ async function bootstrap() {
   app.use(serve("./static"));
   routerLoader(app);
 
+  app.keys = ['secret'];
+  app.use(session({}, app));
   // OAuth
   loaderPassport([OAUTH.TWITTER, OAUTH.GOOGLE, OAUTH.FACEBOOK]);
   app.use(passport.initialize());
@@ -48,7 +50,7 @@ async function bootstrap() {
   const server = http.createServer(app.callback());
   loadSocketService(createSocket(server));
 
-  app.proxy = true
+  app.proxy = true;
   server.listen(Number(config.HTTPS_PORT), "0.0.0.0", () => serviceLogger.info(`Server started at http://localhost:${config.HTTPS_PORT}`));
 
 }
