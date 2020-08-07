@@ -7,8 +7,8 @@ import { SOCKET_CHANNEL } from "@src/infrastructure/utils/constants";
 export function loadSocketService(io: socket.Server) {
   io.on("connection", function (socket: socket.Server) {
     console.log("a client is connected");
-    socket.on("chatMessage", (msg: string) => {
-      io.emit("chatMessage", msg);
+    socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, (msg: string) => {
+      io.emit(SOCKET_CHANNEL.CHAT_MESSAGE, msg);
     });
     // 媒体转换通知
     socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async (msg: string) => {

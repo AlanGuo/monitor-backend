@@ -17,5 +17,6 @@ export enum MEDIA_PURPOSE {
 }
 
 export enum SOCKET_CHANNEL {
+  CHAT_MESSAGE = "chat message",
   MEDIA_CONVERTED = "media converted"
 }
