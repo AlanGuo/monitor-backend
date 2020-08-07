@@ -20,10 +20,9 @@ export default class CallbackController {
       const fileName = recordItem.s3.object.key;
       const key = fileName.split("_")[0];
       const data = await redis.get(key);
-      console.log(key, fileName, recordItem);
       if (data) {
         const decodedData = JSON.parse(data);
-        if (decodedData.fileCount > 0) {
+        if (decodedData.fileCount > 1) {
           decodedData.fileCount --;
           await redis.set(key, JSON.stringify(decodedData));
         } else {
@@ -35,7 +34,7 @@ export default class CallbackController {
             const io = getSocketIO();
             const fileName = decodedData.fileName;
             const fileNameWithoutExt = fileName.split(".")[0];
-            
+            await redis.del(key);
             for(let socketId of decodedData.subscribers){
               io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, JSON.stringify({
                 fileName,
