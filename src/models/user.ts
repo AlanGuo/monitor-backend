@@ -23,7 +23,7 @@ export interface IUser extends Document {
 }
 
 const UserModel: Schema = new Schema({
-  uuid: {type: Number, required, unique},
+  uuid: {type: Number, required, unique, sparse},
   name: {type: String, required: false, unique, sparse},
   show_name: {type: String, required: false, unique, sparse},
   email: {type: String, required: false, unique, sparse},
@@ -34,7 +34,7 @@ const UserModel: Schema = new Schema({
   google: {type: String, required: false, unique, sparse},
   twitter: {type: String, required: false, unique, sparse},
   facebook: {type: String, required: false, unique, sparse},
-  oauth_profile: {type: Types.Map, required: false}
+  oauth_profile: {type: Object, required: false}
 }, {
   timestamps: true
 });

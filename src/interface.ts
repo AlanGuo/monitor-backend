@@ -1,8 +1,11 @@
 import {OAUTH} from "@src/infrastructure/utils/constants";
 
-export type Profile = {
-  [key in OAUTH]: GoogleProfile | FaceBookProfile;
-};
+
+export interface Profile {
+  [OAUTH.GOOGLE] : GoogleProfile,
+  [OAUTH.FACEBOOK]: FaceBookProfile,
+  [OAUTH.TWITTER] : GoogleProfile
+}
 
 export interface User {
   uuid: number,

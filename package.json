@@ -6,7 +6,7 @@
   "scripts": {
     "local": "NODE_ENV=localhost ts-node-dev -r tsconfig-paths/register --respawn --transpile-only ./src/app.ts",
     "dev": "NODE_ENV=dev ts-node-dev -r tsconfig-paths/register --respawn --transpile-only ./src/app.ts",
-    "test": "jest",
+    "test": "NODE_ENV=localhost jest",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint --fix . --ext .ts,.tsx",
     "pm2:test": "pm2 reload ecosystem.test.json --watch"
