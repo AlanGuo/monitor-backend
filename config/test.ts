@@ -60,5 +60,5 @@ module.exports = {
     Consumer_Secret: ""
   },
 
-  HOST: "http://localhost:3010"
+  HOST: "https://test-justfans.bitapp.net"
 };
