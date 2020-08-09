@@ -75,9 +75,10 @@ function addGoogleStrategy() {
         if (!req.user) {
           const googleProfile: GoogleProfile = profile._json as GoogleProfile;
           const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
-          console.log('====new user')
+          console.log('====new user');
           cb(null, user)
         } else {
+          console.log('have user');
           cb(null, req.user)
         }
       }
