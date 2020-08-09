@@ -20,8 +20,8 @@ export default class CallbackController {
     const records = message.Records;
     for(let recordItem of records){
       const fileName = recordItem.s3.object.key;
-      const redisKey = fileName.split(".")[0];
       const ext = fileName.split(".")[1];
+      const redisKey = fileName.split(isVideo(ext) ? "_" : ".")[0];
       const data = await redis.get(redisKey);
       console.log("redisKey", redisKey, data);
       if (data) {
