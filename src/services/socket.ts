@@ -3,6 +3,8 @@ import config from "config";
 import { redis } from "../infrastructure/redis"; 
 import socket from "socket.io";
 import { SOCKET_CHANNEL } from "@src/infrastructure/utils/constants";
+import { isVideo } from "@src/infrastructure/utils/video";
+import { isImage } from "@src/infrastructure/utils/image";
 
 export function loadSocketService(io: socket.Server) {
   io.on("connection", function (socket: socket.Server) {
@@ -13,12 +15,21 @@ export function loadSocketService(io: socket.Server) {
     // 媒体转换通知
     socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async (msg: string) => {
       const {socketId, key, purpose}: {socketId:string, key:string, purpose:string} = JSON.parse(msg);
-      const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
-      const data = await redis.get(config.AWS_MEDIA_CONVERT[ purpose + "_video_folder" ] + fileNameWithoutExt);
+      const ext = key.split(".")[1];
+      let type = "", confKey = "";
+      if (isVideo(ext)) {
+        type = "Video";
+        confKey = purpose + type + "Folder";
+      } else if(isImage(ext)) {
+        type = "Image";
+        confKey = type + "Folder";
+      }
+      const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[type.toLowerCase() + "SourceFolder"], "");
+      const data = await redis.get(config.AWS_MEDIA_CONVERT[ confKey ] + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
         decodedData.subscribers.push(socketId);
-        await redis.set(config.AWS_MEDIA_CONVERT[ purpose + "_video_folder" ] + fileNameWithoutExt, JSON.stringify(decodedData));
+        await redis.set(config.AWS_MEDIA_CONVERT[ confKey ] + fileNameWithoutExt, JSON.stringify(decodedData));
       }
     });
   });

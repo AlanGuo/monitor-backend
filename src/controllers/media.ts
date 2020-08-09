@@ -6,6 +6,8 @@ import { prepareUploadMedia } from "@src/infrastructure/amazon/s3";
 import { createMediaConvertJob, getJob } from "@src/infrastructure/amazon/mediaConvert";
 import { jsonResponse } from "@src/infrastructure/utils/helper";
 import { redis } from "../infrastructure/redis"; 
+import { isVideo } from "@src/infrastructure/utils/video";
+import { isImage } from "@src/infrastructure/utils/image";
 
 @Controller({ prefix: "/media" })
 export default class MediaController {
@@ -20,18 +22,25 @@ export default class MediaController {
   @GET("/convert")
   async convert(ctx: IRouterContext) {
     const key = decodeURIComponent(ctx.query.key);
+    const ext = key.split(".")[1];
     const purpose = ctx.query.purpose;
-    const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
-    const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + key;
-    const jobData: any = await createMediaConvertJob(s3FilePath, purpose);
-    // media convertion job, three jobs
-    await redis.set(config.AWS_MEDIA_CONVERT[ purpose + "_video_folder" ] + fileNameWithoutExt, JSON.stringify({fileCount: 3, key, subscribers: [], purpose}));
-
-    ctx.body = jsonResponse({
-      data: {
-        jobId: jobData.Job.Id,
-      }
-    });
+    if (isVideo(ext)) {
+      const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
+      const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + key;
+      const jobData: any = await createMediaConvertJob(s3FilePath, purpose);
+      // media convertion job, three jobs
+      await redis.set(config.AWS_MEDIA_CONVERT[ purpose + "VideoFolder" ] + fileNameWithoutExt, JSON.stringify({fileCount: 3, key, subscribers: [], purpose}));
+        
+      ctx.body = jsonResponse({
+        data: {
+          jobId: jobData.Job.Id,
+        }
+      });
+    } else if(isImage(ext)) {
+      const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.imageSourceFolder, "");
+      await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({fileCount: 1, key, subscribers: [], purpose}));
+      ctx.body = jsonResponse();
+    }
   }
 
   @GET("/getjob/:id")
@@ -46,9 +55,9 @@ export default class MediaController {
     const fileNameWithoutExt = fileName.split(".")[0];
     ctx.body = jsonResponse({
       data: {
-        screenshot: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.screenshot_suffix,
-        low: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.low_suffix,
-        hd: config.AWS_S3.prefix + fileNameWithoutExt + config.AWS_S3.hd_suffix,
+        screenshot: config.AWS_S3.videoPrefix + fileNameWithoutExt + config.AWS_S3.screenshotSuffix,
+        low: config.AWS_S3.videoPrefix + fileNameWithoutExt + config.AWS_S3.lowSuffix,
+        hd: config.AWS_S3.videoPrefix + fileNameWithoutExt + config.AWS_S3.hdSuffix,
       }
     });
   }

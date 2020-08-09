@@ -27,7 +27,7 @@ export async function prepareUploadMedia(filename: string) {
       Bucket: config.AWS_MEDIA_CONVERT.sourceBucket,
       Fields: {
         key: sourcePath + `${id}`,
-        success_action_status: config.AWS_S3.success_action_status
+        success_action_status: config.AWS_S3.successActionStatus,
       }
     }, (err, data) => {
       if (err) {

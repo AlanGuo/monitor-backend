@@ -10,17 +10,19 @@ module.exports = {
     "endpoint": "https://xdwfvckxc.mediaconvert.ap-southeast-1.amazonaws.com",
     "sourcePath": "s3://newonlyfans/",
     "videoDestination": "s3://newonlyfans-public/media/video/",
-    "chat_video_folder": "media/video/chat/",
+    "imageFolder": "media/image/",
+    "chatVideoFolder": "media/video/chat/",
     "videoSourceFolder": "video/",
     "imageSourceFolder": "image/",
     "otherSourceFolder": "other/",
   },
   AWS_S3: {
-    prefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/media/video/",
-    screenshot_suffix: "_screenshot.0000000.jpg",
-    low_suffix: "_generic_low_mp4_800kbps.mp4",
-    hd_suffix: "_generic_hd_mp4_4000kbps.mp4",
-    success_action_status: "201",
+    videoPrefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/media/video/",
+    imagePrefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/media/image/",
+    screenshotSuffix: "_screenshot.0000000.jpg",
+    lowSuffix: "_generic_low_mp4_800kbps.mp4",
+    hdSuffix: "_generic_hd_mp4_4000kbps.mp4",
+    successActionStatus: "201",
   },
   CORS: {
     origin: "*"
@@ -38,7 +40,9 @@ module.exports = {
 
   MONGODB: {
     Name: "dev",
-    Connection_String_URI: "mongodb://127.0.0.1:27017/newonlyfans"
+    Connection_String_URI: "mongodb://127.0.0.1:27017/justfans",
+    Connection_String_URI_Test: "mongodb://127.0.0.1:27017/justfans_test"
+
   },
 
   FACEBOOK: {
@@ -56,5 +60,5 @@ module.exports = {
     Consumer_Secret: ""
   },
 
-  HOST: "https://test-justfans.bitapp.net/"
+  HOST: "http://localhost:3010"
 };
