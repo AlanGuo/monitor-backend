@@ -22,7 +22,7 @@ export function loadSocketService(io: socket.Server) {
         confKey = purpose + type + "Folder";
       } else if(isImage(ext)) {
         type = "Image";
-        confKey = type + "Folder";
+        confKey = "imageFolder";
       }
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[type.toLowerCase() + "SourceFolder"], "");
       const data = await redis.get(config.AWS_MEDIA_CONVERT[ confKey ] + fileNameWithoutExt);
