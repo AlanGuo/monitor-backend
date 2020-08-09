@@ -20,8 +20,8 @@ export default class CallbackController {
     const records = message.Records;
     for(let recordItem of records){
       const fileName = recordItem.s3.object.key;
-      const key = fileName.split("_")[0];
-      const ext = fileName.split("_")[1];
+      const key = fileName.split(".")[0];
+      const ext = fileName.split(".")[1];
       const data = await redis.get(key);
       console.log("callbackKey", key, data);
       if (data) {
