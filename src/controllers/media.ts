@@ -30,7 +30,7 @@ export default class MediaController {
       const jobData: any = await createMediaConvertJob(s3FilePath, purpose);
       // media convertion job, three jobs
       await redis.set(config.AWS_MEDIA_CONVERT[ purpose + "VideoFolder" ] + fileNameWithoutExt, JSON.stringify({fileCount: 3, key, subscribers: [], purpose}));
-        
+      console.log("setkey",config.AWS_MEDIA_CONVERT[ purpose + "VideoFolder" ] + fileNameWithoutExt )
       ctx.body = jsonResponse({
         data: {
           jobId: jobData.Job.Id,

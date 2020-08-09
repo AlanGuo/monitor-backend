@@ -26,7 +26,7 @@ export function loadSocketService(io: socket.Server) {
       }
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[type.toLowerCase() + "SourceFolder"], "");
       const data = await redis.get(config.AWS_MEDIA_CONVERT[ confKey ] + fileNameWithoutExt);
-
+      console.log("socketKey", config.AWS_MEDIA_CONVERT[ confKey ] + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
         decodedData.subscribers.push(socketId);

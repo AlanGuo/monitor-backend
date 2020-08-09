@@ -23,6 +23,7 @@ export default class CallbackController {
       const redisKey = fileName.split(".")[0];
       const ext = fileName.split(".")[1];
       const data = await redis.get(redisKey);
+      console.log("redisKey", redisKey, data);
       if (data) {
         const decodedData = JSON.parse(data);
         if (decodedData.fileCount > 1) {
