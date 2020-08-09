@@ -12,14 +12,10 @@ import {getUserSequence} from "../utils/sequence";
 export function loaderPassport(oauthList: OAUTH[]) {
 
   passport.serializeUser((user: any, cb) => {
-    console.log('serializeUser');
-    console.log(JSON.stringify(user))
     cb(null, user.uuid)
   });
 
   passport.deserializeUser((uuid, cb) => {
-    console.log('deserializeUser');
-    console.log(JSON.stringify(uuid))
     cb(null, {uuid})
   });
 
@@ -71,14 +67,11 @@ function addGoogleStrategy() {
         passReqToCallback: true
       },
       async (req, accessToken, refreshToken, profile, cb) => {
-        console.log('verify')
         if (!req.user) {
           const googleProfile: GoogleProfile = profile._json as GoogleProfile;
           const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
-          console.log('====new user');
           cb(null, user)
         } else {
-          console.log('have user');
           cb(null, req.user)
         }
       }
@@ -126,6 +119,7 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile):
     default:
       throw Error('provider not exists')
   }
+  console.log(profile, filter, update)
   const tmp = await UserModel.findOneAndUpdate(
     filter, update, {new: true, upsert: true, rawResult: true}
   );
