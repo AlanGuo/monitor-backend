@@ -16,10 +16,12 @@ import {loadSocketService} from "./services/socket";
 import passport from "koa-passport"
 
 import session from "koa-session";
+import {initSequence} from "@src/infrastructure/utils/sequence";
 const cors = require("@koa/cors");
 
 async function bootstrap() {
   await dbConnect();
+  await initSequence();
   const app = new Koa();
 
   /** Middlewares */

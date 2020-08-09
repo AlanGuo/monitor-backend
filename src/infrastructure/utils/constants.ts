@@ -20,3 +20,9 @@ export enum SOCKET_CHANNEL {
   CHAT_MESSAGE = "chat message",
   MEDIA_CONVERTED = "media converted"
 }
+
+export enum Sequence {
+  USER = "USER"
+}
+
+export const UserSequenceInit = 10000000;

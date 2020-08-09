@@ -37,8 +37,3 @@ export interface FaceBookProfile {
   photos?: {value: string}[],
   provider?: string
 }
-
-
-interface  t {
-  OAUTH: GoogleProfile
-}

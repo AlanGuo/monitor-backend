@@ -13,10 +13,38 @@ services:
     - 6379:6379
 
   # Mongo
-  mongo:
+  mongo_primary:
     image: mongo
-    container_name: mongodb_fans
+    container_name: mongodb_fans_primary
     volumes:
-    - ./test_data/mongodb:/var/lib/mongodb
+    - ./test_data/mongodb_primary:/var/lib/mongodb
     ports:
     - 27017:27017
+#    networks:
+#      - mongo_cluster
+#    command: mongod --replSet mongo_replSet
+
+#  mongo_replica1:
+#    image: mongo
+#    container_name: mongodb_fans_replica1
+#    volumes:
+#    - ./test_data/mongodb_rep1:/var/lib/mongodb
+#    ports:
+#    - 27018:27017
+#    networks:
+#    - mongo_cluster
+#    command: mongod --replSet mongo_replSet
+#
+#  mongo_replica2:
+#    image: mongo
+#    container_name: mongodb_fans_replica2
+#    volumes:
+#    - ./test_data/mongodb_rep2:/var/lib/mongodb
+#    ports:
+#    - 27019:27017
+#    networks:
+#    - mongo_cluster
+#    command: mongod --replSet mongo_replSet
+#
+#networks:
+#  mongo_cluster:

@@ -1,16 +1,16 @@
 import uuid from 'node-uuid';
-import base64 from 'urlsafe-base64'
 import {OAUTH} from "../src/infrastructure/utils/constants";
 import {findOrCreateUser} from "../src/infrastructure/oauth_login";
 import {dbConnect} from "../src/infrastructure/mongo";
 import UserModel from "../src/models/user";
-import {random} from "colors";
+import {initSequence} from "../src/infrastructure/utils/sequence";
 
 
 describe("uuid-test", () => {
 
-  beforeAll(async ()=>{
+  beforeAll(async () => {
     await dbConnect(true);
+    await initSequence();
   });
 
   afterAll(async () => {
@@ -18,14 +18,14 @@ describe("uuid-test", () => {
   });
 
   test('findAndUpdateUser', async () => {
+
+    const list = [...new Array(1000).keys()];
     await Promise.all(
-      [...new Array(10).keys()].map(async item => {
-        await findOrCreateUser(OAUTH.GOOGLE, {id: String(Math.random())});
-        // console.log(user)
+      list.map(async item => {
+        const id = String(Math.random());
+        await findOrCreateUser(OAUTH.GOOGLE, {id});
       })
-    ).catch(err => {
-      console.log(err)
-    })
+    )
 
   }, 1000000)
 });

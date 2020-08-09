@@ -15,7 +15,7 @@ export function OAuthRouter(app: any) {
       {failureRedirect: "/oauth/fail"}
     ),
     (req, res) => {
-      req.redirect(`/oauth/success?id=${req.state.user._id}`)
+      req.redirect(`/oauth/success?id=${req.state.user.uuid}`)
     }
   );
 
@@ -48,7 +48,7 @@ export function OAuthRouter(app: any) {
     ctx.body = `auth error`
   });
   router.get("/oauth/success", async (ctx, next) => {
-    ctx.body = `hello ${ctx.query.id}`
+    ctx.body = `hello ${ctx.query.uuid}`
   });
 
   app.use(router.routes()).use(router.allowedMethods())
