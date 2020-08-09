@@ -21,7 +21,9 @@ export default class CallbackController {
     for(let recordItem of records){
       const fileName = recordItem.s3.object.key;
       const ext = fileName.split(".")[1];
-      const redisKey = fileName.split(isVideo(ext) ? "_" : ".")[0];
+      let redisKey = fileName.split(".")[0];
+      // 视频文件有下划线分割"_"，这里把下划线也滤除
+      redisKey = redisKey.split("_")[0];
       const data = await redis.get(redisKey);
       console.log("redisKey", redisKey, data);
       if (data) {
