@@ -20,15 +20,15 @@ export default class CallbackController {
     const records = message.Records;
     for(let recordItem of records){
       const fileName = recordItem.s3.object.key;
-      const key = fileName.split(".")[0];
+      const redisKey = fileName.split(".")[0];
       const ext = fileName.split(".")[1];
-      const data = await redis.get(key);
-      console.log("callbackKey", key, data);
+      const data = await redis.get(redisKey);
+      console.log("callbackKey", redisKey, data);
       if (data) {
         const decodedData = JSON.parse(data);
         if (decodedData.fileCount > 1) {
           decodedData.fileCount --;
-          await redis.set(key, JSON.stringify(decodedData));
+          await redis.set(redisKey, JSON.stringify(decodedData));
         } else {
           // all files have been converted successfully
           // 这里需要根据类型入库
@@ -36,8 +36,8 @@ export default class CallbackController {
           if (decodedData.subscribers.length) {
             const io = getSocketIO();
             if (isImage(ext)) {
-              const fileName = decodedData.key.replace(config.AWS_IMAGE_CONVERT.imageSourceFolder, "");
-              await redis.del(key);
+              const fileName = decodedData.key.replace(config.AWS_MEDIA_CONVERT.imageSourceFolder, "");
+              await redis.del(redisKey);
               for(let socketId of decodedData.subscribers) {
                 io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, JSON.stringify({
                   key: decodedData.key,
@@ -46,7 +46,7 @@ export default class CallbackController {
               }
             } else if(isVideo(ext)) {
               const fileNameWithoutExt = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
-              await redis.del(key);
+              await redis.del(redisKey);
               for(let socketId of decodedData.subscribers){
                 io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, JSON.stringify({
                   key: decodedData.key,
