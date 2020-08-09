@@ -13,12 +13,14 @@ export function loaderPassport(oauthList: OAUTH[]) {
 
   passport.serializeUser((user: any, cb) => {
     console.log('serializeUser');
+    console.log(user)
     cb(null, user)
   });
 
   passport.deserializeUser((id, cb) => {
     console.log('deserializeUser');
     const user = {uuid: id};
+    console.log(user)
     cb(null, user)
   });
 
