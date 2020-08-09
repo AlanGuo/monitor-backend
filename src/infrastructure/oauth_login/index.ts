@@ -71,6 +71,7 @@ function addGoogleStrategy() {
         passReqToCallback: true
       },
       async (req, accessToken, refreshToken, profile, cb) => {
+        console.log('verify')
         if (!req.user) {
           const googleProfile: GoogleProfile = profile._json as GoogleProfile;
           const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
