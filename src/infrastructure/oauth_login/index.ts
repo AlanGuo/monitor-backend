@@ -17,9 +17,8 @@ export function loaderPassport(oauthList: OAUTH[]) {
     cb(null, user)
   });
 
-  passport.deserializeUser((id, cb) => {
+  passport.deserializeUser((user, cb) => {
     console.log('deserializeUser');
-    const user = {uuid: id};
     console.log(user)
     cb(null, user)
   });
