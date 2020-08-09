@@ -23,7 +23,6 @@ export default class CallbackController {
       const redisKey = fileName.split(".")[0];
       const ext = fileName.split(".")[1];
       const data = await redis.get(redisKey);
-      console.log("callbackKey", redisKey, data);
       if (data) {
         const decodedData = JSON.parse(data);
         if (decodedData.fileCount > 1) {
@@ -41,7 +40,7 @@ export default class CallbackController {
               for(let socketId of decodedData.subscribers) {
                 io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, JSON.stringify({
                   key: decodedData.key,
-                  url: config.AWS_S3.imagePrefix + "/" + fileName,
+                  url: config.AWS_S3.imagePrefix + fileName,
                 }));
               }
             } else if(isVideo(ext)) {

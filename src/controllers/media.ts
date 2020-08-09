@@ -38,7 +38,7 @@ export default class MediaController {
       });
     } else if(isImage(ext)) {
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.imageSourceFolder, "");
-      console.log("setKey", config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt);
+      
       await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({fileCount: 1, key, subscribers: [], purpose}));
       ctx.body = jsonResponse();
     }
