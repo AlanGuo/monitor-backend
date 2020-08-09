@@ -68,7 +68,7 @@ function addGoogleStrategy() {
       },
       async (req, accessToken, refreshToken, profile, cb) => {
         if (!req.user) {
-          const googleProfile: GoogleProfile = profile._json as GoogleProfile;
+          const googleProfile: GoogleProfile = profile as GoogleProfile;
           const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
           cb(null, user)
         } else {
