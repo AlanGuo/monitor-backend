@@ -13,13 +13,14 @@ export function loaderPassport(oauthList: OAUTH[]) {
 
   passport.serializeUser((user: any, cb) => {
     console.log('serializeUser');
+    console.log(JSON.stringify(user))
     cb(null, user.uuid)
   });
 
-  passport.deserializeUser((user, cb) => {
+  passport.deserializeUser((uuid, cb) => {
     console.log('deserializeUser');
-    console.log(user)
-    cb(null, user)
+    console.log(JSON.stringify(uuid))
+    cb(null, {uuid})
   });
 
   oauthList.forEach(item => {
@@ -73,6 +74,7 @@ function addGoogleStrategy() {
         if (!req.user) {
           const googleProfile: GoogleProfile = profile._json as GoogleProfile;
           const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
+          console.log('====new user')
           cb(null, user)
         } else {
           cb(null, req.user)
