@@ -23,6 +23,7 @@ export default class CallbackController {
       const key = fileName.split("_")[0];
       const ext = fileName.split("_")[1];
       const data = await redis.get(key);
+      console.log("callbackKey", key, data);
       if (data) {
         const decodedData = JSON.parse(data);
         if (decodedData.fileCount > 1) {
@@ -37,7 +38,6 @@ export default class CallbackController {
             if (isImage(ext)) {
               const fileName = decodedData.key.replace(config.AWS_IMAGE_CONVERT.imageSourceFolder, "");
               await redis.del(key);
-              console.log("callbackKey", key);
               for(let socketId of decodedData.subscribers) {
                 io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, JSON.stringify({
                   key: decodedData.key,
