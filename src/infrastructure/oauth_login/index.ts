@@ -48,7 +48,6 @@ function addFaceBookStrategy() {
       async (req, accessToken, refreshToken, profile, cb) => {
         delete profile._json;
         delete profile._raw;
-        console.log(profile);
         const facebookProfile: FaceBookProfile = profile as FaceBookProfile;
         if (!req.user) {
           const user = await findOrCreateUser(OAUTH.FACEBOOK, facebookProfile);
@@ -132,7 +131,7 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
   );
   if (!tmp.lastErrorObject.updatedExisting) {
     tmp.value!.uuid = await getUserSequence();
-    tmp.value!.save()
+    await tmp.value!.save()
   }
   return tmp.value as User
 }
