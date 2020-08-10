@@ -34,7 +34,7 @@ export function OAuthRouter(app: any) {
 
 
   router.get("/oauth/fail", (ctx) => {
-    ctx.body = `auth error`
+    ctx.body = `auth error: cause ${ctx}`
   });
   router.get("/oauth/success", async (ctx, next) => {
     ctx.body = `hello ${ctx.query.id}`
