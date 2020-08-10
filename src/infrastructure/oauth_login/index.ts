@@ -45,13 +45,16 @@ function addFaceBookStrategy() {
         callbackURL: `${config.HOST}/oauth/facebook/callback`,
         passReqToCallback: true
       },
-      (req, accessToken, refreshToken, profile, cb) => {
-        if (!req.user) {
-          // TODO Not logged-in
-        } else {
-          // TODO  Logged in. Associate Facebook account with user
-        }
-        return cb(null, profile)
+      async (req, accessToken, refreshToken, profile, cb) => {
+        console.log(profile);
+        // const googleProfile: GoogleProfile = profile as GoogleProfile;
+        // if (!req.user) {
+        //   const user = await findOrCreateUser(OAUTH.FACEBOOK, googleProfile);
+        //   cb(null, user)
+        // } else {
+        //   const user = await bindUser(OAUTH.FACEBOOK, googleProfile, (req.user as { uuid: number }).uuid);
+        //   cb(null, user)
+        // }
       }
     )
   );
@@ -67,12 +70,13 @@ function addGoogleStrategy() {
         passReqToCallback: true
       },
       async (req, accessToken, refreshToken, profile, cb) => {
+        const googleProfile: GoogleProfile = profile as GoogleProfile;
         if (!req.user) {
-          const googleProfile: GoogleProfile = profile as GoogleProfile;
           const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
           cb(null, user)
         } else {
-          cb(null, req.user)
+          const user = await bindUser(OAUTH.GOOGLE, googleProfile, (req.user as { uuid: number }).uuid);
+          cb(null, user)
         }
       }
     )
@@ -106,20 +110,15 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile):
   switch (provider) {
     case OAUTH.GOOGLE:
       filter = {google: profile.id};
-      update =  {$setOnInsert: {google: profile.id}, $set: {}};
+      update = {$setOnInsert: {google: profile.id}, $set: {"oauth_profile.google": profile}};
       break;
-    case OAUTH.TWITTER:
-      filter = {twitter: profile.id};
-      update =  {$setOnInsert: {google: profile.id}, $set: {}};
-      break;
-    case OAUTH.FACEBOOK:
-      filter = {google: profile.id};
-      update =  {$setOnInsert: {google: profile.id}, $set: {}};
-      break;
+    // case OAUTH.FACEBOOK:
+    //   filter = {facebook: profile.id};
+    //   update = {$setOnInsert: {facebook: profile.id}, $set: {"oauth_profile.facebook": profile}};
+    //   break;
     default:
-      throw Error('provider not exists')
+      throw Error("provider not exists")
   }
-  console.log(profile, filter, update)
   const tmp = await UserModel.findOneAndUpdate(
     filter, update, {new: true, upsert: true, rawResult: true}
   );
@@ -130,6 +129,32 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile):
   return tmp.value as User
 }
 
-async function bindUser(provider: OAUTH, profile: GoogleProfile, user: typeof UserModel) {
+export async function bindUser(provider: OAUTH, profile: GoogleProfile, uuid: number): Promise<User> {
+  let filter;
+  let update;
+  let oauth;
+  switch (provider) {
+    case OAUTH.GOOGLE:
+      oauth = {google: profile.id};
+      filter = {uuid};
+      update = {$set: {"oauth_profile.google": profile, google: profile.id}};
+      break;
+    // case OAUTH.FACEBOOK:
+    //   filter = {uuid};
+    //   update = {$setOnInsert: {facebook: profile.id}, $set: {"oauth_profile.facebook": profile}};
+    //   break;
+    default:
+      throw Error("provider not exists")
+  }
+  const oauthExists = await UserModel.exists(oauth);
+  if (oauthExists) {
+    throw Error(`${provider} account has been used`)
+  }
+  const user = await UserModel.findOneAndUpdate(filter, update);
+  if (user) {
+    return user as User
+  } else {
+    throw Error("user not exists")
+  }
 
 }

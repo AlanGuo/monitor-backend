@@ -1,4 +1,4 @@
-import SequenceModel from '../../models/sequence';
+import SequenceModel from "../../models/sequence";
 import {Sequence, UserSequenceInit} from "./constants";
 
 export async function initSequence() {

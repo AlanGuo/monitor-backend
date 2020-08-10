@@ -19,30 +19,19 @@ export function OAuthRouter(app: any) {
     }
   );
 
-  // // Facebook
-  // router.get(
-  //   "/oauth/facebook",
-  //   passport.authorize("facebook", {scope: ["public_profile", "email"]})
-  // );
-  // router.get(
-  //   "/oauth/facebook/callback",
-  //   passport.authorize("facebook", {failureRedirect: "/oauth/fail"}),
-  //   (ctx, next) => {
-  //     ctx.redirect(`/oauth/success?id=${ctx.state.user.id}`)
-  //   }
-  // );
-  //
-  // // Twitter
-  // router.get("/oauth/twitter", passport.authorize("twitter", {scope: ["openid", "profile", "email"]}));
-  // router.get("/oauth/twitter/callback",
-  //   passport.authorize(
-  //     "google",
-  //     {failureRedirect: "/oauth/fail"}
-  //   ),
-  //   (ctx, next) => {
-  //     ctx.redirect(`/oauth/success?id=${ctx.state.user.id}`)
-  //   }
-  // );
+  // Facebook
+  router.get(
+    "/oauth/facebook",
+    passport.authorize("facebook", {scope: ["public_profile", "email"]})
+  );
+  router.get(
+    "/oauth/facebook/callback",
+    passport.authorize("facebook", {failureRedirect: "/oauth/fail"}),
+    (ctx, next) => {
+      ctx.redirect(`/oauth/success?id=${ctx.state.user.uuid}`)
+    }
+  );
+
 
   router.get("/oauth/fail", (ctx) => {
     ctx.body = `auth error`
