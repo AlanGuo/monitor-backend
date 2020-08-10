@@ -32,8 +32,8 @@ export interface GoogleProfile {
 
 export interface FaceBookProfile {
   id: string,
+  username?: string,
   displayName?: string,
-  emails?: { value: string, verified: boolean }[],
-  photos?: {value: string}[],
+  name?: { familyName?: string, givenName?: string, middleName?: string }[],
   provider?: string
 }

@@ -6,7 +6,7 @@ import {Strategy as TwitterStrategy} from "passport-twitter"
 import UserModel from "../../models/user";
 import passport from "koa-passport"
 import {OAUTH} from "../utils/constants"
-import {GoogleProfile, User} from "@src/interface";
+import {FaceBookProfile, GoogleProfile, User} from "@src/interface";
 import {getUserSequence} from "../utils/sequence";
 
 export function loaderPassport(oauthList: OAUTH[]) {
@@ -46,15 +46,16 @@ function addFaceBookStrategy() {
         passReqToCallback: true
       },
       async (req, accessToken, refreshToken, profile, cb) => {
-        console.log(profile);
-        // const googleProfile: GoogleProfile = profile as GoogleProfile;
-        // if (!req.user) {
-        //   const user = await findOrCreateUser(OAUTH.FACEBOOK, googleProfile);
-        //   cb(null, user)
-        // } else {
-        //   const user = await bindUser(OAUTH.FACEBOOK, googleProfile, (req.user as { uuid: number }).uuid);
-        //   cb(null, user)
-        // }
+        delete profile._json;
+        delete profile._raw;
+        const facebookProfile: FaceBookProfile = profile as FaceBookProfile;
+        if (!req.user) {
+          const user = await findOrCreateUser(OAUTH.FACEBOOK, facebookProfile);
+          cb(null, user)
+        } else {
+          const user = await bindUser(OAUTH.FACEBOOK, facebookProfile, (req.user as { uuid: number }).uuid);
+          cb(null, user)
+        }
       }
     )
   );
@@ -110,7 +111,7 @@ function addTwitterStrategy() {
   );
 }
 
-export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile): Promise<User> {
+export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile): Promise<User> {
   let filter;
   let update;
   switch (provider) {
@@ -118,10 +119,10 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile):
       filter = {google: profile.id};
       update = {$setOnInsert: {google: profile.id}, $set: {"oauth_profile.google": profile}};
       break;
-    // case OAUTH.FACEBOOK:
-    //   filter = {facebook: profile.id};
-    //   update = {$setOnInsert: {facebook: profile.id}, $set: {"oauth_profile.facebook": profile}};
-    //   break;
+    case OAUTH.FACEBOOK:
+      filter = {facebook: profile.id};
+      update = {$setOnInsert: {facebook: profile.id}, $set: {"oauth_profile.facebook": profile}};
+      break;
     default:
       throw Error("provider not exists")
   }
@@ -135,7 +136,7 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile):
   return tmp.value as User
 }
 
-export async function bindUser(provider: OAUTH, profile: GoogleProfile, uuid: number): Promise<User> {
+export async function bindUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile, uuid: number): Promise<User> {
   let filter;
   let update;
   let oauth;
@@ -145,10 +146,11 @@ export async function bindUser(provider: OAUTH, profile: GoogleProfile, uuid: nu
       filter = {uuid};
       update = {$set: {"oauth_profile.google": profile, google: profile.id}};
       break;
-    // case OAUTH.FACEBOOK:
-    //   filter = {uuid};
-    //   update = {$setOnInsert: {facebook: profile.id}, $set: {"oauth_profile.facebook": profile}};
-    //   break;
+    case OAUTH.FACEBOOK:
+      oauth = {facebook: profile.id};
+      filter = {uuid};
+      update = {$set: {"oauth_profile.facebook": profile, facebook: profile.id}};
+      break;
     default:
       throw Error("provider not exists")
   }

@@ -15,8 +15,8 @@ export interface IUser extends Document {
   self_web?: string,
 
   google?: string,
-  twitter?: Types.ObjectId,
-  facebook?: Types.ObjectId,
+  twitter?: string,
+  facebook?: string,
   oauth_profile?: Profile
 
 
