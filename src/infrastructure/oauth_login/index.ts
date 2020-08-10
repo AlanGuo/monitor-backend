@@ -48,6 +48,7 @@ function addFaceBookStrategy() {
       async (req, accessToken, refreshToken, profile, cb) => {
         delete profile._json;
         delete profile._raw;
+        console.log(profile);
         const facebookProfile: FaceBookProfile = profile as FaceBookProfile;
         if (!req.user) {
           const user = await findOrCreateUser(OAUTH.FACEBOOK, facebookProfile);
@@ -137,6 +138,7 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
 }
 
 export async function bindUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile, uuid: number): Promise<User> {
+  console.log('bind')
   let filter;
   let update;
   let oauth;
