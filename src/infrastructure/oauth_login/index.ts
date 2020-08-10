@@ -70,13 +70,19 @@ function addGoogleStrategy() {
         passReqToCallback: true
       },
       async (req, accessToken, refreshToken, profile, cb) => {
+        delete profile._json;
+        delete profile._raw;
         const googleProfile: GoogleProfile = profile as GoogleProfile;
-        if (!req.user) {
-          const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
-          cb(null, user)
-        } else {
-          const user = await bindUser(OAUTH.GOOGLE, googleProfile, (req.user as { uuid: number }).uuid);
-          cb(null, user)
+        try {
+          if (!req.user) {
+            const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
+            cb(null, user)
+          } else {
+            const user = await bindUser(OAUTH.GOOGLE, googleProfile, (req.user as { uuid: number }).uuid);
+            cb(null, user)
+          }
+        } catch (e) {
+          cb(null, null, e.message)
         }
       }
     )
@@ -146,8 +152,8 @@ export async function bindUser(provider: OAUTH, profile: GoogleProfile, uuid: nu
     default:
       throw Error("provider not exists")
   }
-  const oauthExists = await UserModel.exists(oauth);
-  if (oauthExists) {
+  const oauthExists = await UserModel.findOne(oauth);
+  if (oauthExists && oauthExists.uuid !== uuid) {
     throw Error(`${provider} account has been used`)
   }
   const user = await UserModel.findOneAndUpdate(filter, update);
