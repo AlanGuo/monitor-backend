@@ -82,7 +82,7 @@ function addGoogleStrategy() {
             cb(null, user)
           }
         } catch (e) {
-          cb(null, null, e.message)
+          cb(null, null, {message: e.message})
         }
       }
     )

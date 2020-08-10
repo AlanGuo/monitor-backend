@@ -12,7 +12,7 @@ export function OAuthRouter(app: any) {
   router.get("/oauth/google/callback",
     passport.authenticate(
       "google",
-      {failureRedirect: "/oauth/fail"}
+      {failureRedirect: "/oauth/fail", failureFlash: true}
     ),
     (req, res) => {
       req.redirect(`/oauth/success?id=${req.state.user.uuid}`)

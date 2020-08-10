@@ -33,6 +33,12 @@ async function bootstrap() {
     }
     await next();
   });
+  app.use(function(ctx, next) {
+    ctx.flash = (type: string, msg: string) => {
+      ctx.session.flash = { type: type, message: msg };
+    };
+    return next();
+  });
   app.use(bodyParser());
   app.use(cors({
     "origin": config.CORS.origin,
