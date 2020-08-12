@@ -8,15 +8,17 @@ import passport from "koa-passport"
 import {OAUTH} from "../utils/constants"
 import {FaceBookProfile, GoogleProfile, User} from "@src/interface";
 import {getUserSequence} from "../utils/sequence";
+import {generateToken} from "@src/infrastructure/utils/auth";
 
 export function loaderPassport(oauthList: OAUTH[]) {
 
-  passport.serializeUser((user: any, cb) => {
-    cb(null, user.uuid)
+  passport.serializeUser(async (user: User, cb) => {
+    const token = await generateToken(user.uuid);
+    cb(null, {token, uuid: user.uuid})
   });
 
-  passport.deserializeUser((uuid, cb) => {
-    cb(null, {uuid})
+  passport.deserializeUser((info, cb) => {
+    cb(null, info)
   });
 
   oauthList.forEach(item => {
@@ -137,7 +139,6 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
 }
 
 export async function bindUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile, uuid: number): Promise<User> {
-  console.log('bind')
   let filter;
   let update;
   let oauth;

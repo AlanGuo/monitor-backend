@@ -25,4 +25,5 @@ export enum Sequence {
   USER = "USER"
 }
 
-export const UserSequenceInit = 10000000;
+export const USER_SEQUENCE_INIT = 10000000;
+export const AUTH_TOKEN_OVERDUE_SECOND = 60 * 60 * 12;

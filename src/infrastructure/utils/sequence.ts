@@ -1,10 +1,10 @@
 import SequenceModel from "../../models/sequence";
-import {Sequence, UserSequenceInit} from "./constants";
+import {Sequence, USER_SEQUENCE_INIT} from "./constants";
 
 export async function initSequence() {
   await SequenceModel.updateOne(
     {_id: Sequence.USER},
-    {$setOnInsert: {value: UserSequenceInit}},
+    {$setOnInsert: {value: USER_SEQUENCE_INIT}},
     {upsert: true, new: true})
 }
 

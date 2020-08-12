@@ -39,8 +39,11 @@ export function OAuthRouter(app: any) {
     ctx.body = `auth error`
   });
   router.get("/oauth/success", async (ctx, next) => {
+    console.log(ctx.cookies);
+    console.log(ctx.state.user);
     ctx.body = `hello ${ctx.query.id}`
   });
+
 
   app.use(router.routes()).use(router.allowedMethods())
 }
