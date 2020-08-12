@@ -47,7 +47,7 @@ async function bootstrap() {
   routerLoader(app);
 
   app.keys = ["secret"];
-  app.use(session({}, app));
+  app.use(session({key: "justfans"}, app));
   // OAuth
   loaderPassport([OAUTH.TWITTER, OAUTH.GOOGLE, OAUTH.FACEBOOK]);
   app.use(passport.initialize());
