@@ -9,14 +9,15 @@ import {dbConnect} from "./infrastructure/mongo";
 import http from "http";
 import {logger as serviceLogger} from "./infrastructure/logger";
 import {loaderPassport} from "./infrastructure/oauth_login";
-import {OAUTH} from "@src/infrastructure/utils/constants";
+import {OAUTH, SESSION_OVERDUE_SECOND} from "@src/infrastructure/utils/constants";
 import {OAuthRouter} from "@src/router/oauth-login";
 import {createSocket} from "./infrastructure/socket";
 import {loadSocketService} from "./services/socket";
 import passport from "koa-passport"
 
-import session from "koa-session";
+import session from "koa-generic-session"
 import {initSequence} from "@src/infrastructure/utils/sequence";
+import {loadRedisStore} from "@src/infrastructure/redisStore";
 const cors = require("@koa/cors");
 
 async function bootstrap() {
@@ -46,8 +47,8 @@ async function bootstrap() {
   app.use(serve("./static"));
   routerLoader(app);
 
-  app.keys = ["secret"];
-  app.use(session({key: "justfans"}, app));
+  app.keys = ["secret", "justfans", "alan", "lonzo"];
+  app.use(session({store: await loadRedisStore(), key: 'justfans', cookie: {maxAge: SESSION_OVERDUE_SECOND}}));
   // OAuth
   loaderPassport([OAUTH.TWITTER, OAUTH.GOOGLE, OAUTH.FACEBOOK]);
   app.use(passport.initialize());

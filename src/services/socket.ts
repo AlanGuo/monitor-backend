@@ -8,8 +8,9 @@ import {isImage} from "@src/infrastructure/utils/image";
 
 export function loadSocketService(io: socket.Server) {
   io.on("connection", function (socket: socket.Socket) {
+
     console.log("a client is connected");
-    console.log(socket.handshake.headers.cookie);
+    console.log(socket.handshake.headers.cookie, 'soooo');
     // TODO auth session
     socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, (msg: string) => {
       io.emit(SOCKET_CHANNEL.CHAT_MESSAGE, msg);

@@ -49,10 +49,10 @@ export async function generateAuth(params: IGenerateAuthParams): Promise<IGenera
 
 export async function generateToken(uuid: Number) {
   const token = await generateAuth({content: `${uuid}${Math.random()}`, saltLength: 128});
-  const key = getAuthKey(uuid);
-  const now = Date.now();
-  await redis.set(key, JSON.stringify({token: token.hash, time: now}));
-  await redis.expire(key, AUTH_TOKEN_OVERDUE_SECOND);
+  // const key = getAuthKey(uuid);
+  // const now = Date.now();
+  // await redis.set(key, JSON.stringify({token: token.hash, time: now}));
+  // await redis.expire(key, AUTH_TOKEN_OVERDUE_SECOND);
   return token.salt;
 }
 

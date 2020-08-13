@@ -35,6 +35,7 @@ module.exports = {
     Host: "127.0.0.1",
     Port: 6379,
     DB: 4,
+    Store_DB: 3,
     Password: ""
   },
 
