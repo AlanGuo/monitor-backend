@@ -9,7 +9,7 @@ import {dbConnect} from "./infrastructure/mongo";
 import http from "http";
 import {logger as serviceLogger} from "./infrastructure/logger";
 import {loaderPassport} from "./infrastructure/oauth_login";
-import {OAUTH, SESSION_OVERDUE_SECOND} from "@src/infrastructure/utils/constants";
+import {OAUTH, SESSION_KEY, SESSION_OVERDUE_SECOND} from "@src/infrastructure/utils/constants";
 import {OAuthRouter} from "@src/router/oauth-login";
 import {createSocket} from "./infrastructure/socket";
 import {loadSocketService} from "./services/socket";
@@ -48,7 +48,7 @@ async function bootstrap() {
   routerLoader(app);
 
   app.keys = ["secret", "justfans", "alan", "lonzo"];
-  app.use(session({store: await loadRedisStore(), key: 'justfans', cookie: {maxAge: SESSION_OVERDUE_SECOND}}));
+  app.use(session({store: await loadRedisStore(), key: SESSION_KEY, cookie: {maxAge: SESSION_OVERDUE_SECOND}}));
   // OAuth
   loaderPassport([OAUTH.TWITTER, OAUTH.GOOGLE, OAUTH.FACEBOOK]);
   app.use(passport.initialize());

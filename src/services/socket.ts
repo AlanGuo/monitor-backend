@@ -2,16 +2,31 @@
 import config from "config";
 import {redis} from "../infrastructure/redis";
 import socket from "socket.io";
-import {SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
+import {SESSION_KEY, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
+import cookie from 'cookie'
+import {loadRedisStore} from "@src/infrastructure/redisStore";
+import {SocketAddUser} from "@src/infrastructure/socket";
+
+const store = loadRedisStore();
 
 export function loadSocketService(io: socket.Server) {
-  io.on("connection", function (socket: socket.Socket) {
+  io.use(async (socket: socket.Socket, next) => {
+    if (!socket.handshake.headers.cookie) {
+      return next(`Didn't receive cookies`);
+    }
+    let cookies = cookie.parse(socket.handshake.headers.cookie);
+    const session = await store.get('koa:sess:' + cookies[`${SESSION_KEY}`]);
+    if (session) {
+      (socket as SocketAddUser).user = session.passport.user;
+      return next()
+    } else {
+      next(`session has been expires`);
+    }
+  });
 
-    console.log("a client is connected");
-    console.log(socket.handshake.headers.cookie, 'soooo');
-    // TODO auth session
+  io.on("connection", function (socket: SocketAddUser) {
     socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, (msg: string) => {
       io.emit(SOCKET_CHANNEL.CHAT_MESSAGE, msg);
     });
@@ -36,8 +51,8 @@ export function loadSocketService(io: socket.Server) {
         await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
       }
     });
-    socket.on('disconnect', ()=>{
-
+    socket.on('disconnect', (socket: SocketAddUser) => {
+      console.log(socket.user.uuid, 'disconnect')
     })
   });
 }

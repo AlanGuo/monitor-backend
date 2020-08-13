@@ -25,6 +25,8 @@ export enum Sequence {
   USER = "USER"
 }
 
+
 export const USER_SEQUENCE_INIT = 10000000;
 export const AUTH_TOKEN_OVERDUE_SECOND = 60 * 60 * 12;
 export const SESSION_OVERDUE_SECOND = 60 * 60 * 24 * 1000;
+export const SESSION_KEY = 'justfans';

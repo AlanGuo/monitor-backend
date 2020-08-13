@@ -17,3 +17,5 @@ export function getSocketIO(): SocketIO.Server{
     throw "socket io does not exist"
   }
 }
+
+export type SocketAddUser = socket.Socket & {user: {uuid: number, token: string}}

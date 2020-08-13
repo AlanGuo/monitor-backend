@@ -15,7 +15,8 @@ export function OAuthRouter(app: any) {
       {failureRedirect: "/oauth/fail"}
     ),
     (req, res) => {
-      req.redirect(`/oauth/success?id=${req.state.user.uuid}`)
+      req.redirect(`/tmp`);
+      // req.redirect(`/oauth/success?id=${req.state.user.uuid}`)
     }
   );
 
@@ -30,7 +31,8 @@ export function OAuthRouter(app: any) {
       "facebook",
       {failureRedirect: "/oauth/fail"}),
     (ctx, next) => {
-      ctx.redirect(`/oauth/success?id=${ctx.state.user.uuid}`)
+      ctx.redirect(`/tmp`);
+      // ctx.redirect(`/oauth/success?id=${ctx.state.user.uuid}`)
     }
   );
 

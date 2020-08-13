@@ -13,9 +13,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/co": "^4.6.2",
+    "@types/cookie": "^0.4.0",
     "aws-sdk": "^2.717.0",
+    "co": "^4.6.0",
     "colors": "^1.4.0",
     "config": "^3.3.1",
+    "cookie": "^0.4.1",
     "ioredis": "^4.17.3",
     "json-loader": "^0.5.7",
     "koa": "^2.13.0",
@@ -54,8 +58,6 @@
     "test": "__tests__"
   },
   "devDependencies": {
-    "@types/koa-generic-session": "^1.0.4",
-    "@types/koa-redis": "^4.0.0",
     "@koa/cors": "^3.1.0",
     "@types/async": "^3.2.3",
     "@types/bluebird": "^3.5.32",
@@ -63,8 +65,10 @@
     "@types/jest": "^24.0.23",
     "@types/koa": "^2.11.3",
     "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-generic-session": "^1.0.4",
     "@types/koa-logger": "^3.1.1",
     "@types/koa-passport": "^4.0.2",
+    "@types/koa-redis": "^4.0.0",
     "@types/koa-router": "^7.4.1",
     "@types/koa-static": "^4.0.1",
     "@types/log4js": "^2.3.5",

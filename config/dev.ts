@@ -61,5 +61,6 @@ module.exports = {
     Consumer_Secret: ""
   },
 
-  HOST: "http://localhost:3010"
+  // HOST: "http://localhost:3010"
+  HOST: "http://local.justfans.com:8080"
 };
