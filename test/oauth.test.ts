@@ -40,7 +40,7 @@ describe("uuid-test", () => {
     try {
       await bindUser(OAUTH.GOOGLE, profile, uuid+1);
     } catch (e) {
-      expect(e.message).toBe('google account has been used')
+      expect(e.message).toBe("google account has been used")
     }
   }, 1000000)
 });

@@ -1,6 +1,6 @@
 // @ts-ignore
-import config from 'config'
-import RedisStore from 'koa-redis';
+import config from "config"
+import RedisStore from "koa-redis";
 import {SessionStore} from "koa-generic-session";
 
 let redisStore: SessionStore;

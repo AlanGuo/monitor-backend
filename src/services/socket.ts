@@ -5,7 +5,7 @@ import socket from "socket.io";
 import {SESSION_KEY, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
-import cookie from 'cookie'
+import cookie from "cookie"
 import {loadRedisStore} from "@src/infrastructure/redisStore";
 import {SocketAddUser} from "@src/infrastructure/socket";
 
@@ -20,6 +20,7 @@ export function loadSocketService(io: socket.Server) {
     const session = await store.get('koa:sess:' + cookies[`${SESSION_KEY}`]);
     if (session) {
       (socket as SocketAddUser).user = session.passport.user;
+      await redis.hset('online_user', session.passport.user.uuid, socket.id);
       return next()
     } else {
       next(`session has been expires`);
@@ -27,8 +28,15 @@ export function loadSocketService(io: socket.Server) {
   });
 
   io.on("connection", function (socket: SocketAddUser) {
-    socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, (msg: string) => {
-      io.emit(SOCKET_CHANNEL.CHAT_MESSAGE, msg);
+    socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, async (msg: string) => {
+      const tmp = JSON.parse(msg);
+      if (tmp.to) {
+        const sid = await redis.hget('online_user', tmp.to);
+        if (sid) {
+          tmp.text = `from: ${socket.user.uuid}, say: ${tmp.text}`;
+          io.sockets.connected[sid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(tmp))
+        }
+      }
     });
     // 媒体转换通知
     socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async (msg: string) => {
@@ -51,8 +59,10 @@ export function loadSocketService(io: socket.Server) {
         await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
       }
     });
-    socket.on('disconnect', (socket: SocketAddUser) => {
-      console.log(socket.user.uuid, 'disconnect')
+
+    socket.on("disconnect", (socket: SocketAddUser) => {
+      console.log('disconnect')
+      console.log(socket.user, "disconnect")
     })
   });
 }

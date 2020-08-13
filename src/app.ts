@@ -45,7 +45,6 @@ async function bootstrap() {
     "origin": config.CORS.origin,
   }));
   app.use(serve("./static"));
-  routerLoader(app);
 
   app.keys = ["secret", "justfans", "alan", "lonzo"];
   app.use(session({store: await loadRedisStore(), key: SESSION_KEY, cookie: {maxAge: SESSION_OVERDUE_SECOND}}));
@@ -54,6 +53,7 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
   OAuthRouter(app);
+  routerLoader(app);
 
   // websocket
   const server = http.createServer(app.callback());
