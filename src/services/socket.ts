@@ -33,8 +33,7 @@ export function loadSocketService(io: socket.Server) {
       if (tmp.to) {
         const sid = await redis.hget('online_user', tmp.to);
         if (sid) {
-          tmp.text = `from: ${socket.user.uuid}, say: ${tmp.text}`;
-          io.sockets.connected[sid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(tmp))
+          io.sockets.connected[sid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify({...tmp, from: socket.user.uuid}));
           socket.emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(tmp))
         }
       }
