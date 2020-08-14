@@ -35,6 +35,7 @@ export function loadSocketService(io: socket.Server) {
         if (sid) {
           tmp.text = `from: ${socket.user.uuid}, say: ${tmp.text}`;
           io.sockets.connected[sid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(tmp))
+          socket.emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(tmp))
         }
       }
     });
