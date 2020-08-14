@@ -16,7 +16,7 @@ export function OAuthRouter(app: any) {
     ),
     (req, res) => {
       // req.redirect(`/tmp`);
-      req.redirect(`/oauth/success?id=${req.state.user.uuid}`)
+      req.redirect(`/auth/success?id=${req.state.user.uuid}`)
     }
   );
 
@@ -32,16 +32,13 @@ export function OAuthRouter(app: any) {
       {failureRedirect: "/oauth/fail"}),
     (ctx, next) => {
       // ctx.redirect(`/tmp`);
-      ctx.redirect(`/oauth/success?id=${ctx.state.user.uuid}`)
+      ctx.redirect(`/auth/success?id=${ctx.state.user.uuid}`)
     }
   );
 
 
   router.get("/oauth/fail", (ctx) => {
     ctx.body = `auth error`
-  });
-  router.get("/oauth/success", async (ctx, next) => {
-    ctx.body = `hello ${ctx.query.id}`
   });
 
 
