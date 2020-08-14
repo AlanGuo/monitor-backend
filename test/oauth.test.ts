@@ -1,5 +1,5 @@
 import {OAUTH} from "../src/infrastructure/utils/constants";
-import {bindUser, findOrCreateUser} from "../src/infrastructure/oauth_login";
+import {bindUser, findOrCreateUser} from "../src/infrastructure/oauth";
 import {dbConnect} from "../src/infrastructure/mongo";
 import UserModel from "../src/models/user";
 import {initSequence} from "../src/infrastructure/utils/sequence";

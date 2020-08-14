@@ -8,9 +8,9 @@ import {routerLoader} from "@src/infrastructure/router/loader";
 import {dbConnect} from "./infrastructure/mongo";
 import http from "http";
 import {logger as serviceLogger} from "./infrastructure/logger";
-import {loaderPassport} from "./infrastructure/oauth_login";
+import {loaderPassport} from "./infrastructure/oauth";
 import {OAUTH, SESSION_KEY, SESSION_OVERDUE_SECOND} from "@src/infrastructure/utils/constants";
-import {OAuthRouter} from "@src/router/oauth-login";
+import {OAuthRouter} from "@src/infrastructure/oauth/router";
 import {createSocket} from "./infrastructure/socket";
 import {loadSocketService} from "./services/socket";
 import passport from "koa-passport"
