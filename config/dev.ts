@@ -62,5 +62,5 @@ module.exports = {
   },
 
   // HOST: "http://localhost:3010"
-  HOST: "http://local.justfans.com:8080"
+  HOST: "http://local.justfans.com"
 };
