@@ -1,20 +1,18 @@
 import {Controller, GET} from "@src/infrastructure/decorators/koa";
 import KoaRouter, {IRouterContext} from "koa-router";
 import UserModel from "../models/user"
-import {jsonResponse} from "@src/infrastructure/utils";
-import {RESPONSE_CODE} from "@src/infrastructure/responseCode";
+import { jsonResponse, unauthorized } from "@src/infrastructure/utils";
+import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import { LoginRequired } from "@src/infrastructure/decorators/auth";
 
 @Controller({prefix: "/users"})
 export default class UserController {
 
-  @GET("")
+  @GET()
+  // @AuthRequired()
   async getUsers(ctx: IRouterContext, next: any) {
-    if (ctx.state.user) {
-      const fields = {_id: 0, uuid: 1, oauthProfile: 1};
-      const users = await UserModel.find({}, fields);
-      ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: users})
-    } else {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.LOGIN_IN_ERR, data: []})
-    }
+    const fields = {_id: 0, uuid: 1, displayName: 1, avatar: 1, email: 1};
+    const users = await UserModel.find({}, fields);
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: users})
   }
 }

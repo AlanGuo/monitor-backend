@@ -25,6 +25,10 @@ export enum Sequence {
   USER = "USER"
 }
 
+export enum RESPONSE_CODE {
+  NORMAL = 0,
+  LOGIN_IN_ERR = 1
+}
 
 export const USER_SEQUENCE_INIT = 10000000;
 export const AUTH_TOKEN_OVERDUE_SECOND = 60 * 60 * 12;

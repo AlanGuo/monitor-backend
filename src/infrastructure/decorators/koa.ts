@@ -30,22 +30,22 @@ function Request({url, method}: { url: string, method: string }) {
   }
 }
 
-function POST(url: string) {
+function POST(url: string = "") {
   return Request({url, method: REQUEST_METHOD.POST})
 }
 
 //get 请求
-function GET(url: string) {
+function GET(url: string = "") {
   return Request({url, method: REQUEST_METHOD.GET})
 }
 
 //PUT 请求
-function PUT(url: string) {
+function PUT(url: string = "") {
   return Request({url, method: REQUEST_METHOD.PUT})
 }
 
 //DEL请求
-function DEL(url: string) {
+function DEL(url: string = "") {
   return Request({url, method: REQUEST_METHOD.DELETE})
 }
 

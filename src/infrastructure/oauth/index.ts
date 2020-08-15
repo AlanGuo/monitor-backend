@@ -122,11 +122,10 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
       filter = {google: profile.id};
       const emails = (profile as GoogleProfile).emails;
       const photos = (profile as GoogleProfile).photos;
-      console.log(profile)
       update = {$setOnInsert: {google: profile.id}, $set: {
         "oauthProfile.google": profile,
-        "email": emails ? emails[0]?.value : "",
-        "avatar": photos ? photos[0]?.value : "",
+        "email": emails ? (emails[0]?.value) : "",
+        "avatar": photos ? (photos[0]?.value) : "",
         "displayName": profile.displayName
       }};
       break;
