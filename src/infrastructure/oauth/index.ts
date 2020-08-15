@@ -77,7 +77,6 @@ function addGoogleStrategy() {
         delete profile._raw;
         const googleProfile: GoogleProfile = profile as GoogleProfile;
         try {
-          console.log(req.user, req);
           if (!req.user) {
             const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
             cb(null, user)
@@ -162,6 +161,7 @@ export async function bindUser(provider: OAUTH, profile: GoogleProfile | FaceBoo
   if (oauthExists && oauthExists.uuid !== uuid) {
     throw Error(`${provider} account has been used`)
   }
+  console.log(filter, update);
   const user = await UserModel.findOneAndUpdate(filter, update);
   if (user) {
     return user as User
