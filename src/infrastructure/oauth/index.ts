@@ -77,6 +77,7 @@ function addGoogleStrategy() {
         delete profile._raw;
         const googleProfile: GoogleProfile = profile as GoogleProfile;
         try {
+          console.log(req.user, req);
           if (!req.user) {
             const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
             cb(null, user)
