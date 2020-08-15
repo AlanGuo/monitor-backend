@@ -13,7 +13,7 @@ export function OAuthRouter(app: any) {
       "google",
       {
         failureRedirect: "/auth/failure",
-        failWithError: true
+        failureFlash: true,
       }
     ),
     (req, res) => {
@@ -31,7 +31,7 @@ export function OAuthRouter(app: any) {
     "/oauth/facebook/callback",
     passport.authenticate(
       "facebook",
-      {failureRedirect: "/auth/failure", failWithError: true}),
+      {failureRedirect: "/auth/failure", failureFlash: true}),
     (ctx, next) => {
       // ctx.redirect(`/tmp`);
       ctx.redirect(`/auth/success?id=${ctx.state.user.uuid}`)
