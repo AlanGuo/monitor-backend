@@ -9,23 +9,16 @@ export function OAuthRouter(app: any) {
   // Google
   router.get("/oauth/google", passport.authorize("google", {scope: ["openid", "profile", "email"]}));
   router.get("/oauth/google/callback",
-    // passport.authenticate(
-    //   "google",
-    //   {
-    //     failureRedirect: "/auth/failure",
-    //     failureFlash: true,
-    //   }
-    // ),
-    // (req, res) => {
-    //   // req.redirect(`/tmp`);
-    //   req.redirect(`/auth/success?id=${req.state.user.uuid}`)
-    // }
-    async (ctx: IRouterContext, next: any) => {
-      passport.authenticate("google", function(err, user, info) {
-        if (err) { 
-          console.error(err);
-        }
-    })}
+    passport.authenticate(
+      "google",
+      {
+        failureRedirect: "/oauth/failure"
+      }
+    ),
+    (req, res) => {
+      // req.redirect(`/tmp`);
+      req.redirect(`/auth/success?id=${req.state.user.uuid}`)
+    }
   );
 
   // Facebook
@@ -43,6 +36,10 @@ export function OAuthRouter(app: any) {
       ctx.redirect(`/auth/success?id=${ctx.state.user.uuid}`)
     }
   );
+
+  router.get("/oauth/failure", (ctx: IRouterContext, next: any) => {
+    console.error(ctx.req)
+  });
 
   app.use(router.routes()).use(router.allowedMethods())
 }

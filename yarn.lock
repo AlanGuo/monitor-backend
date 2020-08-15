@@ -3423,6 +3423,11 @@ koa-convert@^1.2.0:
     co "^4.6.0"
     koa-compose "^3.0.0"
 
+koa-flash@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/koa-flash/-/koa-flash-1.0.0.tgz#690f7d10a25130c530dac30b7812d5cf6f74d68d"
+  integrity sha1-aQ99EKJRMMUw2sMLeBLVz2901o0=
+
 koa-generic-session@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/koa-generic-session/-/koa-generic-session-2.0.4.tgz#e212395d344a52c24ce2567f04dbd30c32dc0aa2"
