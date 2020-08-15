@@ -85,6 +85,7 @@ function addGoogleStrategy() {
             cb(null, user)
           }
         } catch (e) {
+          console.error(e);
           cb(null, null, {message: e.message})
         }
       }
