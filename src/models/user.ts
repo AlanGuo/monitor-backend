@@ -8,16 +8,16 @@ const sparse = true;
 export interface IUser extends Document {
   uuid: number,
   name?: string,
-  show_name?: string,
+  showName?: string,
   email?: string
-  sub_price?: number,
-  self_desc?: string,
-  self_web?: string,
+  subPrice?: number,
+  selfDesc?: string,
+  selfWeb?: string,
 
   google?: string,
   twitter?: string,
   facebook?: string,
-  oauth_profile?: Profile
+  oauthProfile?: Profile
 
 
 }
@@ -25,16 +25,16 @@ export interface IUser extends Document {
 const UserModel: Schema = new Schema({
   uuid: {type: Number, required, unique, sparse},
   name: {type: String, required: false, unique, sparse},
-  show_name: {type: String, required: false, unique, sparse},
+  showName: {type: String, required: false, unique, sparse},
   email: {type: String, required: false, unique, sparse},
-  sub_price: {type: Number, required: false},
-  self_desc: {type: String, required: false},
-  self_web: {type: String, required: false},
+  subPrice: {type: Number, required: false},
+  selfDesc: {type: String, required: false},
+  selfWeb: {type: String, required: false},
 
   google: {type: String, required: false, unique, sparse},
   twitter: {type: String, required: false, unique, sparse},
   facebook: {type: String, required: false, unique, sparse},
-  oauth_profile: {type: Object, required: false}
+  oauthProfile: {type: Object, required: false}
 }, {
   timestamps: true
 });

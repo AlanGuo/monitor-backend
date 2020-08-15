@@ -119,11 +119,11 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
   switch (provider) {
     case OAUTH.GOOGLE:
       filter = {google: profile.id};
-      update = {$setOnInsert: {google: profile.id}, $set: {"oauth_profile.google": profile}};
+      update = {$setOnInsert: {google: profile.id}, $set: {"oauthProfile.google": profile}};
       break;
     case OAUTH.FACEBOOK:
       filter = {facebook: profile.id};
-      update = {$setOnInsert: {facebook: profile.id}, $set: {"oauth_profile.facebook": profile}};
+      update = {$setOnInsert: {facebook: profile.id}, $set: {"oauthProfile.facebook": profile}};
       break;
     default:
       throw Error("provider not exists")
@@ -146,12 +146,12 @@ export async function bindUser(provider: OAUTH, profile: GoogleProfile | FaceBoo
     case OAUTH.GOOGLE:
       oauth = {google: profile.id};
       filter = {uuid};
-      update = {$set: {"oauth_profile.google": profile, google: profile.id}};
+      update = {$set: {"oauthProfile.google": profile, google: profile.id}};
       break;
     case OAUTH.FACEBOOK:
       oauth = {facebook: profile.id};
       filter = {uuid};
-      update = {$set: {"oauth_profile.facebook": profile, facebook: profile.id}};
+      update = {$set: {"oauthProfile.facebook": profile, facebook: profile.id}};
       break;
     default:
       throw Error("provider not exists")
