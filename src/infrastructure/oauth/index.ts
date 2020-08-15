@@ -120,10 +120,18 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
   switch (provider) {
     case OAUTH.GOOGLE:
       filter = {google: profile.id};
-      update = {$setOnInsert: {google: profile.id}, $set: {"oauthProfile.google": profile}};
+      const emails = (profile as GoogleProfile).emails;
+      const photos = (profile as GoogleProfile).photos;
+      update = {$setOnInsert: {google: profile.id}, $set: {
+        "oauthProfile.google": profile,
+        "email": emails ? emails[0]?.value : "",
+        "avatar": photos ? photos[0]?.value : "",
+        "displayName": profile.displayName
+      }};
       break;
     case OAUTH.FACEBOOK:
       filter = {facebook: profile.id};
+      //need to do 
       update = {$setOnInsert: {facebook: profile.id}, $set: {"oauthProfile.facebook": profile}};
       break;
     default:

@@ -7,9 +7,11 @@ const sparse = true;
 
 export interface IUser extends Document {
   uuid: number,
-  name?: string,
-  showName?: string,
-  email?: string
+  // name?: string,
+  displayName?: string,
+  email?: string,
+  avatar? :string,
+
   subPrice?: number,
   selfDesc?: string,
   selfWeb?: string,
@@ -18,15 +20,14 @@ export interface IUser extends Document {
   twitter?: string,
   facebook?: string,
   oauthProfile?: Profile
-
-
 }
 
 const UserModel: Schema = new Schema({
   uuid: {type: Number, required, unique, sparse},
-  name: {type: String, required: false, unique, sparse},
-  showName: {type: String, required: false, unique, sparse},
+  // name: {type: String, required: false, unique, sparse},
+  displayName: {type: String, required: false, unique, sparse},
   email: {type: String, required: false, unique, sparse},
+  avatar: {type: String, required: false, unique, sparse},
   subPrice: {type: Number, required: false},
   selfDesc: {type: String, required: false},
   selfWeb: {type: String, required: false},
