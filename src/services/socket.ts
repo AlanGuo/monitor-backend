@@ -8,6 +8,7 @@ import {isImage} from "@src/infrastructure/utils/image";
 import cookie from "cookie"
 import {loadRedisStore} from "@src/infrastructure/redisStore";
 import {SocketAddUser} from "@src/infrastructure/socket";
+import UserModel from "../models/user";
 
 const store = loadRedisStore();
 
@@ -19,9 +20,13 @@ export function loadSocketService(io: socket.Server) {
     let cookies = cookie.parse(socket.handshake.headers.cookie);
     const session = await store.get('koa:sess:' + cookies[`${SESSION_KEY}`]);
     if (session) {
-      (socket as SocketAddUser).user = session.passport.user;
-      await redis.hset('online_user', session.passport.user.uuid, socket.id);
-      return next()
+      if (await UserModel.findOne({uuid: session.passport.user.uuid})) {
+        (socket as SocketAddUser).user = session.passport.user;
+        await redis.hset('online_user', session.passport.user.uuid, socket.id);
+        return next()
+      } else {
+        next(`user not exists`);
+      }
     } else {
       next(`session has been expires`);
     }

@@ -17,8 +17,13 @@ export function loaderPassport(oauthList: OAUTH[]) {
     cb(null, {token, uuid: user.uuid})
   });
 
-  passport.deserializeUser((info, cb) => {
-    cb(null, info)
+  passport.deserializeUser(async (info: User, cb) => {
+    const user = await UserModel.findOne({uuid: info.uuid});
+    if (user) {
+      cb(null, info)
+    } else {
+      cb("user not exists", null)
+    }
   });
 
   oauthList.forEach(item => {
@@ -131,7 +136,7 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
       break;
     case OAUTH.FACEBOOK:
       filter = {facebook: profile.id};
-      //need to do 
+      //need to do
       update = {$setOnInsert: {facebook: profile.id}, $set: {"oauthProfile.facebook": profile}};
       break;
     default:
