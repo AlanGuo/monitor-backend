@@ -35,6 +35,7 @@ export default class CallbackController {
           // all files have been converted successfully
           // 这里需要根据类型入库
           // 转换成功发送给订阅者
+          // TODO publish to MQ
           if (decodedData.subscribers.length) {
             const io = getSocketIO();
             if (isImage(ext)) {

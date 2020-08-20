@@ -8,6 +8,8 @@ export function jsonResponse({data, code, msg}: {data?: any, code?: number, msg?
   }
 }
 
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function unauthorized(ctx: IRouterContext){
   ctx.throw(401, "Unauthorized");
 }

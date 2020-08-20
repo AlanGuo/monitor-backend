@@ -21,6 +21,11 @@ export enum SOCKET_CHANNEL {
   MEDIA_CONVERTED = "media converted"
 }
 
+export enum MEDIA_TYPE {
+  IMAGE = "IMAGE",
+  VIDEO = "VIDEO"
+}
+
 export enum Sequence {
   USER = "USER"
 }
@@ -30,7 +35,15 @@ export enum RESPONSE_CODE {
   LOGIN_IN_ERR = 1
 }
 
+export enum RABBITMQ_EXCHANGE_TYPE {
+  FANOUT = "fanout",
+  DIRECT = "direct",
+  TOPIC = "topic",
+  HEADERS = "headers"
+}
+
 export const USER_SEQUENCE_INIT = 10000000;
 export const AUTH_TOKEN_OVERDUE_SECOND = 60 * 60 * 12;
 export const SESSION_OVERDUE_SECOND = 60 * 60 * 24 * 1000;
 export const SESSION_KEY = "justfans";
+export const ONLINE_USER_KEY = "online_user";

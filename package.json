@@ -13,9 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/co": "^4.6.2",
-    "@types/cookie": "^0.4.0",
+    "amqplib": "^0.6.0",
     "aws-sdk": "^2.717.0",
+    "bignumber.js": "^9.0.0",
     "co": "^4.6.0",
     "colors": "^1.4.0",
     "config": "^3.3.1",
@@ -59,6 +59,9 @@
     "test": "__tests__"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.5.13",
+    "@types/co": "^4.6.2",
+    "@types/cookie": "^0.4.0",
     "@koa/cors": "^3.1.0",
     "@types/async": "^3.2.3",
     "@types/bluebird": "^3.5.32",
