@@ -22,7 +22,7 @@ services:
     ports:
     - 27017:27017
 
-  # rabbitmq  run this command "rabbitmq-plugins enable rabbitmq_management" for login website
+  # rabbitmq  run this command "rabbitmq-plugins enable rabbitmq_management" and you can login website http://localhost:15672
   rabbitmq:
     image: rabbitmq:latest
     container_name: rabbitmq
