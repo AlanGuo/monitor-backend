@@ -57,15 +57,39 @@ export default class UserController {
   @PaginationDec()
   async messages(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination as Pagination;
-    const fields = {_id: 0, from: 1, to: 1, content:1, createdAt: 1};
-    const messages =  await MessageModel.find({
-      $or: [
-        {from: ctx.state.user.uuid, to: ctx.params.uuid},
-        {from: ctx.params.uuid, to: ctx.state.user.uuid}
-      ]
-    }, fields).limit(pagination.limit)
-      .skip(pagination.offset)
-      .sort({_id: -1});
+    const fields = {_id: 0, from: 1, to: 1, content:1, createdAt: 1, media: 1, medias: 1};
+    const messages = await MessageModel.aggregate([
+      {
+        $lookup: {
+          from: "medias",
+          let: {media: "$media"},
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$_id", "$$media"],
+                }
+              }
+            },
+          ],
+          as: 'medias'
+        }
+      },
+      {
+        $project: fields
+      },
+      {$limit: pagination.limit},
+      {$skip: pagination.offset},
+      {$sort: {_id: -1}}
+    ]);
+    // const messages =  await MessageModel.find({
+    //   $or: [
+    //     {from: ctx.state.user.uuid, to: ctx.params.uuid},
+    //     {from: ctx.params.uuid, to: ctx.state.user.uuid}
+    //   ]
+    // }, fields).limit(pagination.limit)
+    //   .skip(pagination.offset)
+    //   .sort({_id: -1});
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
   }
 }
