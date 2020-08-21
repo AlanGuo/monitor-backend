@@ -20,7 +20,7 @@ export async function loadSendMessageConsumer() {
     let tmp = JSON.parse(msg);
     console.log('send:', msg)
     const toSid = await getOnlineUser(tmp.to);
-    const fromSid = await getOnlineUser(tmp.to);
+    const fromSid = await getOnlineUser(tmp.from);
     if (toSid) {
       io.sockets.connected[toSid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, msg)
     }
