@@ -1,6 +1,4 @@
 import {Schema, Types, model, Document} from "mongoose";
-import {MEDIA_TYPE} from "@src/infrastructure/utils/constants";
-import {BigNumber} from "bignumber.js";
 
 const required = true;
 

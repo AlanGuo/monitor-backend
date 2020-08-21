@@ -37,3 +37,10 @@ export interface FaceBookProfile {
   name?: { familyName?: string, givenName?: string, middleName?: string }[],
   provider?: string
 }
+
+export interface Pagination {
+  offset: number,
+  limit: number,
+  page:number,
+  size: number
+}

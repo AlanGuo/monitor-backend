@@ -52,3 +52,4 @@ export const MESSAGE_ROUTING_KEY = "message";
 export const JUSTFANS_EXCHANGE = "justfans";
 export const SAVE_MESSAGE_QUEUE = "save_message";
 export const SEND_MESSAGE_QUEUE = "send_message";
+export const UPDATE_DIALOGUE_QUEUE = "update_dialogue";
