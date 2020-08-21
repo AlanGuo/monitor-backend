@@ -1,7 +1,7 @@
 import {Controller, GET} from "@src/infrastructure/decorators/koa";
 import KoaRouter, {IRouterContext} from "koa-router";
 import DialogueModel from "../models/dialogue";
-import UserModel from "../models/user"
+import MediaModel from "../models/media"
 import MessageModel from "../models/message"
 import {jsonResponse, unauthorized} from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
@@ -57,49 +57,24 @@ export default class UserController {
   @PaginationDec()
   async messages(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination as Pagination;
-    const fields = {_id: 0, from: 1, to: 1, content: 1, createdAt: 1, media: 1, medias: 1};
-    const messages = await MessageModel.aggregate([
-      // {
-      //   $lookup: {
-      //     from: "medias",
-      //     let: {media: "$media"},
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           _id: {$in: "$$media"}
-      //           // $expr: {
-      //           //   $in: ["$_id", "$$media"],
-      //           // }
-      //         }
-      //       },
-      //     ],
-      //     as: 'medias'
-      //   }
-      // },
-      {
-        $match: {
-          $or: [
-            {from: ctx.state.user.uuid, to: ctx.params.uuid},
-            {from: ctx.params.uuid, to: ctx.state.user.uuid}
-          ]
-        }
-      },
-      {
-        $project: fields
-      },
-      {$limit: pagination.limit},
-      {$skip: pagination.offset},
-      {$sort: {_id: -1}}
-    ]);
-    console.log(messages)
-    // const messages =  await MessageModel.find({
-    //   $or: [
-    //     {from: ctx.state.user.uuid, to: ctx.params.uuid},
-    //     {from: ctx.params.uuid, to: ctx.state.user.uuid}
-    //   ]
-    // }, fields).limit(pagination.limit)
-    //   .skip(pagination.offset)
-    //   .sort({_id: -1});
+    const fields = {_id: 0, from: 1, to: 1, content: 1, createdAt: 1, media: 1};
+    const messages =  await MessageModel.find({
+      $or: [
+        {from: ctx.state.user.uuid, to: ctx.params.uuid},
+        {from: ctx.params.uuid, to: ctx.state.user.uuid}
+      ]
+    }, fields).limit(pagination.limit)
+      .skip(pagination.offset)
+      .sort({_id: -1});
+
+    const mediaIds = messages.map(item => {
+      return item.media || []
+    }).reduce((pre, cur) => {
+      return pre.concat(cur)
+    });
+
+    const medias = await MediaModel.find({_id: {$in: mediaIds}});
+    console.log(medias)
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
   }
 }
