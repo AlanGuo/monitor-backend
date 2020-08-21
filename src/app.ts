@@ -18,6 +18,8 @@ import passport from "koa-passport"
 import session from "koa-generic-session"
 import {initSequence} from "@src/infrastructure/utils/sequence";
 import {loadRedisStore} from "@src/infrastructure/redisStore";
+import {loadSendMessageConsumer} from "@src/services/consumer/sendMessage";
+import {loadSaveMessageConsumer} from "@src/services/consumer/saveMessage";
 const cors = require("@koa/cors");
 
 async function bootstrap() {
@@ -57,8 +59,11 @@ async function bootstrap() {
 
   // websocket
   const server = http.createServer(app.callback());
-  loadSocketService(createSocket(server));
+  await loadSocketService(createSocket(server));
 
+  // consumer can be start another service. Now, just for test
+  await loadSaveMessageConsumer();
+  await loadSendMessageConsumer();
   app.proxy = true;
   server.listen(Number(config.HTTPS_PORT), "0.0.0.0", () => serviceLogger.info(`Server started at http://localhost:${config.HTTPS_PORT}`));
 

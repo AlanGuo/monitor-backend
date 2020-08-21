@@ -18,7 +18,7 @@ export class Producer {
     // new channel
     this.channel = await this.connect.createChannel();
     // defined exchange
-    await this.channel.assertExchange(this.exchangeName, exchangeType || RABBITMQ_EXCHANGE_TYPE.DIRECT, options);
+    await this.channel.assertExchange(this.exchangeName, exchangeType || RABBITMQ_EXCHANGE_TYPE.DIRECT, options || {durable: true});
   }
 
   async publish(msg: string) {

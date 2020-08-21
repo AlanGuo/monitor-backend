@@ -20,7 +20,7 @@ export class Consumer {
     // new channel
     this.channel = await this.connect.createChannel();
     // defined exchange
-    await this.channel.assertExchange(this.exchangeName, exchangeType || RABBITMQ_EXCHANGE_TYPE.DIRECT, options);
+    await this.channel.assertExchange(this.exchangeName, exchangeType || RABBITMQ_EXCHANGE_TYPE.DIRECT, options || {durable: true});
     // defined queue
     await this.channel.assertQueue(this.queueName);
     // binding
@@ -28,14 +28,10 @@ export class Consumer {
 
   }
 
-  async publish(msg: string) {
-    await this.channel!.publish(this.exchangeName, this.routingKey, Buffer.from(msg))
-  }
-
-  async consume(cb: (msg: string) => void) {
-    await this.channel!.consume(this.queueName, msg => {
+  async consume(cb: (msg: string) => Promise<void>) {
+    await this.channel!.consume(this.queueName, async msg => {
       if (msg) {
-        cb(msg.content.toString());
+        await cb(msg.content.toString());
         this.channel!.ack(msg)
       }
     })

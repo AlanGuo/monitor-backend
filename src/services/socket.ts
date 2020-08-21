@@ -2,28 +2,38 @@
 import config from "config";
 import {delOnlineUser, getOnlineUser, redis, setOnlineUser} from "../infrastructure/redis";
 import socket from "socket.io";
-import {ONLINE_USER_KEY, SESSION_KEY, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
+import {
+  JUSTFANS_EXCHANGE,
+  MESSAGE_ROUTING_KEY,
+  RABBITMQ_EXCHANGE_TYPE,
+  SESSION_KEY,
+  SOCKET_CHANNEL
+} from "@src/infrastructure/utils/constants";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
 import cookie from "cookie"
 import {loadRedisStore} from "@src/infrastructure/redisStore";
 import {SocketAddUser} from "@src/infrastructure/socket";
 import UserModel from "../models/user";
+import {Producer} from "@src/infrastructure/rabbitMq";
 
 const store = loadRedisStore();
 
-export function loadSocketService(io: socket.Server) {
+export async function loadSocketService(io: socket.Server) {
+
+  const messageProducer = new Producer(MESSAGE_ROUTING_KEY, JUSTFANS_EXCHANGE);
+  await messageProducer.connection(config.RABBITMQ, RABBITMQ_EXCHANGE_TYPE.DIRECT);
 
   io.use(async (socket: socket.Socket, next) => {
     if (!socket.handshake.headers.cookie) {
       return next(new Error(`Didn't receive cookies`));
     }
     let cookies = cookie.parse(socket.handshake.headers.cookie);
-    const session = await store.get('koa:sess:' + cookies[`${SESSION_KEY}`]);
+    const session = await store.get("koa:sess:" + cookies[`${SESSION_KEY}`]);
     if (session) {
       if (await UserModel.findOne({uuid: session.passport.user.uuid})) {
         (socket as SocketAddUser).user = session.passport.user;
-        await setOnlineUser(session.passport.user.uuid, socket.id)
+        await setOnlineUser(session.passport.user.uuid, socket.id);
         return next()
       } else {
         next(new Error(`user not exists`));
@@ -36,17 +46,11 @@ export function loadSocketService(io: socket.Server) {
   io.on("connection", function (socket: SocketAddUser) {
 
     socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, async (msg: string) => {
-      // TODO
-      // 当 to 存在的时候，进行推送 并纪录message
-      // 纪录message推送到 MQ，让消费者进行消费纪录
-
+      // when "to" exists then publish the msg to mq
       const tmp = JSON.parse(msg);
-      if (tmp.to) {
-        const sid = await getOnlineUser(tmp.to);
-        if (sid) {
-          io.sockets.connected[sid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify({...tmp, from: socket.user.uuid}));
-          socket.emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(tmp))
-        }
+      tmp.from = socket.user.uuid;
+      if (tmp.to && UserModel.exists({uuid: tmp.to})) {
+        await messageProducer.publish(JSON.stringify(tmp));
       }
     });
 

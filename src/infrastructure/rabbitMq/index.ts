@@ -1,2 +1,2 @@
-import {Producer} from "./producer"
-import {Consumer} from "./consumer";
+export {Producer} from "./producer"
+export {Consumer} from "./consumer";
