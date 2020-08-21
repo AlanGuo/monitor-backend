@@ -2,7 +2,7 @@
 import config from "config"
 import {Consumer} from "@src/infrastructure/rabbitMq";
 import {
-  JUSTFANS_EXCHANGE, MEDIA_ROUTING_KEY,
+  JUSTFANS_EXCHANGE, MEDIA_ROUTING_KEY, MEDIA_TYPE,
   RABBITMQ_EXCHANGE_TYPE, SAVE_MEDIA_QUEUE
 } from "@src/infrastructure/utils/constants";
 import MediaModel from "@src/models/media"
@@ -15,8 +15,12 @@ export async function loadSaveProducerConsumer() {
   await consumer.consume(async msg => {
     let tmp = JSON.parse(msg);
     console.log('save producer:', msg);
-    // await MediaModel.create({
-    //   ow
-    // })
+    const fileName = tmp.fileName.split(".");
+    await MediaModel.create({
+      type: fileName.length > 1 ? MEDIA_TYPE.IMAGE : MEDIA_TYPE.VIDEO,
+      owner: tmp.owner,
+      fileName: fileName[0]
+    })
+
   })
 }
