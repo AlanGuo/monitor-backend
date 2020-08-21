@@ -61,5 +61,8 @@ module.exports = {
     Consumer_Secret: ""
   },
 
-  HOST: "https://test-justfans.bitapp.net"
+  HOST: "https://test-justfans.bitapp.net",
+
+  RABBITMQ: "amqp://localhost:5672"
+
 };
