@@ -80,7 +80,7 @@ export default class UserController {
       },
       {$limit: pagination.limit},
       {$skip: pagination.offset},
-      {$sort: {_id: -1}}
+      {$sort: {_id: 1}}
     ]);
     // const messages =  await MessageModel.find({
     //   $or: [
