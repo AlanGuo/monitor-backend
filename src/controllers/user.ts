@@ -17,7 +17,7 @@ export default class UserController {
     }
     const filterArr: any[] = [nameFilter];
     if (ctx.state.user) {
-      filterArr.push({uuid: {$ne: ctx.state.user.name}});
+      filterArr.push({uuid: {$ne: ctx.state.user.uuid}});
     }
     const fields = { _id: 0, uuid: 1, name: 1, displayName: 1, avatar: 1, email: 1 };
     const users = await UserModel.find({$and: filterArr}, fields);
