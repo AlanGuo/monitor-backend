@@ -3,9 +3,9 @@ import KoaRouter, {IRouterContext} from "koa-router";
 import DialogueModel from "../models/dialogue";
 import UserModel from "../models/user"
 import MessageModel from "../models/message"
-import { jsonResponse, unauthorized } from "@src/infrastructure/utils";
+import {jsonResponse, unauthorized} from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
-import { AuthRequired } from "@src/infrastructure/decorators/auth";
+import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
 
@@ -57,7 +57,7 @@ export default class UserController {
   @PaginationDec()
   async messages(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination as Pagination;
-    const fields = {_id: 0, from: 1, to: 1, content:1, createdAt: 1, media: 1, medias: 1};
+    const fields = {_id: 0, from: 1, to: 1, content: 1, createdAt: 1, media: 1, medias: 1};
     const messages = await MessageModel.aggregate([
       {
         $lookup: {
@@ -76,11 +76,19 @@ export default class UserController {
         }
       },
       {
+        $match: {
+          $or: [
+            {from: ctx.state.user.uuid, to: ctx.params.uuid},
+            {from: ctx.params.uuid, to: ctx.state.user.uuid}
+          ]
+        }
+      },
+      {
         $project: fields
       },
       {$limit: pagination.limit},
       {$skip: pagination.offset},
-      {$sort: {_id: 1}}
+      {$sort: {_id: -1}}
     ]);
     // const messages =  await MessageModel.find({
     //   $or: [
