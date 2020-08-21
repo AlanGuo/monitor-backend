@@ -73,7 +73,7 @@ export async function loadSocketService(io: socket.Server) {
       const data = await redis.get(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
-        decodedData.subscribers.push(socketId);
+        decodedData.subscribers.push(socket.user.uuid);
         await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
       }
     });

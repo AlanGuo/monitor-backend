@@ -21,6 +21,7 @@ import {loadRedisStore} from "@src/infrastructure/redisStore";
 import {loadSendMessageConsumer} from "@src/services/consumer/sendMessage";
 import {loadSaveMessageConsumer} from "@src/services/consumer/saveMessage";
 import {loadUpdateDialogueConsumer} from "@src/services/consumer/updateDialogue";
+import {loadMediaProducer} from "@src/services/producer/mediaProducer";
 const cors = require("@koa/cors");
 
 async function bootstrap() {
@@ -66,6 +67,10 @@ async function bootstrap() {
   await loadSaveMessageConsumer();
   await loadSendMessageConsumer();
   await loadUpdateDialogueConsumer();
+
+  //producer
+  await loadMediaProducer();
+
   app.proxy = true;
   server.listen(Number(config.HTTPS_PORT), "0.0.0.0", () => serviceLogger.info(`Server started at http://localhost:${config.HTTPS_PORT}`));
 

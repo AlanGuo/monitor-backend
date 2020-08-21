@@ -2,12 +2,13 @@
 import config from "config";
 import { Controller, POST } from "@src/infrastructure/decorators/koa";
 import { IRouterContext } from "koa-router";
-import { redis } from "@src/infrastructure/redis";
+import {getOnlineUser, redis} from "@src/infrastructure/redis";
 import { getSocketIO } from "@src/infrastructure/socket";
 import { SOCKET_CHANNEL } from "@src/infrastructure/utils/constants";
 import { jsonResponse } from "@src/infrastructure/utils/helper";
 import { isImage } from "@src/infrastructure/utils/image";
 import { isVideo } from "@src/infrastructure/utils/video";
+import {mediaProducer} from "@src/services/producer/mediaProducer";
 
 
 // todo: need to verity the signatures of Amazon SNS messages
@@ -41,22 +42,36 @@ export default class CallbackController {
             if (isImage(ext)) {
               const fileName = decodedData.key.replace(config.AWS_MEDIA_CONVERT.imageSourceFolder, "");
               await redis.del(redisKey);
-              for(let socketId of decodedData.subscribers) {
-                io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, JSON.stringify({
+              for(let uuid of decodedData.subscribers) {
+                const msg = JSON.stringify({
                   key: decodedData.key,
                   url: config.AWS_S3.imagePrefix + fileName,
-                }));
+                  fileName,
+                  owner: uuid
+                });
+                await mediaProducer.publish(msg);
+                const sid = await getOnlineUser(uuid);
+                if (sid) {
+                  io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, msg);
+                }
               }
             } else if(isVideo(ext)) {
               const fileNameWithoutExt = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
               await redis.del(redisKey);
-              for(let socketId of decodedData.subscribers){
-                io.sockets.connected[socketId].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, JSON.stringify({
+              for(let uuid of decodedData.subscribers){
+                const msg = JSON.stringify({
                   key: decodedData.key,
                   screenshot: config.AWS_S3.videoPrefix + decodedData.purpose + "/" + fileNameWithoutExt + config.AWS_S3.screenshotSuffix,
                   low: config.AWS_S3.videoPrefix + decodedData.purpose + "/" + fileNameWithoutExt + config.AWS_S3.lowSuffix,
-                  hd: config.AWS_S3.videoPrefix + decodedData.purpose + "/" + fileNameWithoutExt + config.AWS_S3.hdSuffix
-                }));
+                  hd: config.AWS_S3.videoPrefix + decodedData.purpose + "/" + fileNameWithoutExt + config.AWS_S3.hdSuffix,
+                  fileName: fileNameWithoutExt,
+                  owner: uuid
+                });
+                await mediaProducer.publish(msg);
+                const sid = await getOnlineUser(uuid);
+                if (sid) {
+                  io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, msg);
+                }
               }
             }
           }

@@ -49,6 +49,7 @@ export const SESSION_KEY = "justfans";
 export const ONLINE_USER_KEY = "online_user";
 
 export const MESSAGE_ROUTING_KEY = "message";
+export const MEDIA_ROUTING_KEY = "media";
 export const JUSTFANS_EXCHANGE = "justfans";
 export const SAVE_MESSAGE_QUEUE = "save_message";
 export const SEND_MESSAGE_QUEUE = "send_message";
