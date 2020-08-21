@@ -91,6 +91,7 @@ export default class UserController {
       {$skip: pagination.offset},
       {$sort: {_id: -1}}
     ]);
+    console.log(messages)
     // const messages =  await MessageModel.find({
     //   $or: [
     //     {from: ctx.state.user.uuid, to: ctx.params.uuid},
