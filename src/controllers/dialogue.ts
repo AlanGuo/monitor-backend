@@ -59,22 +59,23 @@ export default class UserController {
     const pagination = ctx.state.pagination as Pagination;
     const fields = {_id: 0, from: 1, to: 1, content: 1, createdAt: 1, media: 1, medias: 1};
     const messages = await MessageModel.aggregate([
-      {
-        $lookup: {
-          from: "medias",
-          let: {media: "$media"},
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: ["$_id", "$$media"],
-                }
-              }
-            },
-          ],
-          as: 'medias'
-        }
-      },
+      // {
+      //   $lookup: {
+      //     from: "medias",
+      //     let: {media: "$media"},
+      //     pipeline: [
+      //       {
+      //         $match: {
+      //           _id: {$in: "$$media"}
+      //           // $expr: {
+      //           //   $in: ["$_id", "$$media"],
+      //           // }
+      //         }
+      //       },
+      //     ],
+      //     as: 'medias'
+      //   }
+      // },
       {
         $match: {
           $or: [
