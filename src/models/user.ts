@@ -7,7 +7,7 @@ const sparse = true;
 
 export interface IUser extends Document {
   uuid: number,
-  // name?: string,
+  name?: string,
   displayName?: string,
   email?: string,
   avatar? :string,
@@ -24,7 +24,9 @@ export interface IUser extends Document {
 
 const UserModel: Schema = new Schema({
   uuid: {type: Number, required, unique, sparse},
-  // name: {type: String, required: false, unique, sparse},
+  // 默认为uuid，可自定义，不允许重复
+  name: {type: String, required: false, unique, sparse},
+  // 从第三方登录获取的昵称，可自定义，允许重复
   displayName: {type: String, required: false, unique, sparse},
   email: {type: String, required: false, unique, sparse},
   avatar: {type: String, required: false, unique, sparse},
