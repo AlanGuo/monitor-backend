@@ -7,6 +7,9 @@ import {
   RABBITMQ_EXCHANGE_TYPE, SAVE_MESSAGE_QUEUE,
 } from "@src/infrastructure/utils/constants";
 import MessageModel from "@src/models/message"
+import MediaModel from "@src/models/media"
+import {Types} from "mongoose";
+
 
 export async function loadSaveMessageConsumer() {
 
@@ -15,11 +18,17 @@ export async function loadSaveMessageConsumer() {
 
   await consumer.consume(async msg => {
     let tmp = JSON.parse(msg);
-    console.log('save:', msg)
+    console.log('save:', msg);
+    const medias: Types.ObjectId[] = await tmp.media.map(async (item:any) => {
+      const mediaTmp = await MediaModel.findOne({fileName: item.fileName});
+      return mediaTmp?._id as Types.ObjectId;
+    });
+
     await MessageModel.create({
       from: tmp.from,
       to: tmp.to,
       content: tmp.text,
+      media: medias
     })
   })
 }

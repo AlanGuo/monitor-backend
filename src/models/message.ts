@@ -5,14 +5,14 @@ const required = true;
 export interface Message extends Document {
   from: number,
   to: number,
-  media?: string,
+  media?: Schema.Types.ObjectId[],
   content?: string
 }
 
 const MessageModel: Schema = new Schema({
   from: {type: Number, required},
   to: {type: Number, required},
-  media: {type: Schema.Types.ObjectId},
+  media: {type: Array(Schema.Types.ObjectId)},
   content: {type: String}
 }, {
   timestamps: true
