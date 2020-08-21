@@ -8,7 +8,7 @@ export interface Media extends Document {
   type: MEDIA_TYPE,
   owner: Types.ObjectId,
   fileName: string,
-  price?: string;
+  price?: BigNumber;
 }
 
 const MediaModel: Schema = new Schema({
