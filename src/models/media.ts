@@ -7,14 +7,14 @@ const required = true;
 export interface Media extends Document {
   type: MEDIA_TYPE,
   owner: Types.ObjectId,
-  path: string,
-  price: string;
+  fileName: string,
+  price?: string;
 }
 
 const MediaModel: Schema = new Schema({
   type: {type: MEDIA_TYPE, required},
   owner: {type: Schema.Types.ObjectId, required},
-  path: {type: String, required},
+  fileName: {type: String, required},
   price: {type: BigNumber, required, default: new BigNumber(0)}
 }, {
   timestamps: true
