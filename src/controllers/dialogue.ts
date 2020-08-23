@@ -67,6 +67,12 @@ export default class UserController {
       "mediaDetail.fileName": 1
     };
 
+    console.log(await MessageModel.find({
+      $or: [
+        {from: ctx.state.user.uuid, to: ctx.params.uuid},
+        {from: ctx.params.uuid, to: ctx.state.user.uuid}
+      ]
+    }))
     const messages = await MessageModel.aggregate([
       {
         $match: {
@@ -77,24 +83,24 @@ export default class UserController {
         }
       },
       {$sort: {_id: -1}},
-      // {$skip: pagination.offset},
-      // {$limit: pagination.limit},
-      // {
-      //   $lookup: {
-      //     from: "media",
-      //     let: {mediaIds: "$media"},
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $or: ["$_id", "$$mediaIds"],
-      //           }
-      //         },
-      //       }
-      //     ],
-      //     as: 'mediaDetail'
-      //   }
-      // },
+      {$skip: pagination.offset},
+      {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "media",
+          let: {mediaIds: "$media"},
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $or: ["$_id", "$$mediaIds"],
+                }
+              },
+            }
+          ],
+          as: 'mediaDetail'
+        }
+      },
       {$project: fields},
     ]);
 
