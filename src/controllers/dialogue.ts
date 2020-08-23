@@ -69,6 +69,17 @@ export default class UserController {
 
     const messages = await MessageModel.aggregate([
       {
+        $match: {
+          $or: [
+            {from: ctx.state.user.uuid, to: Number(ctx.params.uuid)},
+            {from: Number(ctx.params.uuid), to: ctx.state.user.uuid}
+          ]
+        }
+      },
+      {$sort: {_id: -1}},
+      {$skip: pagination.offset},
+      {$limit: pagination.limit},
+      {
         $lookup: {
           from: "media",
           let: {mediaIds: "$media"},
@@ -84,17 +95,6 @@ export default class UserController {
           as: 'mediaDetail'
         }
       },
-      {
-        $match: {
-          $or: [
-            {from: ctx.state.user.uuid, to: Number(ctx.params.uuid)},
-            {from: Number(ctx.params.uuid), to: ctx.state.user.uuid}
-          ]
-        }
-      },
-      {$sort: {_id: -1}},
-      {$skip: pagination.offset},
-      {$limit: pagination.limit},
       {$project: fields},
     ]);
 
