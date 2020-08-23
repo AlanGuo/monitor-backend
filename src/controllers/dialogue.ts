@@ -67,6 +67,7 @@ export default class UserController {
       "mediaDetail.fileName": 1
     };
 
+    console.log(ctx.state.user.uuid, ctx.params.uuid)
     const messages = await MessageModel.aggregate([
       {
         $match: {
