@@ -76,7 +76,7 @@ export default class UserController {
             {
               $match: {
                 $expr: {
-                  $or: ["_id", "$$mediaIds"],
+                  $in: ["_id", "$$mediaIds"],
                 }
               },
             }
