@@ -4,10 +4,11 @@ import DialogueModel from "../models/dialogue";
 import MediaModel from "../models/media"
 import MessageModel from "../models/message"
 import {jsonResponse} from "@src/infrastructure/utils";
-import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {MEDIA_PURPOSE, MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
+import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -63,8 +64,8 @@ export default class UserController {
       to: 1,
       content: 1,
       createdAt: 1,
-      "mediaDetail.type": 1,
-      "mediaDetail.fileName": 1
+      "medias.type": 1,
+      "medias.fileName": 1
     };
 
     const messages = await MessageModel.aggregate([
@@ -92,11 +93,17 @@ export default class UserController {
               },
             }
           ],
-          as: 'mediaDetail'
+          as: 'medias'
         }
       },
       {$project: fields},
     ]);
+
+    messages.forEach(item => {
+      item.medias.forEach((media: any) => {
+        media.urls = getMediaUrl(media.type, media.fileName, MEDIA_PURPOSE.CHAT)
+      })
+    });
 
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
   }

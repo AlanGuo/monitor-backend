@@ -1,7 +1,9 @@
 // @ts-ignore
 import config from "config";
-import { MediaConvert } from "aws-sdk";
-import { job } from "@config/mediaconvert/job";
+import {MediaConvert} from "aws-sdk";
+import {job} from "@config/mediaconvert/job";
+import {MEDIA_PURPOSE, MEDIA_TYPE} from "@src/infrastructure/utils/constants";
+import {ImageAmazonUrl, VideoAmazonUrl} from "@src/interface";
 
 const mediaConvert = new MediaConvert({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -38,4 +40,22 @@ export async function getJob(jobId: string) {
       }
     })
   });
+}
+
+export function getMediaUrl(type: MEDIA_TYPE, fileName: string, purpose?: MEDIA_PURPOSE): ImageAmazonUrl | VideoAmazonUrl {
+  switch (type) {
+    case MEDIA_TYPE.IMAGE:
+      return { url:config.AWS_S3.imagePrefix + fileName};
+    case MEDIA_TYPE.VIDEO:
+      if (!purpose) {
+        throw Error("video type must have purpose params")
+      }
+      return {
+        screenshot: config.AWS_S3.videoPrefix + purpose + "/" + fileName + config.AWS_S3.screenshotSuffix,
+        low: config.AWS_S3.videoPrefix + purpose + "/" + fileName + config.AWS_S3.lowSuffix,
+        hd: config.AWS_S3.videoPrefix + purpose + "/" + fileName + config.AWS_S3.hdSuffix,
+      };
+    default:
+      throw Error("media type not exists")
+  }
 }

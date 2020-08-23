@@ -44,3 +44,13 @@ export interface Pagination {
   page:number,
   size: number
 }
+
+export interface VideoAmazonUrl {
+  screenshot: string,
+  low: string,
+  hd: string
+}
+
+export interface ImageAmazonUrl {
+  url: string
+}
