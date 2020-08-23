@@ -78,7 +78,6 @@ export default class UserController {
       }
     ]))
     const messages = await MessageModel.aggregate([
-      ,
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
