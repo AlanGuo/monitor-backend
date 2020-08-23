@@ -67,6 +67,7 @@ export default class UserController {
       "medias.type": 1,
       "medias.fileName": 1
     };
+    console.log(ctx.params.timeline, new Date(ctx.params.timeline || Date.now()), new Date(ctx.params.timeline || Date.now()).getTime())
     const messages = await MessageModel.aggregate([
       {
         $match: {
