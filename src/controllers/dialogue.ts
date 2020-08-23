@@ -67,7 +67,14 @@ export default class UserController {
       "mediaDetail.fileName": 1
     };
 
-    console.log(await MessageModel.aggregate([
+
+    console.log(
+      [
+        {from: ctx.state.user.uuid, to: ctx.params.uuid},
+        {from: ctx.params.uuid, to: ctx.state.user.uuid}
+      ]
+    )
+    const messages = await MessageModel.aggregate([
       {
         $match: {
           $or: [
@@ -75,9 +82,7 @@ export default class UserController {
             {from: ctx.params.uuid, to: ctx.state.user.uuid}
           ]
         }
-      }
-    ]))
-    const messages = await MessageModel.aggregate([
+      },
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
