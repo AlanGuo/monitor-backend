@@ -67,11 +67,10 @@ export default class UserController {
       "medias.type": 1,
       "medias.fileName": 1
     };
-    console.log(Number(ctx.params.timeline) || Date.now());
     const messages = await MessageModel.aggregate([
       {
         $match: {
-          createdAt: {$lte: new Date(ctx.params.timeline) || new Date()},
+          createdAt: {$lte: new Date(ctx.params.timeline || Date.now())},
           $or: [
             {from: ctx.state.user.uuid, to: Number(ctx.params.uuid)},
             {from: Number(ctx.params.uuid), to: ctx.state.user.uuid}
