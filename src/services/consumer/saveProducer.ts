@@ -19,7 +19,7 @@ export async function loadSaveProducerConsumer() {
     await MediaModel.create({
       type: fileName.length > 1 ? MEDIA_TYPE.IMAGE : MEDIA_TYPE.VIDEO,
       owner: tmp.owner,
-      fileName: fileName[0]
+      fileName: tmp.fileName
     })
 
   })

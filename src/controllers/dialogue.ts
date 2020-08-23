@@ -3,7 +3,7 @@ import KoaRouter, {IRouterContext} from "koa-router";
 import DialogueModel from "../models/dialogue";
 import MediaModel from "../models/media"
 import MessageModel from "../models/message"
-import {jsonResponse, unauthorized} from "@src/infrastructure/utils";
+import {jsonResponse} from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
@@ -57,24 +57,47 @@ export default class UserController {
   @PaginationDec()
   async messages(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination as Pagination;
-    const fields = {_id: 0, from: 1, to: 1, content: 1, createdAt: 1, media: 1};
-    const messages =  await MessageModel.find({
-      $or: [
-        {from: ctx.state.user.uuid, to: ctx.params.uuid},
-        {from: ctx.params.uuid, to: ctx.state.user.uuid}
-      ]
-    }, fields).limit(pagination.limit)
-      .skip(pagination.offset)
-      .sort({_id: -1});
+    const fields = {
+      _id: 0,
+      from: 1,
+      to: 1,
+      content: 1,
+      createdAt: 1,
+      "mediaDetail.type": 1,
+      "mediaDetail.fileName": 1
+    };
 
-    const mediaIds = messages.map(item => {
-      return item.media || []
-    }).reduce((pre, cur) => {
-      return pre.concat(cur)
-    });
+    const messages = await MessageModel.aggregate([
+      {
+        $match: {
+          $or: [
+            {from: ctx.state.user.uuid, to: ctx.params.uuid},
+            {from: ctx.params.uuid, to: ctx.state.user.uuid}
+          ]
+        }
+      },
+      {$sort: {_id: -1}},
+      {$skip: pagination.offset},
+      {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "media",
+          let: {mediaIds: "$media"},
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $or: ["$_id", "$$mediaIds"],
+                }
+              },
+            }
+          ],
+          as: 'mediaDetail'
+        }
+      },
+      {$project: fields},
+    ]);
 
-    const medias = await MediaModel.find({_id: {$in: mediaIds}});
-    console.log(medias)
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
   }
 }
