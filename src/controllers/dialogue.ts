@@ -77,8 +77,8 @@ export default class UserController {
         }
       },
       {$sort: {_id: -1}},
-      {$skip: pagination.offset},
-      {$limit: pagination.limit},
+      // {$skip: pagination.offset},
+      // {$limit: pagination.limit},
       // {
       //   $lookup: {
       //     from: "media",
