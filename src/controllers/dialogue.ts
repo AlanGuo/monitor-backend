@@ -71,6 +71,7 @@ export default class UserController {
     const messages = await MessageModel.aggregate([
       {
         $match: {
+          createdAt: {$lte: Number(ctx.params.timeline) || Date.now()},
           $or: [
             {from: ctx.state.user.uuid, to: Number(ctx.params.uuid)},
             {from: Number(ctx.params.uuid), to: ctx.state.user.uuid}
