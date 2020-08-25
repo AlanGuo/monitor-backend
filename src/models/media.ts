@@ -14,7 +14,7 @@ const MediaModel: Schema = new Schema({
   type: {type: MEDIA_TYPE, required},
   owner: {type: Number, required},
   fileName: {type: String, required},
-  price: {type: String, required, default: '0'}
+  price: {type: String, required, default: "0"}
 }, {
   timestamps: true
 });

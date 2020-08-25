@@ -54,7 +54,7 @@ export default class UserController {
   }
 
   @GET("/messages/:uuid")
-  @AuthRequired()
+  // @AuthRequired()
   @PaginationDec()
   async messages(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination as Pagination;
@@ -64,8 +64,8 @@ export default class UserController {
       to: 1,
       content: 1,
       createdAt: 1,
-      "medias.type": 1,
-      "medias.fileName": 1
+      "media.type": 1,
+      "media.fileName": 1
     };
     const messages = await MessageModel.aggregate([
       {
@@ -93,14 +93,14 @@ export default class UserController {
               },
             }
           ],
-          as: 'medias'
+          as: 'media'
         }
       },
       {$project: fields},
     ]);
 
     messages.forEach(item => {
-      item.medias.forEach((media: any) => {
+      item.media.forEach((media: any) => {
         media.urls = getMediaUrl(media.type, media.fileName, MEDIA_PURPOSE.CHAT)
       })
     });

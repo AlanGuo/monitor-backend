@@ -19,7 +19,7 @@ export async function loadSaveMessageConsumer() {
   await consumer.consume(async msg => {
     let tmp = JSON.parse(msg);
     console.log('save:', msg);
-    const medias: Types.ObjectId[] = await Promise.all(tmp.media.map(async (item:any) => {
+    const media: Types.ObjectId[] = await Promise.all(tmp.media.map(async (item:any) => {
       const mediaTmp = await MediaModel.findOne({fileName: item.fileName});
       return mediaTmp?._id as Types.ObjectId;
     }));
@@ -28,7 +28,7 @@ export async function loadSaveMessageConsumer() {
       from: tmp.from,
       to: tmp.to,
       content: tmp.text,
-      media: medias
+      media: media
     })
   })
 }

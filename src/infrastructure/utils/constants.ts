@@ -22,12 +22,13 @@ export enum SOCKET_CHANNEL {
 }
 
 export enum MEDIA_TYPE {
-  IMAGE = "IMAGE",
-  VIDEO = "VIDEO"
+  UNKNOWN = "unknown",
+  IMAGE = "image",
+  VIDEO = "video",
 }
 
 export enum Sequence {
-  USER = "USER"
+  USER = "user"
 }
 
 export enum RESPONSE_CODE {
