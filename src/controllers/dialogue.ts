@@ -54,7 +54,7 @@ export default class UserController {
   }
 
   @GET("/messages/:uuid")
-  // @AuthRequired()
+  @AuthRequired()
   @PaginationDec()
   async messages(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination as Pagination;
