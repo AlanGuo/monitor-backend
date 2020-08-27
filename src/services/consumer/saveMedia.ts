@@ -14,7 +14,7 @@ export async function loadSaveMediaConsumer() {
 
   await consumer.consume(async msg => {
     let tmp = JSON.parse(msg);
-    console.log('save producer:', msg);
+    console.log('save Media:', msg);
     const fileName = tmp.fileName.split(".");
     await MediaModel.create({
       type: fileName.length > 1 ? MEDIA_TYPE.IMAGE : MEDIA_TYPE.VIDEO,
