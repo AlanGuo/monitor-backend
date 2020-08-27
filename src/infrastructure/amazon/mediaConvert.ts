@@ -45,7 +45,7 @@ export async function getJob(jobId: string) {
 export function getMediaUrl(type: MEDIA_TYPE, fileName: string, purpose?: MEDIA_PURPOSE): ImageAmazonUrl | VideoAmazonUrl {
   switch (type) {
     case MEDIA_TYPE.IMAGE:
-      return { url:config.AWS_S3.imagePrefix + fileName};
+      return { url:config.AWS_S3.imagePrefix + fileName, thumbnail: config.AWS_S3.imagePrefix + fileName};
     case MEDIA_TYPE.VIDEO:
       if (!purpose) {
         throw Error("video type must have purpose params")

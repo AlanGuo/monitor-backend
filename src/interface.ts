@@ -52,5 +52,6 @@ export interface VideoAmazonUrl {
 }
 
 export interface ImageAmazonUrl {
-  url: string
+  url: string,
+  thumbnail: string
 }

@@ -44,10 +44,12 @@ export default class CallbackController {
             if (isImage(ext)) {
               const fileName = decodedData.key.replace(config.AWS_MEDIA_CONVERT.imageSourceFolder, "");
               await redis.del(redisKey);
+              const urls = (getMediaUrl(MEDIA_TYPE.IMAGE, fileName) as ImageAmazonUrl);
               for(let uuid of decodedData.subscribers) {
                 const msg = JSON.stringify({
+                  type: MEDIA_TYPE.IMAGE,
                   key: decodedData.key,
-                  url: (getMediaUrl(MEDIA_TYPE.IMAGE, fileName) as ImageAmazonUrl).url,
+                  ...urls,
                   fileName,
                   owner: uuid
                 });
@@ -63,6 +65,7 @@ export default class CallbackController {
               for(let uuid of decodedData.subscribers){
                 const urls = getMediaUrl(MEDIA_TYPE.VIDEO, fileNameWithoutExt) as VideoAmazonUrl;
                 const msg = JSON.stringify({
+                  type: MEDIA_TYPE.VIDEO,
                   key: decodedData.key,
                   ...urls,
                   fileName: fileNameWithoutExt,
