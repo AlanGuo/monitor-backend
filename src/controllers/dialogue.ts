@@ -110,8 +110,9 @@ export default class UserController {
     ]);
 
     messages.forEach(item => {
-      item.media.forEach((media: any) => {
-        media.urls = getMediaUrl(media.type, media.fileName, MEDIA_PURPOSE.CHAT)
+      item.media.forEach((media: {type: MEDIA_TYPE, fileName: string, [any: string]: any}) => {
+        media.urls = getMediaUrl(media.type, media.fileName, MEDIA_PURPOSE.CHAT);
+        media.ready = true;
       })
     });
 
