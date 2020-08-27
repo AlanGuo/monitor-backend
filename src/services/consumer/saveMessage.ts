@@ -20,6 +20,9 @@ export async function loadSaveMessageConsumer() {
     let tmp = JSON.parse(msg);
     console.log('save:', msg);
     const media:string[] = await Promise.all(tmp.media.map( (item:any) => {
+      if (item.key) {
+        return item.key.split("/")[1]
+      }
       return item.fileName;
     }));
 
