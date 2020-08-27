@@ -37,14 +37,16 @@ export default class UserController {
       {
         $lookup: {
           from: "messages",
-          let: {form: "$from", to: "$to"},
+          let: {from: "$from", to: "$to"},
           pipeline: [
             {
               $match: {
-                $or: [
-
-                  {$expr: {$eq: ["$from", "$$from"],}}
-                ]
+                $expr: {
+                  $or: [
+                    {from: "$$from", to: "$$to"},
+                    {from: "$$to", to: "from"}
+                  ]
+                }
               }
             },
             {$sort: {_id: -1}},
@@ -55,7 +57,7 @@ export default class UserController {
       },
       {
         $project: {
-          _id: 0, from: 1, to: 1, "userInfo.displayName": 1
+          _id: 0, from: 1, to: 1, "userInfo.displayName": 1, "lastMessage.content": 1, "lastMessage.createdAt": 1
         }
       },
     ]);
@@ -110,7 +112,7 @@ export default class UserController {
     ]);
 
     messages.forEach(item => {
-      item.media.forEach((media: {type: MEDIA_TYPE, fileName: string, [any: string]: any}) => {
+      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, MEDIA_PURPOSE.CHAT);
         media.ready = true;
       })
