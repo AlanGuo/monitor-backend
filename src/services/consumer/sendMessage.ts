@@ -20,7 +20,7 @@ export async function loadSendMessageConsumer() {
 
   await consumer.consume(async msg => {
     let jsonMsg = JSON.parse(msg);
-    console.log("send:", jsonMsg)
+    console.log("send:", jsonMsg);
     const toSid = await getOnlineUser(jsonMsg.to);
     // 判断消息中的媒体类型是否转换完成
     for(let m of jsonMsg.media) {

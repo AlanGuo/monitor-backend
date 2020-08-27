@@ -19,9 +19,8 @@ export async function loadSaveMessageConsumer() {
   await consumer.consume(async msg => {
     let tmp = JSON.parse(msg);
     console.log('save:', msg);
-    const media: Types.ObjectId[] = await Promise.all(tmp.media.map(async (item:any) => {
-      const mediaTmp = await MediaModel.findOne({fileName: item.fileName});
-      return mediaTmp?._id as Types.ObjectId;
+    const media:string[] = await Promise.all(tmp.media.map( (item:any) => {
+      return item.fileName;
     }));
 
     await MessageModel.create({

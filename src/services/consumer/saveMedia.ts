@@ -7,7 +7,7 @@ import {
 } from "@src/infrastructure/utils/constants";
 import MediaModel from "@src/models/media"
 
-export async function loadSaveProducerConsumer() {
+export async function loadSaveMediaConsumer() {
 
   const consumer = new Consumer(SAVE_MEDIA_QUEUE, MEDIA_ROUTING_KEY, JUSTFANS_EXCHANGE);
   await consumer.connection(config.RABBITMQ, RABBITMQ_EXCHANGE_TYPE.DIRECT);

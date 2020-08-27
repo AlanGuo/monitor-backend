@@ -21,35 +21,45 @@ export default class UserController {
 
     const dialogues = await DialogueModel.aggregate([
       {
+        $match: {
+          from: ctx.state.user.uuid,
+          show: true
+        }
+      },
+      {
         $lookup: {
-          localField: "from",
+          localField: "to",
           from: "users",
           foreignField: "uuid",
-          as: "user"
+          as: "userInfo"
+        }
+      },
+      {
+        $lookup: {
+          from: "messages",
+          let: {form: "$from", to: "$to"},
+          pipeline: [
+            {
+              $match: {
+                $or: [
+
+                  {$expr: {$eq: ["$from", "$$from"],}}
+                ]
+              }
+            },
+            {$sort: {_id: -1}},
+            {$limit: 1}
+          ],
+          as: "lastMessage"
         }
       },
       {
         $project: {
-          _id: 0, "user._id": 0, "user.displayName": 1
+          _id: 0, from: 1, to: 1, "userInfo.displayName": 1
         }
       },
     ]);
-    console.log(dialogues);
-    // const dialogues = (await DialogueModel.find({
-    //   from: ctx.state.user.uuid,
-    //   show: true
-    // }, {_id: 0, to: 1})).map(item => {
-    //   return item.to
-    // });
-    // const message = await MessageModel.find({
-    //   $or: [
-    //     {from: {$in: dialogues}, to: ctx.state.user.uuid},
-    //     {from: ctx.state.user.uuid, to: {$in: dialogues}}
-    //   ]
-    // }, {_id: 0, from: 1, to: 1, createdAt: 1});
-    // console.log(message)
-    // const fields = {_id: 0, uuid: 1, name: 1, displayName: 1, avatar: 1, email: 1};
-    // const user = await DialogueModel.g({uuid: ctx.params.id}, fields);
+    console.log(JSON.stringify(dialogues));
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogues})
   }
 
@@ -88,7 +98,7 @@ export default class UserController {
             {
               $match: {
                 $expr: {
-                  $in: ["$_id", "$$mediaIds"],
+                  $in: ["$fileName", "$$mediaIds"],
                 }
               },
             }

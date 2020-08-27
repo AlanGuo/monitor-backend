@@ -22,7 +22,7 @@ import {loadSendMessageConsumer} from "@src/services/consumer/sendMessage";
 import {loadSaveMessageConsumer} from "@src/services/consumer/saveMessage";
 import {loadUpdateDialogueConsumer} from "@src/services/consumer/updateDialogue";
 import {loadMediaProducer} from "@src/services/producer/mediaProducer";
-import {loadSaveProducerConsumer} from "@src/services/consumer/saveProducer";
+import {loadSaveMediaConsumer} from "@src/services/consumer/saveMedia";
 const cors = require("@koa/cors");
 
 async function bootstrap() {
@@ -68,7 +68,7 @@ async function bootstrap() {
   await loadSaveMessageConsumer();
   await loadSendMessageConsumer();
   await loadUpdateDialogueConsumer();
-  await loadSaveProducerConsumer();
+  await loadSaveMediaConsumer();
   //producer
   await loadMediaProducer();
 
