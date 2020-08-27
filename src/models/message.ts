@@ -14,7 +14,7 @@ const MessageModel: Schema = new Schema({
   from: {type: Number, required},
   to: {type: Number, required},
   // media: {type: Array(Schema.Types.ObjectId)},
-  media: {type: Array(String)},
+  media: {type: Array(String), default: []},
   content: {type: String}
 }, {
   timestamps: true
