@@ -2,7 +2,7 @@
 import config from "config"
 import {Consumer} from "@src/infrastructure/rabbitMq";
 import {
-  JUSTFANS_EXCHANGE,
+  JUSTFANS_EXCHANGE, MEDIA_TYPE,
   MESSAGE_ROUTING_KEY,
   RABBITMQ_EXCHANGE_TYPE, SAVE_MESSAGE_QUEUE,
 } from "@src/infrastructure/utils/constants";
@@ -19,9 +19,9 @@ export async function loadSaveMessageConsumer() {
   await consumer.consume(async msg => {
     let tmp = JSON.parse(msg);
     console.log('save:', msg);
-    const media:string[] = await Promise.all(tmp.media.map( (item:any) => {
+    const media: string[] = await Promise.all(tmp.media.map((item: any) => {
       if (item.key) {
-        return item.key.split("/")[1]
+        return item.type === MEDIA_TYPE.VIDEO ? item.key.split("/")[1].split('.')[0] : item.key.split("/")[1]
       }
       return item.fileName;
     }));
