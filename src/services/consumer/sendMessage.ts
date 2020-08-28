@@ -3,14 +3,17 @@ import config from "config"
 import {Consumer} from "@src/infrastructure/rabbitMq";
 import {
   JUSTFANS_EXCHANGE,
+  MEDIA_TYPE,
   MESSAGE_ROUTING_KEY,
   RABBITMQ_EXCHANGE_TYPE,
-  SEND_MESSAGE_QUEUE, SOCKET_CHANNEL
+  SEND_MESSAGE_QUEUE,
+  SOCKET_CHANNEL
 } from "@src/infrastructure/utils/constants";
-import { getSocketIO } from "@src/infrastructure/socket";
-import { getOnlineUser, redis } from "@src/infrastructure/redis";
-import { isVideo } from "@src/infrastructure/utils/video";
-import { isImage } from "@src/infrastructure/utils/image";
+import {getSocketIO} from "@src/infrastructure/socket";
+import {getOnlineUser, redis} from "@src/infrastructure/redis";
+import {isVideo} from "@src/infrastructure/utils/video";
+import {isImage} from "@src/infrastructure/utils/image";
+import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 
 export async function loadSendMessageConsumer() {
   const io = getSocketIO();
@@ -40,13 +43,24 @@ export async function loadSendMessageConsumer() {
         if (data) {
           const decodedData = JSON.parse(data);
           decodedData.subscribers.push(jsonMsg.to);
-          console.log('add subscribers',  jsonMsg.to)
+          console.log('add subscribers',  jsonMsg.to);
           await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
+        } else {
+          jsonMsg.media.forEach((media: {key: string, purpose: string, type: string, ready: boolean, urls: any}) => {
+            media.ready = true;
+            switch (media.type) {
+              case MEDIA_TYPE.IMAGE:
+                media.urls = getMediaUrl(MEDIA_TYPE.IMAGE, media.key.split("/")[1]);
+                break;
+              case MEDIA_TYPE.VIDEO:
+                media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, media.key.split("/")[1].split(".")[0]);
+            }
+          })
         }
       }
     }
     if (toSid) {
-      io.sockets.connected[toSid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, msg)
+      io.sockets.connected[toSid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(jsonMsg))
     }
   })
 }
