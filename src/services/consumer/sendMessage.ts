@@ -40,6 +40,7 @@ export async function loadSendMessageConsumer() {
         if (data) {
           const decodedData = JSON.parse(data);
           decodedData.subscribers.push(jsonMsg.to);
+          console.log('add subscribers',  jsonMsg.to)
           await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
         }
       }
