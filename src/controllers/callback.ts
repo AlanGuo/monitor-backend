@@ -68,6 +68,7 @@ export default class CallbackController {
             for (let uuid of decodedData.subscribers) {
               const sid = await getOnlineUser(uuid);
               if (sid) {
+                console.log(`send to ${uuid}: ${msg}`)
                 io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, msg);
               }
             }
