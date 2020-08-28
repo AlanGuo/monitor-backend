@@ -35,44 +35,40 @@ export default class CallbackController {
           decodedData.fileCount--;
           await redis.set(redisKey, JSON.stringify(decodedData));
         } else {
-          // all files have been converted successfully
+          const io = getSocketIO();
+          let msg;
+          if (isImage(ext)) {
+            const fileName = decodedData.key.replace(config.AWS_MEDIA_CONVERT.imageSourceFolder, "");
+            await redis.del(redisKey);
+            const urls = (getMediaUrl(MEDIA_TYPE.IMAGE, fileName) as ImageAmazonUrl);
+            msg = JSON.stringify({
+              type: MEDIA_TYPE.IMAGE,
+              key: decodedData.key,
+              ...urls,
+              fileName,
+              owner: decodedData.owner
+            });
+            await mediaProducer.publish(msg);
+          } else if (isVideo(ext)) {
+            const fileNameWithoutExt = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
+            await redis.del(redisKey);
+
+            const urls = getMediaUrl(MEDIA_TYPE.VIDEO, fileNameWithoutExt, MEDIA_PURPOSE.CHAT) as VideoAmazonUrl;
+            msg = JSON.stringify({
+              type: MEDIA_TYPE.IMAGE,
+              key: decodedData.key,
+              ...urls,
+              fileName: fileNameWithoutExt,
+              owner: decodedData.owner
+            });
+            await mediaProducer.publish(msg);
+          }
+
           if (decodedData.subscribers.length) {
-            const io = getSocketIO();
-            if (isImage(ext)) {
-              const fileName = decodedData.key.replace(config.AWS_MEDIA_CONVERT.imageSourceFolder, "");
-              await redis.del(redisKey);
-              const urls = (getMediaUrl(MEDIA_TYPE.IMAGE, fileName) as ImageAmazonUrl);
-              for (let uuid of decodedData.subscribers) {
-                const msg = JSON.stringify({
-                  type: MEDIA_TYPE.IMAGE,
-                  key: decodedData.key,
-                  ...urls,
-                  fileName,
-                  owner: uuid
-                });
-                await mediaProducer.publish(msg);
-                const sid = await getOnlineUser(uuid);
-                if (sid) {
-                  io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, msg);
-                }
-              }
-            } else if (isVideo(ext)) {
-              const fileNameWithoutExt = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
-              await redis.del(redisKey);
-              for (let uuid of decodedData.subscribers) {
-                const urls = getMediaUrl(MEDIA_TYPE.VIDEO, fileNameWithoutExt, MEDIA_PURPOSE.CHAT) as VideoAmazonUrl;
-                const msg = JSON.stringify({
-                  type: MEDIA_TYPE.VIDEO,
-                  key: decodedData.key,
-                  ...urls,
-                  fileName: fileNameWithoutExt,
-                  owner: uuid
-                });
-                await mediaProducer.publish(msg);
-                const sid = await getOnlineUser(uuid);
-                if (sid) {
-                  io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, msg);
-                }
+            for (let uuid of decodedData.subscribers) {
+              const sid = await getOnlineUser(uuid);
+              if (sid) {
+                io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, msg);
               }
             }
           }
