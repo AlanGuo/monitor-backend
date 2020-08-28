@@ -2,9 +2,9 @@
 import config from "config";
 import {S3} from "aws-sdk";
 import path from "path";
-import {newUniqId, newUuid} from "@src/infrastructure/utils/uuid";
-import { isImage } from "@src/infrastructure/utils/image";
-import { isVideo } from "@src/infrastructure/utils/video"
+import {newUniqId, newUuid} from "../utils/uuid";
+import { isImage } from "../utils/image";
+import { isVideo } from "../utils/video"
 
 const s3: S3 = new S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -15,13 +15,14 @@ const s3: S3 = new S3({
 
 export async function prepareUploadMedia(filename: string) {
   const ext = path.extname(filename);
-  const id = newUuid() + ext;
+  const id = newUniqId() + ext;
   let sourcePath = config.AWS_MEDIA_CONVERT.otherSourceFolder;
   if (isImage(ext)) {
     sourcePath = config.AWS_MEDIA_CONVERT.imageSourceFolder;
   } else if(isVideo(ext)) {
     sourcePath = config.AWS_MEDIA_CONVERT.videoSourceFolder;
   }
+  console.log(sourcePath + `${id}`)
   return new Promise((res, rej) => {
     s3.createPresignedPost({
       Bucket: config.AWS_MEDIA_CONVERT.sourceBucket,
