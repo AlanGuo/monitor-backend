@@ -1,9 +1,15 @@
-import KoaRouter, { IRouterContext } from "koa-router";
+import KoaRouter, {IRouterContext} from "koa-router";
 import passport from "koa-passport"
+import {jsonResponse} from "@src/infrastructure/utils";
+import {delOnlineUser, getOnlineUser} from "@src/infrastructure/redis";
+import {getSocketIO} from "@src/infrastructure/socket";
+import {SESSION_KEY} from "@src/infrastructure/utils/constants";
+import {loadRedisStore} from "@src/infrastructure/redisStore";
 
 
 export const router = new KoaRouter();
 const failureRedirect = "/auth/failure";
+const store = loadRedisStore();
 
 export function OAuthRouter(app: any) {
   // Google
@@ -24,6 +30,21 @@ export function OAuthRouter(app: any) {
       ctx.redirect(`/auth/success?id=${ctx.state.user.uuid}`)
     }
   );
+
+  router.get("/oauth/logout", async (ctx: any) => {
+    if (ctx.state.user) {
+      const uuid = ctx.state.user.uuid;
+      const sid = await getOnlineUser(uuid);
+      if (sid) {
+        const io = getSocketIO();
+        io.sockets.connected[sid].disconnect(true);
+        await delOnlineUser(uuid);
+      }
+      await store.destroy(`koa:sess:${ctx.cookies.get(SESSION_KEY)}`);
+      await ctx.logout();
+    }
+    ctx.body = jsonResponse({data: {auth: await ctx.isAuthenticated()}})
+  });
 
   app.use(router.routes()).use(router.allowedMethods())
 }

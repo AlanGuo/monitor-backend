@@ -18,7 +18,7 @@ export async function loadSaveMessageConsumer() {
 
   await consumer.consume(async msg => {
     let tmp = JSON.parse(msg);
-    console.log('save:', msg);
+    console.log('save message:', msg);
     const media: string[] = await Promise.all(tmp.media.map((item: any) => {
       if (item.key) {
         return item.type === MEDIA_TYPE.VIDEO ? item.key.split("/")[1].split('.')[0] : item.key.split("/")[1]

@@ -22,7 +22,6 @@ export async function prepareUploadMedia(filename: string) {
   } else if(isVideo(ext)) {
     sourcePath = config.AWS_MEDIA_CONVERT.videoSourceFolder;
   }
-  console.log(sourcePath + `${id}`)
   return new Promise((res, rej) => {
     s3.createPresignedPost({
       Bucket: config.AWS_MEDIA_CONVERT.sourceBucket,

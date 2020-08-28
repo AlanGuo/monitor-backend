@@ -30,7 +30,7 @@ export async function loadSocketService(io: socket.Server) {
     }
     let cookies = cookie.parse(socket.handshake.headers.cookie);
     const session = await store.get("koa:sess:" + cookies[`${SESSION_KEY}`]);
-    if (session) {
+    if (session && session.passport.user) {
       if (await UserModel.findOne({uuid: session.passport.user.uuid})) {
         (socket as SocketAddUser).user = session.passport.user;
         await setOnlineUser(session.passport.user.uuid, socket.id);

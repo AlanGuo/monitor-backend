@@ -39,7 +39,6 @@ export default class MediaController {
         purpose,
         owner: ctx.state.user.uuid
       }));
-      // console.log("setkey",config.AWS_MEDIA_CONVERT[ purpose + "VideoFolder" ] + fileNameWithoutExt )
       ctx.body = jsonResponse({
         data: {
           jobId: jobData.Job.Id,

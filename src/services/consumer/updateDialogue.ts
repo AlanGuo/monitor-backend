@@ -15,7 +15,7 @@ export async function loadUpdateDialogueConsumer() {
 
   await consumer.consume(async msg => {
     let tmp = JSON.parse(msg);
-    console.log('dialogue:', msg)
+    console.log('update dialogue:', msg)
 
     await DialogueModel.updateOne(
       {from: tmp.from, to: tmp.to},

@@ -28,7 +28,6 @@ export default class CallbackController {
       // 视频文件有下划线分割"_"，这里把下划线也滤除
       redisKey = redisKey.split("_")[0];
       const data = await redis.get(redisKey);
-      // console.log("redisKey", redisKey, data);
       if (data) {
         const decodedData = JSON.parse(data);
         if (decodedData.fileCount > 1) {
@@ -68,7 +67,6 @@ export default class CallbackController {
             for (let uuid of decodedData.subscribers) {
               const sid = await getOnlineUser(uuid);
               if (sid) {
-                console.log(`send to ${uuid}: ${msg}`)
                 io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, msg);
               }
             }

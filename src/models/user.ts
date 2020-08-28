@@ -27,7 +27,7 @@ const UserModel: Schema = new Schema({
   // 默认为uuid，可自定义，不允许重复
   name: {type: String, required: false, unique, sparse},
   // 从第三方登录获取的昵称，可自定义，允许重复
-  displayName: {type: String, required: false, unique, sparse},
+  displayName: {type: String, required: false, sparse},
   email: {type: String, required: false, unique, sparse},
   avatar: {type: String, required: false, unique, sparse},
   subPrice: {type: Number, required: false},
