@@ -34,7 +34,7 @@ export default class UserController {
           localField: "to",
           from: "users",
           foreignField: "uuid",
-          as: "userInfo"
+          as: "user"
         }
       },
       {
@@ -60,7 +60,7 @@ export default class UserController {
       },
       {
         $project: {
-          _id: 0, from: 1, to: 1, "userInfo.displayName": 1, "lastMessage.content": 1, "lastMessage.createdAt": 1
+          _id: 0, from: 1, to: 1, "user.uuid": 1, "user.avatar": 1, "user.name": 1, "user.displayName": 1, "lastMessage.content": 1, "lastMessage.createdAt": 1
         }
       },
     ]);
