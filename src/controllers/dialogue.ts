@@ -26,6 +26,9 @@ export default class UserController {
           show: true
         }
       },
+      {$sort: {updateAt: -1}},
+      {$skip: pagination.offset},
+      {$limit: pagination.limit},
       {
         $lookup: {
           localField: "to",
@@ -61,7 +64,6 @@ export default class UserController {
         }
       },
     ]);
-    console.log(JSON.stringify(dialogues));
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogues})
   }
 
