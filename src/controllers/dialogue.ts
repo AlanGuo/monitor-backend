@@ -18,7 +18,8 @@ export default class UserController {
   @PaginationDec()
   async getDialogues(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination;
-
+    // search displayName and name
+    const user = ctx.query.user;
     const dialogues = await DialogueModel.aggregate([
       {
         $match: {
@@ -31,9 +32,21 @@ export default class UserController {
       {$limit: pagination.limit},
       {
         $lookup: {
-          localField: "to",
           from: "users",
+          localField: "to",
           foreignField: "uuid",
+          // let: {to: "$to"},
+          // pipeline: [{
+          //   $match: {
+          //     $expr: {
+          //       $and: [{
+          //         $eq: ["$uuid", "$$to"],
+          //       }, {
+          //         $eq: ["$displayName", new RegExp(user, "i")],
+          //       }]
+          //     },
+          //   }
+          // }],
           as: "user"
         }
       },
@@ -47,7 +60,7 @@ export default class UserController {
                 $expr: {
                   $or: [
                     {from: "$$from", to: "$$to"},
-                    {from: "$$to", to: "from"}
+                    {from: "$$to", to: "from"},
                   ]
                 }
               }
@@ -107,7 +120,7 @@ export default class UserController {
               },
             }
           ],
-          as: 'media'
+          as: "media"
         }
       },
       {$project: fields},
