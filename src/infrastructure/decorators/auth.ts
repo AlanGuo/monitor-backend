@@ -6,7 +6,12 @@ export function AuthRequired() {
     const fn = descriptor.value;
     descriptor.value = async (ctx: IRouterContext, next: any) => {
       if (!ctx.state.user) {
-        unauthorized(ctx);
+        // 模拟本地登录态
+        ctx.state.user = {
+          uuid: 10000011
+        }
+        await fn(ctx, next);
+        //unauthorized(ctx);
       } else {
         await fn(ctx, next);
       }
