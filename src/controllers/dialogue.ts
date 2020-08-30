@@ -35,18 +35,6 @@ export default class UserController {
           from: "users",
           localField: "to",
           foreignField: "uuid",
-          // let: {to: "$to"},
-          // pipeline: [{
-          //   $match: {
-          //     $expr: {
-          //       $and: [{
-          //         $eq: ["$uuid", "$$to"],
-          //       }, {
-          //         $eq: ["$displayName", new RegExp(user, "i")],
-          //       }]
-          //     },
-          //   }
-          // }],
           as: "user"
         }
       },
