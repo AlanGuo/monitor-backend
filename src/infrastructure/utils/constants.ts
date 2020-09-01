@@ -33,8 +33,8 @@ export enum Sequence {
 
 export enum RESPONSE_CODE {
   NORMAL = 0,
-  LOGIN_IN_ERR = 1,
-  CAN_NOT_SUBSCRIBE_YOURSELF = 2,
+  LOGIN_IN_ERR = "login in error",
+  CAN_NOT_SUBSCRIBE_YOURSELF = "can not subscribe yourself",
 }
 
 export enum RABBITMQ_EXCHANGE_TYPE {

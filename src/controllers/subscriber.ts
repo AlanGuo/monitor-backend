@@ -25,8 +25,9 @@ export default class Subscriber {
   @AuthRequired()
   async getSubcribers(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
-    const subscribers = await SubscriberModel.find({uuid}).countDocuments();
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: subscribers});
+    const following = await SubscriberModel.find({uuid}).countDocuments();
+    const fans = await SubscriberModel.find({target: uuid}).countDocuments();
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {following, fans}});
   }
 
   @POST("/new/:target")
