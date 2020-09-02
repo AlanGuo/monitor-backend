@@ -49,6 +49,27 @@ export default class UserController {
         {$skip: pagination.offset},
         {$limit: pagination.limit},
         {
+          $lookup: {
+            from: "messages",
+            let: {from: "$from", to: "$to"},
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $or: [
+                      {from: "$$from", to: "$$to"},
+                      {from: "$$to", to: "from"},
+                    ]
+                  }
+                }
+              },
+              {$sort: {_id: -1}},
+              {$limit: 1}
+            ],
+            as: "lastMessage"
+          }
+        },
+        {
           $project: {
             _id: 0,
             from: 1,
