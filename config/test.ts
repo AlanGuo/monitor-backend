@@ -11,7 +11,7 @@ module.exports = {
     "sourcePath": "s3://newonlyfans/",
     "videoDestination": "s3://newonlyfans-public/media/video/",
     "imageFolder": "media/image/",
-    "chatVideoFolder": "media/video/chat/",
+    "videoFolder": "media/video/",
     "videoSourceFolder": "video/",
     "imageSourceFolder": "image/",
     "otherSourceFolder": "other/",

@@ -4,7 +4,7 @@ import {Controller, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import {getOnlineUser, redis} from "@src/infrastructure/redis";
 import {getSocketIO} from "@src/infrastructure/socket";
-import {MEDIA_PURPOSE, MEDIA_TYPE, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
+import {MEDIA_TYPE, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
 import {jsonResponse} from "@src/infrastructure/utils/helper";
 import {isImage} from "@src/infrastructure/utils/image";
 import {isVideo} from "@src/infrastructure/utils/video";
@@ -52,7 +52,7 @@ export default class CallbackController {
             const fileNameWithoutExt = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
             await redis.del(redisKey);
 
-            const urls = getMediaUrl(MEDIA_TYPE.VIDEO, fileNameWithoutExt, MEDIA_PURPOSE.CHAT) as VideoAmazonUrl;
+            const urls = getMediaUrl(MEDIA_TYPE.VIDEO, fileNameWithoutExt) as VideoAmazonUrl;
             msg = JSON.stringify({
               type: MEDIA_TYPE.IMAGE,
               key: decodedData.key,

@@ -4,7 +4,7 @@ import DialogueModel from "../models/dialogue";
 import MediaModel from "../models/media"
 import MessageModel from "../models/message"
 import {jsonResponse} from "@src/infrastructure/utils";
-import {MEDIA_PURPOSE, MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
@@ -116,7 +116,7 @@ export default class UserController {
 
     messages.forEach(item => {
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName, MEDIA_PURPOSE.CHAT);
+        media.urls = getMediaUrl(media.type, media.fileName);
         media.ready = true;
       })
     });

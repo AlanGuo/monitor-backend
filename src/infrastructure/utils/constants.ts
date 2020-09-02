@@ -11,11 +11,6 @@ export enum OAUTH {
   TWITTER = "twitter"
 }
 
-export enum MEDIA_PURPOSE {
-  CHAT = "chat",
-  POST = "post"
-}
-
 export enum SOCKET_CHANNEL {
   CHAT_MESSAGE = "chat message",
   MEDIA_CONVERTED = "media converted"

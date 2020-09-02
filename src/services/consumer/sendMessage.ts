@@ -33,7 +33,7 @@ export async function loadSendMessageConsumer() {
         let type = "", confKey = "";
         if (isVideo(ext)) {
           type = "Video";
-          confKey = m.purpose + type + "Folder";
+          confKey = "videoFolder";
         } else if (isImage(ext)) {
           type = "Image";
           confKey = "imageFolder";
@@ -46,7 +46,7 @@ export async function loadSendMessageConsumer() {
           console.log('add subscribers',  jsonMsg.to);
           await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
         } else {
-          jsonMsg.media.forEach((media: {key: string, purpose: string, type: string, ready: boolean, urls: any}) => {
+          jsonMsg.media.forEach((media: {key: string, type: string, ready: boolean, urls: any}) => {
             media.ready = true;
             switch (media.type) {
               case MEDIA_TYPE.IMAGE:

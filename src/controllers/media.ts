@@ -26,17 +26,15 @@ export default class MediaController {
   async convert(ctx: IRouterContext) {
     const key = decodeURIComponent(ctx.query.key);
     const ext = key.split(".")[1];
-    const purpose = ctx.query.purpose;
     if (isVideo(ext)) {
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
       const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + key;
-      const jobData: any = await createMediaConvertJob(s3FilePath, purpose);
+      const jobData: any = await createMediaConvertJob(s3FilePath);
       // media convertion job, three jobs
-      await redis.set(config.AWS_MEDIA_CONVERT[purpose + "VideoFolder"] + fileNameWithoutExt, JSON.stringify({
+      await redis.set(config.AWS_MEDIA_CONVERT["videoFolder"] + fileNameWithoutExt, JSON.stringify({
         fileCount: 3,
         key,
         subscribers: [],
-        purpose,
         owner: ctx.state.user.uuid
       }));
       ctx.body = jsonResponse({
@@ -51,7 +49,6 @@ export default class MediaController {
         fileCount: 1,
         key,
         subscribers: [],
-        purpose,
         owner: ctx.state.user.uuid
       }));
       ctx.body = jsonResponse();
