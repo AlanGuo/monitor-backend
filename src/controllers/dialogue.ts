@@ -18,53 +18,105 @@ export default class UserController {
   @PaginationDec()
   async getDialogues(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination;
-    // search displayName and name
     const user = ctx.query.user;
-    const dialogues = await DialogueModel.aggregate([
-      {
-        $match: {
-          from: ctx.state.user.uuid,
-          show: true
-        }
-      },
-      {$sort: {updateAt: -1}},
-      {$skip: pagination.offset},
-      {$limit: pagination.limit},
-      {
-        $lookup: {
-          from: "users",
-          localField: "to",
-          foreignField: "uuid",
-          as: "user"
-        }
-      },
-      {
-        $lookup: {
-          from: "messages",
-          let: {from: "$from", to: "$to"},
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $or: [
-                    {from: "$$from", to: "$$to"},
-                    {from: "$$to", to: "from"},
-                  ]
+
+    let dialogues = [];
+    if (user) {
+      // search displayName and name
+      dialogues = await DialogueModel.aggregate([
+        {
+          $match: {
+            from: ctx.state.user.uuid
+          }
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "to",
+            foreignField: "uuid",
+            as: "user"
+          }
+        },
+        {
+          $match: {
+            $or: [
+              {"user.name": {$regex: new RegExp(user, "i")}},
+              {"user.displayName": {$regex: new RegExp(user, "i")}}
+            ]
+          }
+        },
+        {$sort: {updateAt: -1}},
+        {$skip: pagination.offset},
+        {$limit: pagination.limit},
+        {
+          $project: {
+            _id: 0,
+            from: 1,
+            to: 1,
+            "user.uuid": 1,
+            "user.avatar": 1,
+            "user.name": 1,
+            "user.displayName": 1,
+            "lastMessage.content": 1,
+            "lastMessage.createdAt": 1
+          }
+        },
+      ])
+    } else {
+      dialogues = await DialogueModel.aggregate([
+        {
+          $match: {
+            from: ctx.state.user.uuid,
+            show: true
+          }
+        },
+        {$sort: {updateAt: -1}},
+        {$skip: pagination.offset},
+        {$limit: pagination.limit},
+        {
+          $lookup: {
+            from: "users",
+            localField: "to",
+            foreignField: "uuid",
+            as: "user"
+          }
+        },
+        {
+          $lookup: {
+            from: "messages",
+            let: {from: "$from", to: "$to"},
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $or: [
+                      {from: "$$from", to: "$$to"},
+                      {from: "$$to", to: "from"},
+                    ]
+                  }
                 }
-              }
-            },
-            {$sort: {_id: -1}},
-            {$limit: 1}
-          ],
-          as: "lastMessage"
-        }
-      },
-      {
-        $project: {
-          _id: 0, from: 1, to: 1, "user.uuid": 1, "user.avatar": 1, "user.name": 1, "user.displayName": 1, "lastMessage.content": 1, "lastMessage.createdAt": 1
-        }
-      },
-    ]);
+              },
+              {$sort: {_id: -1}},
+              {$limit: 1}
+            ],
+            as: "lastMessage"
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            from: 1,
+            to: 1,
+            "user.uuid": 1,
+            "user.avatar": 1,
+            "user.name": 1,
+            "user.displayName": 1,
+            "lastMessage.content": 1,
+            "lastMessage.createdAt": 1
+          }
+        },
+      ]);
+    }
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogues})
   }
 

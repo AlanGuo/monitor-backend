@@ -25,12 +25,13 @@ export async function loadSaveMessageConsumer() {
       }
       return item.fileName;
     }));
-
-    await MessageModel.create({
-      from: tmp.from,
-      to: tmp.to,
-      content: tmp.content,
-      media: media
-    })
+    if (tmp.content.trim("") !== "" || media.length > 0) {
+      await MessageModel.create({
+        from: tmp.from,
+        to: tmp.to,
+        content: tmp.content,
+        media: media
+      })
+    }
   })
 }
