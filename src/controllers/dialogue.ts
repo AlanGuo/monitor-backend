@@ -19,24 +19,62 @@ export default class UserController {
   async getDialogues(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination;
     const user = ctx.query.user;
+    const fields = {
+      $project: {
+        _id: 0,
+        from: 1,
+        to: 1,
+        "user.uuid": 1,
+        "user.avatar": 1,
+        "user.name": 1,
+        "user.displayName": 1,
+        "lastMessage.content": 1,
+        "lastMessage.createdAt": 1
+      }
+    }
+    const innerUser = {
+      $lookup: {
+        from: "users",
+        localField: "to",
+        foreignField: "uuid",
+        as: "user"
+      }
+    };
+    const getLastMessage = {
+      $lookup: {
+        from: "messages",
+        let: {from: "$from", to: "$to"},
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $or: [
+                  {from: "$$from", to: "$$to"},
+                  {from: "$$to", to: "from"},
+                ]
+              }
+            }
+          },
+          {$sort: {_id: -1}},
+          {$limit: 1}
+        ],
+        as: "lastMessage"
+      }
+    };
+    const sort = {$sort: {updateAt: -1}};
+    const skip = {$skip: pagination.offset};
+    const limit = {$limit: pagination.limit};
 
-    let dialogues = [];
+    let aggregations = [];
     if (user) {
       // search displayName and name
-      dialogues = await DialogueModel.aggregate([
+      aggregations = [
         {
           $match: {
             from: ctx.state.user.uuid
           }
         },
-        {
-          $lookup: {
-            from: "users",
-            localField: "to",
-            foreignField: "uuid",
-            as: "user"
-          }
-        },
+        innerUser,
         {
           $match: {
             $or: [
@@ -45,99 +83,29 @@ export default class UserController {
             ]
           }
         },
-        {$sort: {updateAt: -1}},
-        {$skip: pagination.offset},
-        {$limit: pagination.limit},
-        {
-          $lookup: {
-            from: "messages",
-            let: {from: "$from", to: "$to"},
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $or: [
-                      {from: "$$from", to: "$$to"},
-                      {from: "$$to", to: "from"},
-                    ]
-                  }
-                }
-              },
-              {$sort: {_id: -1}},
-              {$limit: 1}
-            ],
-            as: "lastMessage"
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            from: 1,
-            to: 1,
-            "user.uuid": 1,
-            "user.avatar": 1,
-            "user.name": 1,
-            "user.displayName": 1,
-            "lastMessage.content": 1,
-            "lastMessage.createdAt": 1
-          }
-        },
-      ])
+        sort,
+        skip,
+        limit,
+        getLastMessage,
+        fields
+      ];
     } else {
-      dialogues = await DialogueModel.aggregate([
+      aggregations = [
         {
           $match: {
             from: ctx.state.user.uuid,
             show: true
           }
         },
-        {$sort: {updateAt: -1}},
-        {$skip: pagination.offset},
-        {$limit: pagination.limit},
-        {
-          $lookup: {
-            from: "users",
-            localField: "to",
-            foreignField: "uuid",
-            as: "user"
-          }
-        },
-        {
-          $lookup: {
-            from: "messages",
-            let: {from: "$from", to: "$to"},
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $or: [
-                      {from: "$$from", to: "$$to"},
-                      {from: "$$to", to: "from"},
-                    ]
-                  }
-                }
-              },
-              {$sort: {_id: -1}},
-              {$limit: 1}
-            ],
-            as: "lastMessage"
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            from: 1,
-            to: 1,
-            "user.uuid": 1,
-            "user.avatar": 1,
-            "user.name": 1,
-            "user.displayName": 1,
-            "lastMessage.content": 1,
-            "lastMessage.createdAt": 1
-          }
-        },
-      ]);
+        sort,
+        skip,
+        limit,
+        innerUser,
+        getLastMessage,
+        fields
+      ];
     }
+    const dialogues = await DialogueModel.aggregate(aggregations);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogues})
   }
 
