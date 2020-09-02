@@ -58,7 +58,7 @@ export async function loadSocketService(io: socket.Server) {
     socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async (msg: string) => {
       // TODO
       // 客户端进行了媒体转换
-      const {socketId, key}: { socketId: string, key: string } = JSON.parse(msg);
+      const {key}: { socketId: string, key: string } = JSON.parse(msg);
       const ext = key.split(".")[1];
       let type = "", confKey = "";
       if (isVideo(ext)) {
@@ -77,7 +77,7 @@ export async function loadSocketService(io: socket.Server) {
       }
     });
 
-    socket.on("disconnect", async (msg: string) => {
+    socket.on("disconnect", async () => {
       await delOnlineUser(socket.user.uuid.toString());
     })
   });
