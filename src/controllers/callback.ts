@@ -28,7 +28,7 @@ export default class CallbackController {
       // 视频文件有下划线分割"_"，这里把下划线也滤除
       redisKey = redisKey.split("_")[0];
       const data = await redis.get(redisKey);
-      console.log(data);
+      console.log(redisKey, data);
       if (data) {
         const decodedData = JSON.parse(data);
         if (decodedData.fileCount > 1) {
