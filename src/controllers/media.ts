@@ -22,7 +22,7 @@ export default class MediaController {
   }
 
   @GET("/convert")
-  @AuthRequired()
+  // @AuthRequired()
   async convert(ctx: IRouterContext) {
     const key = decodeURIComponent(ctx.query.key);
     const ext = key.split(".")[1];
