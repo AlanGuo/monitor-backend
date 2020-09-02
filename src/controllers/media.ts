@@ -30,13 +30,21 @@ export default class MediaController {
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
       const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + key;
       const jobData: any = await createMediaConvertJob(s3FilePath);
-      // media convertion job, three jobs
-      await redis.set(config.AWS_MEDIA_CONVERT["videoFolder"] + fileNameWithoutExt, JSON.stringify({
-        fileCount: 3,
-        key,
-        subscribers: [],
-        owner: ctx.state.user.uuid
-      }));
+      const data = await redis.get(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt);
+      if (data) {
+        const decodedData = JSON.parse(data);
+        decodedData.fileCount = 3;
+        decodedData.key = key;
+        await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify(decodedData));
+      } else {
+        // media convertion job, three jobs
+        await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify({
+          fileCount: 3,
+          key,
+          subscribers: []
+        }));
+      }
+      
       ctx.body = jsonResponse({
         data: {
           jobId: jobData.Job.Id,
@@ -44,13 +52,19 @@ export default class MediaController {
       });
     } else if (isImage(ext)) {
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.imageSourceFolder, "");
-
-      await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
-        fileCount: 1,
-        key,
-        subscribers: [],
-        owner: ctx.state.user.uuid
-      }));
+      const data = await redis.get(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt);
+      if (data) {
+        const decodedData = JSON.parse(data);
+        decodedData.fileCount = 1;
+        decodedData.key = key;
+        await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify(decodedData));
+      } else {
+        await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
+          fileCount: 1,
+          key,
+          subscribers: []
+        }));
+      }
       ctx.body = jsonResponse();
     }
   }

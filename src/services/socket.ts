@@ -73,7 +73,13 @@ export async function loadSocketService(io: socket.Server) {
       if (data) {
         const decodedData = JSON.parse(data);
         decodedData.subscribers.push(socket.user.uuid);
+        decodedData.owner = socket.user.uuid;
         await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
+      } else {
+        await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify({
+          subscribers: [socket.user.uuid],
+          owner: socket.user.uuid
+        }));
       }
     });
 
