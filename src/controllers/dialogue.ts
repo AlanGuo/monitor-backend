@@ -49,7 +49,7 @@ export default class UserController {
             $match: {
               $expr: {
                 $or: [
-                  {from: "$$from", to: "$$to"},
+                  {from: "$$from", to: "to"},
                   {from: "$$to", to: "from"},
                 ]
               }
@@ -65,7 +65,7 @@ export default class UserController {
     const skip = {$skip: pagination.offset};
     const limit = {$limit: pagination.limit};
 
-    let aggregations = [];
+    let aggregations;
     if (user) {
       // search displayName and name
       aggregations = [
