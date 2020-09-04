@@ -12,7 +12,7 @@ export interface Post extends Document {
 const PostModel: Schema = new Schema({
   from: {type: Number, required},
   media: {type: Array(String), default: []},
-  content: {type: String, required},
+  content: {type: String, required, default: ""},
   deleted: {type: Boolean }
 }, {
   timestamps: true

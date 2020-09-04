@@ -37,7 +37,7 @@ export default class PostsController {
     await postModel.create({
       from: uuid,
       media,
-      content: data.content ?? ""
+      content: data.content
     });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
