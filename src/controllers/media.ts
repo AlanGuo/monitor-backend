@@ -8,7 +8,7 @@ import {jsonResponse} from "@src/infrastructure/utils/helper";
 import {redis} from "../infrastructure/redis";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
-import {AuthRequired} from "@src/infrastructure/decorators/auth";
+import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
 
 @Controller({prefix: "/media"})
 export default class MediaController {
@@ -22,7 +22,6 @@ export default class MediaController {
   }
 
   @GET("/convert")
-  // @AuthRequired()
   async convert(ctx: IRouterContext) {
     const key = decodeURIComponent(ctx.query.key);
     const ext = key.split(".")[1];
@@ -86,5 +85,11 @@ export default class MediaController {
         hd: config.AWS_S3.videoPrefix + fileNameWithoutExt + config.AWS_S3.hdSuffix,
       }
     });
+  }
+
+  @GET("/signed")
+  async getSignedUrl (ctx: IRouterContext) {
+    const key = decodeURIComponent(ctx.query.key);
+    ctx.body = await getSignedUrl(key);
   }
 }

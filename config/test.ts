@@ -24,6 +24,10 @@ module.exports = {
     hdSuffix: "_generic_hd_mp4_4000kbps.mp4",
     successActionStatus: "201",
   },
+  AWS_CLOUDFRONT: {
+    keyPairId: "APKAJH6JUHUQ35LPLWOA",
+    url: "https://d361bamx0sbpue.cloudfront.net/"
+  },
   CORS: {
     origin: "*"
   },
