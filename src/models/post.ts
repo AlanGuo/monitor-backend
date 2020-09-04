@@ -7,12 +7,16 @@ export interface Post extends Document {
   media?: string[],
   content?: string;
   deleted?: boolean;
+  like?: number;
+  comment?: number;
 }
 
 const PostModel: Schema = new Schema({
   from: {type: Number, required},
   media: {type: Array(String), default: []},
   content: {type: String, default: ""},
+  like: {type: Number, default: 0},
+  comment: {type: Number, default: 0},
   deleted: {type: Boolean }
 }, {
   timestamps: true

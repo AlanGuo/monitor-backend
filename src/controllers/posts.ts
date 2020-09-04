@@ -19,7 +19,7 @@ export default class PostsController {
     const pagination = ctx.state.pagination;
     const uuid = ctx.state.user.uuid;
     const fields = {
-      _id: 0, from: 1, content: 1, createdAt: 1, "media.type": 1, "media.fileName": 1,
+      _id: 0, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
       "user.uuid": 1, "user.name": 1, "user.displayName": 1
     };
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
@@ -38,6 +38,56 @@ export default class PostsController {
           as: "user"
         }
       },
+      {
+        $lookup: {
+          from: "media",
+          let: {mediaIds: "$media"},
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$fileName", "$$mediaIds"],
+                }
+              },
+            }
+          ],
+          as: "media"
+        }
+      },
+      {$project: fields},
+    ]);
+    posts.forEach(item => {
+      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+        media.urls = getMediaUrl(media.type, media.fileName);
+        media.ready = true;
+      })
+    });
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts})
+  }
+
+  @GET("/list")
+  @AuthRequired()
+  @PaginationDec()
+  async getMyPosts(ctx: IRouterContext, next: any) {
+    const pagination = ctx.state.pagination;
+    const uuid = ctx.state.user.uuid;
+    const fields = {
+      _id: 0,
+      from: 1,
+      content: 1,
+      createdAt: 1,
+      like: 1,
+      comment: 1,
+      "media.type": 1,
+      "media.fileName": 1
+    };
+    const posts = await postModel.aggregate([
+      {
+        $match: {from: uuid}
+      },
+      {$sort: {_id: -1}},
+      {$skip: pagination.offset},
+      {$limit: pagination.limit},
       {
         $lookup: {
           from: "media",
