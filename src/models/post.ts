@@ -4,7 +4,7 @@ const required = true;
 
 export interface Post extends Document {
   from: number,
-  media: string[],
+  media?: string[],
   content?: string;
   deleted?: boolean;
 }
