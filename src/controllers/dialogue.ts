@@ -1,7 +1,6 @@
 import {Controller, GET} from "@src/infrastructure/decorators/koa";
-import KoaRouter, {IRouterContext} from "koa-router";
+import {IRouterContext} from "koa-router";
 import DialogueModel from "../models/dialogue";
-import MediaModel from "../models/media"
 import MessageModel from "../models/message"
 import {jsonResponse} from "@src/infrastructure/utils";
 import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
