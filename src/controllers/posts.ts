@@ -62,7 +62,8 @@ export default class PostsController {
         media.ready = true;
       })
     });
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts})
+    const total = await postModel.countDocuments({from: uuid});
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total}})
   }
 
   @GET("/my/list")
