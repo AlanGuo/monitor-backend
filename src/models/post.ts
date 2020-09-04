@@ -17,7 +17,7 @@ const PostModel: Schema = new Schema({
   content: {type: String, default: ""},
   like: {type: Number, default: 0},
   comment: {type: Number, default: 0},
-  deleted: {type: Boolean }
+  deleted: {type: Boolean, default: false}
 }, {
   timestamps: true
 });

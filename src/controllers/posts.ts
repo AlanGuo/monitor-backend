@@ -1,4 +1,4 @@
-import {Controller, GET, POST} from "@src/infrastructure/decorators/koa";
+import {Controller, GET, POST, DEL, PUT} from "@src/infrastructure/decorators/koa";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {IRouterContext} from "koa-router";
@@ -8,6 +8,7 @@ import {jsonResponse} from "@src/infrastructure/utils";
 import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
+import {Types} from "mongoose";
 
 @Controller({prefix: "/posts"})
 export default class PostsController {
@@ -19,13 +20,13 @@ export default class PostsController {
     const pagination: Pagination = ctx.state.pagination;
     const uuid = ctx.state.user.uuid;
     const fields = {
-      _id: 0, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
+      _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
       "user.uuid": 1, "user.name": 1, "user.displayName": 1
     };
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
     const posts = await postModel.aggregate([
       {
-        $match: {from: {$in: followers.map(item => item.target)}}
+        $match: {from: {$in: followers.map(item => item.target)}, deleted: false}
       },
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
@@ -72,7 +73,7 @@ export default class PostsController {
     const pagination: Pagination = ctx.state.pagination;
     const uuid = ctx.state.user.uuid;
     const fields = {
-      _id: 0,
+      _id: 1,
       from: 1,
       content: 1,
       createdAt: 1,
@@ -81,10 +82,13 @@ export default class PostsController {
       "media.type": 1,
       "media.fileName": 1
     };
+    const content = ctx.query.content;
+    const match: any = {from: uuid, deleted: false};
+    if (content) {
+      match.content = {$regex: new RegExp(content, "i")}
+    }
     const posts = await postModel.aggregate([
-      {
-        $match: {from: uuid}
-      },
+      {$match: match},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
@@ -112,7 +116,7 @@ export default class PostsController {
         media.ready = true;
       })
     });
-    const total = await postModel.countDocuments({from: uuid});
+    const total = await postModel.countDocuments(match);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total}})
   }
 
@@ -139,4 +143,90 @@ export default class PostsController {
     });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
+
+  @DEL("/delete/:id")
+  @AuthRequired()
+  async del(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const id = ctx.params.id;
+    await postModel.updateOne({from: uuid, _id: id}, {$set: {deleted: true}});
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
+  }
+
+  @PUT("/put/:id")
+  @AuthRequired()
+  async put(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const id = ctx.params.id;
+    const data = ctx.request.body;
+    const media = data.media?.map((item: any) => {
+      if (item.fileName) {
+        return item.fileName
+      }
+      switch (item.type) {
+        case MEDIA_TYPE.VIDEO:
+          return item.key.split("/")[1].split(".")[0];
+        case MEDIA_TYPE.IMAGE:
+          return item.key.split("/")[1]
+      }
+    });
+    let change: any = {};
+    if (data.content) {
+      change.content = data.content;
+    }
+    if (media && media.length > 0) {
+      change.media = media
+    }
+    await postModel.updateOne({_id: id, from: uuid}, {$set: change});
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
+  }
+
+  @GET("/list/:id")
+  @AuthRequired()
+  async get(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const fields = {
+      _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
+      "user.uuid": 1, "user.name": 1, "user.displayName": 1
+    };
+    const id = ctx.params.id;
+    const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
+    const posts = await postModel.aggregate([
+      {
+        $match: {
+          _id: Types.ObjectId(id),
+          from: {$in: followers.map(item => item.target).concat([uuid])},
+          deleted: false
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "from",
+          foreignField: "uuid",
+          as: "user"
+        }
+      },
+      {
+        $lookup: {
+          from: "media",
+          let: {mediaIds: "$media"},
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$fileName", "$$mediaIds"],
+                }
+              },
+            }
+          ],
+          as: "media"
+        }
+      },
+      {$project: fields},
+    ]);
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts})
+
+  }
+
 }
