@@ -24,6 +24,9 @@ export default class PostsController {
     const uuid = ctx.state.user.uuid;
     const data = ctx.request.body;
     const media = data.media.map((item: any) => {
+      if (item.fileName) {
+        return item.fileName
+      }
       switch (item.type) {
         case MEDIA_TYPE.VIDEO:
           return item.key.split("/")[1].split(".")[0];
