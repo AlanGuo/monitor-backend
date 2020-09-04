@@ -4,6 +4,7 @@ import {MediaConvert} from "aws-sdk";
 import {job} from "@config/mediaconvert/job";
 import {MEDIA_TYPE} from "@src/infrastructure/utils/constants";
 import {ImageAmazonUrl, VideoAmazonUrl} from "@src/interface";
+import { getSignedUrl } from "./cloudfront";
 
 const mediaConvert = new MediaConvert({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -45,12 +46,12 @@ export async function getJob(jobId: string) {
 export function getMediaUrl(type: MEDIA_TYPE, fileName: string): ImageAmazonUrl | VideoAmazonUrl {
   switch (type) {
     case MEDIA_TYPE.IMAGE:
-      return { url:config.AWS_S3.imagePrefix + fileName, thumbnail: config.AWS_S3.imagePrefix + fileName};
+      return { url:getSignedUrl(config.AWS_S3.imagePrefix + fileName), thumbnail: getSignedUrl(config.AWS_S3.imagePrefix + fileName)};
     case MEDIA_TYPE.VIDEO:
       return {
-        screenshot: config.AWS_S3.videoPrefix + fileName + config.AWS_S3.screenshotSuffix,
-        low: config.AWS_S3.videoPrefix + fileName + config.AWS_S3.lowSuffix,
-        hd: config.AWS_S3.videoPrefix + fileName + config.AWS_S3.hdSuffix,
+        screenshot: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.screenshotSuffix),
+        low: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.lowSuffix),
+        hd: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.hdSuffix),
       };
     default:
       throw Error("media type not exists")

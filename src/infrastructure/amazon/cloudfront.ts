@@ -3,7 +3,7 @@ import config from "config";
 // @ts-ignore
 import cfsign from "aws-cloudfront-sign";
 
-export async function getSignedUrl(key: string) {
+export function getSignedUrl(key: string) {
   const signingParams = {
     keypairId: config.AWS_CLOUDFRONT.keyPairId,
     // Optional - this can be used as an alternative to privateKeyString

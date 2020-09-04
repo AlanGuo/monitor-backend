@@ -17,8 +17,8 @@ module.exports = {
     "otherSourceFolder": "other/",
   },
   AWS_S3: {
-    videoPrefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/media/video/",
-    imagePrefix: "https://newonlyfans-public.s3-ap-southeast-1.amazonaws.com/media/image/",
+    videoPrefix: "media/video/",
+    imagePrefix: "media/image/",
     screenshotSuffix: "_screenshot.0000000.jpg",
     lowSuffix: "_generic_low_mp4_800kbps.mp4",
     hdSuffix: "_generic_hd_mp4_4000kbps.mp4",
