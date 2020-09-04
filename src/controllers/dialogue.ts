@@ -49,8 +49,8 @@ export default class UserController {
             $match: {
               $expr: {
                 $or: [
-                  {from: "$$from", to: "to"},
-                  {from: "$$to", to: "from"},
+                  {from: "$$from", to: "$$to"},
+                  {from: "$$to", to: "$$from"},
                 ]
               }
             }
