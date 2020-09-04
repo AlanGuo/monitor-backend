@@ -120,6 +120,60 @@ export default class PostsController {
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total}})
   }
 
+  @GET("/:id/list")
+  @PaginationDec()
+  async getUserPosts(ctx: IRouterContext, next: any) {
+    const pagination: Pagination = ctx.state.pagination;
+    const uuid = ctx.params.id;
+    const fields = {
+      _id: 1,
+      from: 1,
+      content: 1,
+      createdAt: 1,
+      like: 1,
+      comment: 1,
+      "media.type": 1,
+      "media.fileName": 1
+    };
+    const content = ctx.query.content;
+    const match: any = {from: Number(uuid), deleted: false};
+    if (content) {
+      match.content = {$regex: new RegExp(content, "i")}
+    }
+    const posts = await postModel.aggregate([
+      {$match: match},
+      {$sort: {_id: -1}},
+      {$skip: pagination.offset},
+      {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "media",
+          let: {mediaIds: "$media"},
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$fileName", "$$mediaIds"],
+                }
+              },
+            }
+          ],
+          as: "media"
+        }
+      },
+      {$project: fields},
+    ]);
+    console.log(posts)
+    posts.forEach(item => {
+      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+        media.urls = getMediaUrl(media.type, media.fileName);
+        media.ready = true;
+      })
+    });
+    const total = await postModel.countDocuments(match);
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total}})
+  }
+
   @POST("/new")
   @AuthRequired()
   async new(ctx: IRouterContext, next: any) {
