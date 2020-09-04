@@ -65,7 +65,7 @@ export default class PostsController {
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts})
   }
 
-  @GET("/list")
+  @GET("/my/list")
   @AuthRequired()
   @PaginationDec()
   async getMyPosts(ctx: IRouterContext, next: any) {
