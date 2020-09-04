@@ -16,7 +16,7 @@ export default class PostsController {
   @AuthRequired()
   @PaginationDec()
   async getPosts(ctx: IRouterContext, next: any) {
-    const pagination = ctx.state.pagination;
+    const pagination: Pagination = ctx.state.pagination;
     const uuid = ctx.state.user.uuid;
     const fields = {
       _id: 0, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
@@ -62,15 +62,14 @@ export default class PostsController {
         media.ready = true;
       })
     });
-    const total = await postModel.countDocuments({from: uuid});
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total}})
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts}})
   }
 
   @GET("/my/list")
   @AuthRequired()
   @PaginationDec()
   async getMyPosts(ctx: IRouterContext, next: any) {
-    const pagination = ctx.state.pagination;
+    const pagination: Pagination = ctx.state.pagination;
     const uuid = ctx.state.user.uuid;
     const fields = {
       _id: 0,
@@ -113,7 +112,8 @@ export default class PostsController {
         media.ready = true;
       })
     });
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts})
+    const total = await postModel.countDocuments({from: uuid});
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total}})
   }
 
   @POST("/new")
