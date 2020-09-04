@@ -26,7 +26,9 @@ module.exports = {
   },
   AWS_CLOUDFRONT: {
     keyPairId: "APKAJH6JUHUQ35LPLWOA",
-    url: "https://d361bamx0sbpue.cloudfront.net/"
+    url: "https://d361bamx0sbpue.cloudfront.net/",
+    // 一小时
+    timeLimit: 3600 * 1000
   },
   CORS: {
     origin: "*"
