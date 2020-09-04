@@ -279,6 +279,12 @@ export default class PostsController {
       },
       {$project: fields},
     ]);
+    posts.forEach(item => {
+      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+        media.urls = getMediaUrl(media.type, media.fileName);
+        media.ready = true;
+      })
+    });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts})
 
   }
