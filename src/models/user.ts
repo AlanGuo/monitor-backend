@@ -13,8 +13,8 @@ export interface IUser extends Document {
   avatar? :string,
 
   subPrice?: number,
-  selfDesc?: string,
-  selfWeb?: string,
+  desc?: string,
+  website?: string,
 
   google?: string,
   twitter?: string,
@@ -31,8 +31,8 @@ const UserModel: Schema = new Schema({
   email: {type: String, required: false, unique, sparse},
   avatar: {type: String, required: false, unique, sparse},
   subPrice: {type: Number, required: false},
-  selfDesc: {type: String, required: false},
-  selfWeb: {type: String, required: false},
+  desc: {type: String, required: false},
+  website: {type: String, required: false},
 
   google: {type: String, required: false, unique, sparse},
   twitter: {type: String, required: false, unique, sparse},

@@ -240,7 +240,7 @@ export default class PostsController {
     const uuid = ctx.state.user.uuid;
     const fields = {
       _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
-      "user.uuid": 1, "user.name": 1, "user.displayName": 1
+      "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1
     };
     const id = ctx.params.id;
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
@@ -284,7 +284,7 @@ export default class PostsController {
         media.ready = true;
       })
     });
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts})
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts[0]})
 
   }
 
