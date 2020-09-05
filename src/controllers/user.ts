@@ -6,7 +6,7 @@ import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
 import {getOnlineUser} from "@src/infrastructure/redis";
 
-@Controller({prefix: "/users"})
+@Controller({prefix: "/user"})
 export default class UserController {
 
   // 查自己的信息

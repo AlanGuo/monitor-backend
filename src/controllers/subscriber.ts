@@ -30,6 +30,18 @@ export default class Subscriber {
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {following, fans}});
   }
 
+  @GET("/check/:target")
+  @AuthRequired()
+  async checkSubscription(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const target = Number(ctx.params.target);
+    const sub = await SubscriberModel.findOne({
+      uuid,
+      target
+    });
+    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: !!sub });
+  }
+
   @POST("/new/:target")
   @AuthRequired()
   async subNewUser(ctx: IRouterContext, next: any) {
@@ -38,7 +50,29 @@ export default class Subscriber {
     if (target === uuid) {
       ctx.body = jsonResponse({code: RESPONSE_CODE.CAN_NOT_SUBSCRIBE_YOURSELF});
     } else {
-      await SubscriberModel.create({
+      const sub = await SubscriberModel.findOne({
+        uuid,
+        target
+      });
+      if (!sub) {
+        await SubscriberModel.create({
+          uuid,
+          target
+        });
+      }
+      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL });
+    }
+  }
+
+  @POST("/cancel/:target")
+  @AuthRequired()
+  async CancelSubUser(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const target = Number(ctx.params.target);
+    if (target === uuid) {
+      ctx.body = jsonResponse({code: RESPONSE_CODE.CAN_NOT_UNSUBSCRIBE_YOURSELF});
+    } else {
+      await SubscriberModel.deleteOne({
         uuid,
         target
       });

@@ -10,7 +10,7 @@ import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {Types} from "mongoose";
 
-@Controller({prefix: "/posts"})
+@Controller({prefix: "/post"})
 export default class PostsController {
 
   @GET("/list")
@@ -163,7 +163,6 @@ export default class PostsController {
       },
       {$project: fields},
     ]);
-    console.log(posts)
     posts.forEach(item => {
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName);
