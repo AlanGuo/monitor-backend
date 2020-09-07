@@ -19,14 +19,20 @@ export default class PostsController {
   async getPosts(ctx: IRouterContext, next: any) {
     const pagination: Pagination = ctx.state.pagination;
     const uuid = ctx.state.user.uuid;
+    const content = ctx.query.content;
+
     const fields = {
       _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
       "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1
     };
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
+    const match: any = {from: {$in: followers.map(item => item.target)}, deleted: false};
+    if (content) {
+      match.content = {$regex: new RegExp(content, "i")}
+    }
     const posts = await postModel.aggregate([
       {
-        $match: {from: {$in: followers.map(item => item.target)}, deleted: false}
+        $match: match
       },
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
@@ -63,7 +69,8 @@ export default class PostsController {
         media.ready = true;
       })
     });
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts}})
+    const total = await postModel.countDocuments(match);
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total, page: pagination.page, size: pagination.size}})
   }
 
   @GET("/my/list")
@@ -117,7 +124,10 @@ export default class PostsController {
       })
     });
     const total = await postModel.countDocuments(match);
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total}})
+    ctx.body = jsonResponse({
+      code: RESPONSE_CODE.NORMAL,
+      data: {posts, total, page: pagination.page, size: pagination.size}
+    })
   }
 
   @GET("/:id/list")
@@ -170,7 +180,10 @@ export default class PostsController {
       })
     });
     const total = await postModel.countDocuments(match);
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total}})
+    ctx.body = jsonResponse({
+      code: RESPONSE_CODE.NORMAL,
+      data: {posts, total, page: pagination.page, size: pagination.size}
+    })
   }
 
   @POST("/new")

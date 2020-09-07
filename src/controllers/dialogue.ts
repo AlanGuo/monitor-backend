@@ -82,11 +82,7 @@ export default class UserController {
             ]
           }
         },
-        sort,
-        skip,
-        limit,
-        getLastMessage,
-        fields
+        sort, skip, limit, getLastMessage, fields
       ];
     } else {
       aggregations = [
@@ -96,12 +92,7 @@ export default class UserController {
             show: true
           }
         },
-        sort,
-        skip,
-        limit,
-        innerUser,
-        getLastMessage,
-        fields
+        sort, skip, limit, innerUser, getLastMessage, fields
       ];
     }
     const dialogues = await DialogueModel.aggregate(aggregations);
