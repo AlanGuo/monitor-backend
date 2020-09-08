@@ -10,7 +10,7 @@ export async function dbConnect(test = false): Promise<void> {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useFindAndModify: true,
-        useCreateIndex: true
+        useCreateIndex: true,
       });
     console.log(`connected to ${config.MONGODB.Name}:${url}`)
   }

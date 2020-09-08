@@ -3,13 +3,13 @@ import {Schema, Types, model, Document} from "mongoose";
 const required = true;
 
 export interface ILike extends Document {
-  postId: number,
-  from: number,
+  postId: string,
+  uuid: number,
 }
 
 const likeModel: Schema = new Schema({
-  postId: {type: Number, required},
-  from: {type: Number, required},
+  postId: {type: String, required},
+  uuid: {type: Number, required},
 }, {
   timestamps: true
 });
