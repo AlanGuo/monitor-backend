@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 import socket from "socket.io";
 import { Server } from "http";
 

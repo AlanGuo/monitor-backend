@@ -1,4 +1,4 @@
-import {Schema, Types, model, Document} from "mongoose";
+import {Schema, model, Document} from "mongoose";
 import {Profile} from "@src/interface";
 
 const required = true;

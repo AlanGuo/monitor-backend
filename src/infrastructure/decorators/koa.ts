@@ -1,11 +1,10 @@
-// @ts-ignore
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 import KoaRouter, {IRouterContext} from "koa-router";
 import {REQUEST_METHOD} from "@src/infrastructure/utils/constants";
 const router = new KoaRouter({prefix: config.API_PREFIX});
 
 function Controller({prefix}: { prefix: string }) {
-  return function (target: any) {
+  return function (target: any): void {
     const classPrefix = (prefix ? prefix.replace(/\/+$/g, "") : "");
     target.router = router;
     const reqList = Object.getOwnPropertyDescriptors(target.prototype);
@@ -20,7 +19,7 @@ function Controller({prefix}: { prefix: string }) {
 }
 
 function Request({url, method}: { url: string, method: string }) {
-  return function (target: any, name: string, descriptor: any) {
+  return function (target: any, name: string, descriptor: any): void {
     const fn = descriptor.value;
     descriptor.value = (router: any, {prefix}: { prefix: string }) => {
       router[method](prefix + url, async (ctx: IRouterContext, next: any) => {
@@ -30,22 +29,22 @@ function Request({url, method}: { url: string, method: string }) {
   }
 }
 
-function POST(url: string = "") {
+function POST(url = "") {
   return Request({url, method: REQUEST_METHOD.POST})
 }
 
 //get 请求
-function GET(url: string = "") {
+function GET(url = "") {
   return Request({url, method: REQUEST_METHOD.GET})
 }
 
 //PUT 请求
-function PUT(url: string = "") {
+function PUT(url = "") {
   return Request({url, method: REQUEST_METHOD.PUT})
 }
 
 //DEL请求
-function DEL(url: string = "") {
+function DEL(url = "") {
   return Request({url, method: REQUEST_METHOD.DELETE})
 }
 

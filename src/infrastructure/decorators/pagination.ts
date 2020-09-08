@@ -1,5 +1,5 @@
 import { IRouterContext } from "koa-router";
-import {queryToPagination, unauthorized} from "../utils";
+import {queryToPagination} from "../utils";
 
 export function PaginationDec() {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {

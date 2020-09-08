@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 import {S3, CloudFront} from "aws-sdk";
 import path from "path";
 import {newUniqId, newUuid} from "../utils/uuid";

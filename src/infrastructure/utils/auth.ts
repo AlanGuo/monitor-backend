@@ -47,7 +47,7 @@ export async function generateAuth(params: IGenerateAuthParams): Promise<IGenera
   })
 }
 
-export async function generateToken(uuid: Number) {
+export async function generateToken(uuid: number) {
   const token = await generateAuth({content: `${uuid}${Math.random()}`, saltLength: 128});
   // const key = getAuthKey(uuid);
   // const now = Date.now();
@@ -56,10 +56,6 @@ export async function generateToken(uuid: Number) {
   return token.salt;
 }
 
-export async function checkAuth(auth: string) {
-
-}
-
-export function getAuthKey(uuid: Number) {
+export function getAuthKey(uuid: number) {
   return `auth_${uuid}`
 }

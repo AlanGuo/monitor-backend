@@ -1,4 +1,4 @@
-import KoaRouter, {IRouterContext} from "koa-router";
+import KoaRouter from "koa-router";
 import passport from "koa-passport"
 import {jsonResponse} from "@src/infrastructure/utils";
 import {delOnlineUser, getOnlineUser} from "@src/infrastructure/redis";

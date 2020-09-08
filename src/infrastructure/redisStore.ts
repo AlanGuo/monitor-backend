@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config"
+import config from "@src/infrastructure/utils/config"
 import RedisStore from "koa-redis";
 import {SessionStore} from "koa-generic-session";
 

@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 import {delOnlineUser, getOnlineUser, redis, setOnlineUser} from "../infrastructure/redis";
 import socket from "socket.io";
 import {
@@ -16,6 +15,7 @@ import {loadRedisStore} from "@src/infrastructure/redisStore";
 import {SocketAddUser} from "@src/infrastructure/socket";
 import UserModel from "../models/user";
 import {Producer} from "@src/infrastructure/rabbitMq";
+import {mediaType} from "@src/infrastructure/utils";
 
 const store = loadRedisStore();
 
@@ -28,7 +28,7 @@ export async function loadSocketService(io: socket.Server) {
     if (!socket.handshake.headers.cookie) {
       return next(new Error(`Didn't receive cookies`));
     }
-    let cookies = cookie.parse(socket.handshake.headers.cookie);
+    const cookies = cookie.parse(socket.handshake.headers.cookie);
     const session = await store.get("koa:sess:" + cookies[`${SESSION_KEY}`]);
     if (session && session.passport.user) {
       if (await UserModel.findOne({uuid: session.passport.user.uuid})) {
@@ -49,7 +49,7 @@ export async function loadSocketService(io: socket.Server) {
       // when "to" exists then publish the msg to mq
       const tmp = JSON.parse(msg);
       tmp.from = socket.user.uuid;
-      if (tmp.to && UserModel.exists({uuid: tmp.to})) {
+      if (tmp.to && await UserModel.exists({uuid: tmp.to})) {
         await messageProducer.publish(JSON.stringify(tmp));
       }
     });
@@ -60,23 +60,16 @@ export async function loadSocketService(io: socket.Server) {
       // 客户端进行了媒体转换
       const {key}: { socketId: string, key: string } = JSON.parse(msg);
       const ext = key.split(".")[1];
-      let type = "", confKey = "";
-      if (isVideo(ext)) {
-        type = "Video";
-        confKey = "videoFolder";
-      } else if (isImage(ext)) {
-        type = "Image";
-        confKey = "imageFolder";
-      }
-      const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[type.toLowerCase() + "SourceFolder"], "");
-      const data = await redis.get(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt);
+      const mediaInfo = mediaType(ext);
+      const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "");
+      const data = await redis.get(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
         decodedData.subscribers.push(socket.user.uuid);
         decodedData.owner = socket.user.uuid;
-        await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
+        await redis.set(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
       } else {
-        await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify({
+        await redis.set(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt, JSON.stringify({
           subscribers: [socket.user.uuid],
           owner: socket.user.uuid
         }));

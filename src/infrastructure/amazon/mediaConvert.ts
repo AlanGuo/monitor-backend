@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 import {MediaConvert} from "aws-sdk";
 import {job} from "@config/mediaconvert/job";
 import {MEDIA_TYPE} from "@src/infrastructure/utils/constants";

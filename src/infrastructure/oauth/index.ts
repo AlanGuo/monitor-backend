@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 import {Strategy as FacebookStrategy} from "passport-facebook"
 import {OAuth2Strategy as GoogleStrategy} from "passport-google-oauth"
 import {Strategy as TwitterStrategy} from "passport-twitter"
@@ -127,12 +126,14 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
       filter = {google: profile.id};
       const emails = (profile as GoogleProfile).emails;
       const photos = (profile as GoogleProfile).photos;
-      update = {$setOnInsert: {google: profile.id}, $set: {
-        "oauthProfile.google": profile,
-        "email": emails ? (emails[0]?.value) : "",
-        "avatar": photos ? (photos[0]?.value) : "",
-        "displayName": profile.displayName
-      }};
+      update = {
+        $setOnInsert: {google: profile.id}, $set: {
+          "oauthProfile.google": profile,
+          "email": emails ? (emails[0]?.value) : "",
+          "avatar": photos ? (photos[0]?.value) : "",
+          "displayName": profile.displayName
+        }
+      };
       break;
     case OAUTH.FACEBOOK:
       filter = {facebook: profile.id};
@@ -145,9 +146,9 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
   const tmp = await UserModel.findOneAndUpdate(
     filter, update, {new: true, upsert: true, rawResult: true}
   );
-  if (!tmp.lastErrorObject.updatedExisting) {
-    tmp.value!.uuid = await getUserSequence();
-    await tmp.value!.save()
+  if (tmp.value && !tmp.lastErrorObject.updatedExisting) {
+    tmp.value.uuid = await getUserSequence();
+    await tmp.value.save()
   }
   return tmp.value as User
 }

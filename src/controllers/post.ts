@@ -236,7 +236,7 @@ export default class PostsController {
           return item.key.split("/")[1]
       }
     });
-    let change: any = {};
+    const change: any = {};
     if (data.content) {
       change.content = data.content;
     }

@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 import {Controller, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import {getOnlineUser, redis} from "@src/infrastructure/redis";
@@ -21,7 +20,7 @@ export default class CallbackController {
     const body = ctx.request.body;
     const message = JSON.parse(body.Message);
     const records = message.Records;
-    for (let recordItem of records) {
+    for (const recordItem of records) {
       const fileName = recordItem.s3.object.key;
       const ext = fileName.split(".")[1];
       let redisKey = fileName.split(".")[0];
@@ -64,7 +63,7 @@ export default class CallbackController {
           }
 
           if (decodedData.subscribers.length) {
-            for (let uuid of decodedData.subscribers) {
+            for (const uuid of decodedData.subscribers) {
               const sid = await getOnlineUser(uuid);
               if (sid) {
                 io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, msg);

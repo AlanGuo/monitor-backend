@@ -22,12 +22,12 @@ export class Producer {
   }
 
   async publish(msg: string) {
-    await this.channel!.publish(this.exchangeName, this.routingKey, Buffer.from(msg))
+    await this.channel?.publish(this.exchangeName, this.routingKey, Buffer.from(msg))
   }
 
   async close() {
-    await this.channel!.close();
-    await this.connect!.close();
+    await this.channel?.close();
+    await this.connect?.close();
   }
 }
 
