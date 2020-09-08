@@ -15,8 +15,8 @@ const postModel: Schema = new Schema({
   from: {type: Number, required},
   media: {type: Array(String), default: []},
   content: {type: String, default: ""},
-  like: {type: Number, default: 0},
-  comment: {type: Number, default: 0},
+  like: {type: Number, default: 0, min: 0},
+  comment: {type: Number, default:0, min: 0},
   deleted: {type: Boolean, default: false}
 }, {
   timestamps: true

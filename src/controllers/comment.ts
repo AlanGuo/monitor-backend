@@ -42,7 +42,7 @@ export default class Comment {
     }], {
       session
     });
-    await postModel.update({
+    await postModel.updateOne({
       _id: Types.ObjectId(postId)
     }, {
       $inc: {
@@ -62,7 +62,8 @@ export default class Comment {
     const id = ctx.params.id;
     const postId = ctx.query.postid;
     const session = await commentModel.db.startSession();
-    await commentModel.update({
+    session.startTransaction();
+    await commentModel.updateOne({
       _id: Types.ObjectId(id)
     }, {
       $set: {

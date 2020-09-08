@@ -11,17 +11,17 @@ import { Types } from "mongoose";
 export default class Like {
 
   @POST("/:id")
-  //@AuthRequired()
+  @AuthRequired()
   async newLike(ctx: IRouterContext, next: any) {
     const postId = ctx.params.id
-    const uuid = 10000011// ctx.state.user.uuid;
+    const uuid = ctx.state.user.uuid;
     const session = await likeModel.db.startSession();
     session.startTransaction();
     await likeModel.create([{
       postId,
       uuid
     }], { session });
-    await postModel.update({
+    await postModel.updateOne({
       _id: Types.ObjectId(postId)
     }, {
       $inc: {
@@ -36,13 +36,15 @@ export default class Like {
   @DEL("/:id")
   @AuthRequired()
   async deleteLike(ctx: IRouterContext) {
-    const id = ctx.params.id
-    const postId = ctx.query.postid
+    const uuid = 10000011 //ctx.state.user.uuid;
+    const postId = ctx.params.id
     const session = await likeModel.db.startSession();
+    session.startTransaction();
     await likeModel.deleteOne({
-      _id: Types.ObjectId(id)
+      uuid,
+      postId
     }, { session });
-    await postModel.update({
+    await postModel.updateOne({
       _id: Types.ObjectId(postId)
     }, {
       $inc: {
