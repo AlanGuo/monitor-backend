@@ -21,6 +21,43 @@ services:
     - ./test_data/mongodb_primary:/var/lib/mongodb
     ports:
     - 27017:27017
+    networks:
+      - mongo_cluster
+    command: mongod --replSet mongo_replSet
+
+  mongo_replica1:
+    image: mongo
+    container_name: mongodb_fans_replica1
+    volumes:
+    - ./test_data/mongodb_rep1:/var/lib/mongodb
+    ports:
+    - 27018:27017
+    networks:
+    - mongo_cluster
+    command: mongod --replSet mongo_replSet
+
+  mongo_replica2:
+    image: mongo
+    container_name: mongodb_fans_replica2
+    volumes:
+    - ./test_data/mongodb_rep2:/var/lib/mongodb
+    ports:
+    - 27019:27017
+    networks:
+    - mongo_cluster
+    command: mongod --replSet mongo_replSet
+
+  rsinit:
+    build:
+      context: ./static/dockerfile/rsinit
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo_primary
+      - mongo_replica1
+      - mongo_replica2
+    entrypoint: ["bash", "-c", "rs.sh"]
+    networks:
+      - mongo_cluster
 
   # rabbitmq  run this command "rabbitmq-plugins enable rabbitmq_management" then you can login website http://localhost:15672
   rabbitmq:
@@ -33,3 +70,6 @@ services:
     ports:
     - 15672:15672
     - 5672:5672
+
+networks:
+  mongo_cluster:
