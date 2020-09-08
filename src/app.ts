@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 import Koa from "koa";
 import logger from "koa-logger";
 import bodyParser from "koa-bodyparser";
@@ -14,7 +13,6 @@ import {OAuthRouter} from "@src/infrastructure/oauth/router";
 import {createSocket} from "./infrastructure/socket";
 import {loadSocketService} from "./services/socket";
 import passport from "koa-passport"
-
 import session from "koa-generic-session"
 import {initSequence} from "@src/infrastructure/utils/sequence";
 import {loadRedisStore} from "@src/infrastructure/redisStore";
@@ -23,7 +21,7 @@ import {loadSaveMessageConsumer} from "@src/services/consumer/saveMessage";
 import {loadUpdateDialogueConsumer} from "@src/services/consumer/updateDialogue";
 import {loadMediaProducer} from "@src/services/producer/mediaProducer";
 import {loadSaveMediaConsumer} from "@src/services/consumer/saveMedia";
-const cors = require("@koa/cors");
+import cors from "@koa/cors"
 
 async function bootstrap() {
   await dbConnect();

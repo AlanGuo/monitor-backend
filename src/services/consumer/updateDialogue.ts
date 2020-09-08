@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config"
+import config from "@src/infrastructure/utils/config";
 import {Consumer} from "@src/infrastructure/rabbitMq";
 import {
   JUSTFANS_EXCHANGE,
@@ -14,7 +13,7 @@ export async function loadUpdateDialogueConsumer() {
   await consumer.connection(config.RABBITMQ, RABBITMQ_EXCHANGE_TYPE.DIRECT);
 
   await consumer.consume(async msg => {
-    let tmp = JSON.parse(msg);
+    const tmp = JSON.parse(msg);
     console.log('update dialogue:', msg)
 
     await DialogueModel.updateOne(

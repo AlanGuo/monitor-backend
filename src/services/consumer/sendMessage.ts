@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config"
+import config from "@src/infrastructure/utils/config";
 import {Consumer} from "@src/infrastructure/rabbitMq";
 import {
   JUSTFANS_EXCHANGE,
@@ -14,6 +13,12 @@ import {getOnlineUser, redis} from "@src/infrastructure/redis";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
+import {mediaType} from "@src/infrastructure/utils";
+
+enum tmp {
+  videoSourceFolder = "videoSourceFolder",
+  imageSourceFolder = "imageSourceFolder"
+}
 
 export async function loadSendMessageConsumer() {
   const io = getSocketIO();
@@ -22,29 +27,23 @@ export async function loadSendMessageConsumer() {
   await consumer.connection(config.RABBITMQ, RABBITMQ_EXCHANGE_TYPE.DIRECT);
 
   await consumer.consume(async msg => {
-    let jsonMsg = JSON.parse(msg);
+    const jsonMsg = JSON.parse(msg);
     console.log("send message:", jsonMsg);
     const toSid = await getOnlineUser(jsonMsg.to);
     // 判断消息中的媒体类型是否转换完成
-    for(let m of jsonMsg.media) {
+    for(const m of jsonMsg.media) {
       if (!m.ready) {
         // 媒体未完成转换
+
         const ext = m.key.split(".")[1];
-        let type = "", confKey = "";
-        if (isVideo(ext)) {
-          type = "Video";
-          confKey = "videoFolder";
-        } else if (isImage(ext)) {
-          type = "Image";
-          confKey = "imageFolder";
-        }
-        const fileNameWithoutExt = m.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[type.toLowerCase() + "SourceFolder"], "");
-        const data = await redis.get(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt);
+        const mediaInfo = mediaType(ext)
+        const fileNameWithoutExt = m.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "");
+        const data = await redis.get(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt);
         if (data) {
           const decodedData = JSON.parse(data);
           decodedData.subscribers.push(jsonMsg.to);
           console.log('add subscribers',  jsonMsg.to);
-          await redis.set(config.AWS_MEDIA_CONVERT[confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
+          await redis.set(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
         } else {
           jsonMsg.media.forEach((media: {key: string, type: string, ready: boolean, urls: any}) => {
             media.ready = true;

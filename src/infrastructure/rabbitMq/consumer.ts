@@ -29,17 +29,17 @@ export class Consumer {
   }
 
   async consume(cb: (msg: string) => Promise<void>) {
-    await this.channel!.consume(this.queueName, async msg => {
+    await this.channel?.consume(this.queueName, async msg => {
       if (msg) {
         await cb(msg.content.toString());
-        this.channel!.ack(msg)
+        this.channel?.ack(msg)
       }
     })
   }
 
   async close() {
-    await this.channel!.close();
-    await this.connect!.close();
+    await this.channel?.close();
+    await this.connect?.close();
   }
 }
 

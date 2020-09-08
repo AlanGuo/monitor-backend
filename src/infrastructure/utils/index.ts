@@ -1,16 +1,18 @@
-import { IRouterContext } from "koa-router";
+import {IRouterContext} from "koa-router";
+import {isVideo} from "@src/infrastructure/utils/video";
+import {isImage} from "@src/infrastructure/utils/image";
 
-export function jsonResponse({data, code, msg}: {data?: any, code?: number | string, msg?: string} = {}) {
+export function jsonResponse({data, code, msg}: { data?: any, code?: number | string, msg?: string } = {}) {
   return {
     code: code || 0,
-    data: data ? data:undefined,
+    data: data ? data : undefined,
     msg: msg || ""
   }
 }
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export function queryToPagination ({ page = 1, size = 50 }) {
+export function queryToPagination({page = 1, size = 50}) {
   size = Number(size);
   size = size > 500 ? 500 : size;
 
@@ -23,6 +25,28 @@ export function queryToPagination ({ page = 1, size = 50 }) {
   }
 }
 
-export function unauthorized(ctx: IRouterContext){
+export function unauthorized(ctx: IRouterContext) {
   ctx.throw(401, "Unauthorized");
+}
+
+export function mediaType(ext: string): {
+  type: "Video" | "Image",
+  confKey: "videoFolder" | "imageFolder",
+  sourceFolder: "videoSourceFolder" | "imageSourceFolder"
+} {
+  if (isVideo(ext)) {
+    return {
+      type: "Video",
+      confKey: "videoFolder",
+      sourceFolder: "videoSourceFolder"
+    }
+  } else if (isImage(ext)) {
+    return {
+      type: "Image",
+      confKey: "imageFolder",
+      sourceFolder: "imageSourceFolder"
+    }
+  } else {
+    throw Error("can't recognize media type")
+  }
 }

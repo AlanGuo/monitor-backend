@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config"
+import config from "@src/infrastructure/utils/config";
 import {Consumer} from "@src/infrastructure/rabbitMq";
 import {
   JUSTFANS_EXCHANGE, MEDIA_TYPE,
@@ -7,9 +6,6 @@ import {
   RABBITMQ_EXCHANGE_TYPE, SAVE_MESSAGE_QUEUE,
 } from "@src/infrastructure/utils/constants";
 import MessageModel from "@src/models/message"
-import MediaModel from "@src/models/media"
-import {Types} from "mongoose";
-
 
 export async function loadSaveMessageConsumer() {
 
@@ -17,7 +13,7 @@ export async function loadSaveMessageConsumer() {
   await consumer.connection(config.RABBITMQ, RABBITMQ_EXCHANGE_TYPE.DIRECT);
 
   await consumer.consume(async msg => {
-    let tmp = JSON.parse(msg);
+    const tmp = JSON.parse(msg);
     console.log('save message:', msg);
     const media: string[] = await Promise.all(tmp.media.map((item: any) => {
       if (item.key) {

@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 import Redis from "ioredis";
 import {ONLINE_USER_KEY} from "@src/infrastructure/utils/constants";
 

@@ -1,4 +1,4 @@
-import {Schema, Types, model, Document} from "mongoose";
+import {Schema, model, Document} from "mongoose";
 import {MEDIA_TYPE} from "@src/infrastructure/utils/constants";
 
 const required = true;

@@ -1,5 +1,4 @@
-// @ts-ignore
-import config from "config"
+import config from "@src/infrastructure/utils/config";
 import {Producer} from "@src/infrastructure/rabbitMq";
 import {
   JUSTFANS_EXCHANGE,
