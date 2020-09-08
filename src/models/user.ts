@@ -33,6 +33,7 @@ const UserModel: Schema = new Schema({
   subPrice: {type: Number, required: false},
   desc: {type: String, required: false},
   website: {type: String, required: false},
+  bgImage: {type: String, required: false},
 
   google: {type: String, required: false, unique, sparse},
   twitter: {type: String, required: false, unique, sparse},

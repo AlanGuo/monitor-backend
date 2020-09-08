@@ -11,7 +11,7 @@ export interface Post extends Document {
   comment?: number;
 }
 
-const PostModel: Schema = new Schema({
+const postModel: Schema = new Schema({
   from: {type: Number, required},
   media: {type: Array(String), default: []},
   content: {type: String, default: ""},
@@ -22,4 +22,4 @@ const PostModel: Schema = new Schema({
   timestamps: true
 });
 
-export default model<Post>("post", PostModel);
+export default model<Post>("post", postModel);
