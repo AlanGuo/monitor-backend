@@ -9,6 +9,7 @@ export interface Post extends Document {
   deleted?: boolean;
   like?: number;
   comment?: number;
+  price?: number
 }
 
 const postModel: Schema = new Schema({
@@ -17,7 +18,8 @@ const postModel: Schema = new Schema({
   content: {type: String, default: ""},
   like: {type: Number, default: 0, min: 0},
   comment: {type: Number, default:0, min: 0},
-  deleted: {type: Boolean, default: false}
+  deleted: {type: Boolean, default: false},
+  price: {type: Number, default: 0}
 }, {
   timestamps: true
 });

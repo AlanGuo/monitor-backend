@@ -3,6 +3,7 @@ import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {IRouterContext} from "koa-router";
 import postModel from "@src/models/post";
+import userModel from "@src/models/user";
 import subscriberModel from "@src/models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
 import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
@@ -269,9 +270,12 @@ export default class PostsController {
           return item.key.split("/")[1]
       }
     });
+    const user = await userModel.findOne({uuid});
+    const userSubPrice = user?.subPrice ? -1 : data.price ?? 0;
     await postModel.create({
       from: uuid,
       media,
+      price: userSubPrice,
       content: data.content
     });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
