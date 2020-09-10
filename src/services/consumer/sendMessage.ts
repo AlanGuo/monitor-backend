@@ -31,7 +31,7 @@ export async function loadSendMessageConsumer() {
     console.log("send message:", jsonMsg);
     const toSid = await getOnlineUser(jsonMsg.to);
     // 判断消息中的媒体类型是否转换完成
-    for(const m of jsonMsg.media) {
+    for (const m of jsonMsg.media) {
       if (!m.ready) {
         // 媒体未完成转换
 
@@ -42,10 +42,10 @@ export async function loadSendMessageConsumer() {
         if (data) {
           const decodedData = JSON.parse(data);
           decodedData.subscribers.push(jsonMsg.to);
-          console.log('add subscribers',  jsonMsg.to);
+          console.log('add subscribers', jsonMsg.to);
           await redis.set(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
         } else {
-          jsonMsg.media.forEach((media: {key: string, type: string, ready: boolean, urls: any}) => {
+          jsonMsg.media.forEach((media: { key: string, type: string, ready: boolean, urls: any }) => {
             media.ready = true;
             switch (media.type) {
               case MEDIA_TYPE.IMAGE:

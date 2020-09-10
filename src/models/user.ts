@@ -13,6 +13,7 @@ export interface IUser extends Document {
   avatar? :string,
 
   subPrice?: number,
+  chatPrice?: number,
   desc?: string,
   website?: string,
 
@@ -30,7 +31,8 @@ const UserModel: Schema = new Schema({
   displayName: {type: String, required: false, sparse},
   email: {type: String, required: false, unique, sparse},
   avatar: {type: String, required: false, unique, sparse},
-  subPrice: {type: Number, required: false},
+  subPrice: {type: Number, required: false, default: 0},
+  chatPrice: {type: Number, required: false, default: 0},
   desc: {type: String, required: false},
   website: {type: String, required: false},
   bgImage: {type: String, required: false},

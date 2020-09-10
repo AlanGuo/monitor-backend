@@ -27,7 +27,8 @@ export default class PostsController {
       "isLiked.uuid": 1
     };
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
-    const match: any = {from: {$in: followers.map(item => item.target)}, deleted: false};
+    const matchFollowers = followers.map(item => item.target).concat([uuid])
+    const match: any = {from: {$in: matchFollowers}, deleted: false};
     if (content) {
       match.content = {$regex: new RegExp(content, "i")}
     }
@@ -91,7 +92,10 @@ export default class PostsController {
       })
     });
     const total = await postModel.countDocuments(match);
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {posts, total, page: pagination.page, size: pagination.size}})
+    ctx.body = jsonResponse({
+      code: RESPONSE_CODE.NORMAL,
+      data: {posts, total, page: pagination.page, size: pagination.size}
+    })
   }
 
   @GET("/my/list")
@@ -320,11 +324,12 @@ export default class PostsController {
     };
     const id = ctx.params.id;
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
+    const matchFollowers = followers.map(item => item.target).concat([uuid])
     const posts = await postModel.aggregate([
       {
         $match: {
           _id: Types.ObjectId(id),
-          from: {$in: followers.map(item => item.target).concat([uuid])},
+          from: {$in: matchFollowers},
           deleted: false
         }
       },
