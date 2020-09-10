@@ -23,12 +23,21 @@ export default class PostsController {
 
     const fields = {
       _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
-      "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1
+      "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1,
+      "isLiked.uuid": 1
     };
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
     const match: any = {from: {$in: followers.map(item => item.target)}, deleted: false};
     if (content) {
       match.content = {$regex: new RegExp(content, "i")}
+    }
+    const isLikeMatch: any = {
+      $expr: {
+        $eq: ["$postId", "$$id"]
+      }
+    }
+    if (ctx.state.user) {
+      isLikeMatch.uuid = ctx.state.user.uuid;
     }
     const posts = await postModel.aggregate([
       {
@@ -43,6 +52,18 @@ export default class PostsController {
           localField: "from",
           foreignField: "uuid",
           as: "user"
+        }
+      },
+      {
+        $lookup: {
+          from: "likes",
+          let: {id: "$_id"},
+          pipeline: [
+            {
+              $match: isLikeMatch,
+            }
+          ],
+          as: "isLiked"
         }
       },
       {
@@ -87,18 +108,39 @@ export default class PostsController {
       like: 1,
       comment: 1,
       "media.type": 1,
-      "media.fileName": 1
+      "media.fileName": 1,
+      "isLiked.uuid": 1
     };
     const content = ctx.query.content;
     const match: any = {from: uuid, deleted: false};
     if (content) {
       match.content = {$regex: new RegExp(content, "i")}
     }
+    const isLikeMatch: any = {
+      $expr: {
+        $eq: ["$postId", "$$id"]
+      }
+    }
+    if (ctx.state.user) {
+      isLikeMatch.uuid = ctx.state.user.uuid;
+    }
     const posts = await postModel.aggregate([
       {$match: match},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "likes",
+          let: {id: "$_id"},
+          pipeline: [
+            {
+              $match: isLikeMatch,
+            }
+          ],
+          as: "isLiked"
+        }
+      },
       {
         $lookup: {
           from: "media",
@@ -143,18 +185,39 @@ export default class PostsController {
       like: 1,
       comment: 1,
       "media.type": 1,
-      "media.fileName": 1
+      "media.fileName": 1,
+      "isLiked.uuid": 1
     };
     const content = ctx.query.content;
     const match: any = {from: Number(uuid), deleted: false};
     if (content) {
       match.content = {$regex: new RegExp(content, "i")}
     }
+    const isLikeMatch: any = {
+      $expr: {
+        $eq: ["$postId", "$$id"]
+      }
+    }
+    if (ctx.state.user) {
+      isLikeMatch.uuid = ctx.state.user.uuid;
+    }
     const posts = await postModel.aggregate([
       {$match: match},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "likes",
+          let: {id: "$_id"},
+          pipeline: [
+            {
+              $match: isLikeMatch,
+            }
+          ],
+          as: "isLiked"
+        }
+      },
       {
         $lookup: {
           from: "media",

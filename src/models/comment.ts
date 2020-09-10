@@ -1,21 +1,22 @@
 import {Schema, Types, model, Document} from "mongoose";
-import { stringType } from "aws-sdk/clients/iam";
 
 const required = true;
 
 export interface IComment extends Document {
-  postId: stringType,
-  uuid: number,
-  mention?: string,
-  content: string,
-  deleted: boolean
+  postId: string;
+  uuid: number;
+  mention?: string;
+  content: string;
+  like?: number;
+  deleted: boolean;
 }
 
 const commentModel: Schema = new Schema({
   postId: {type: String, required},
   uuid: {type: Number, required},
   content: { type: String, required },
-  mention: {type: Number },
+  mention: {type: String },
+  like: {type: Number, default: 0, min: 0},
   deleted: {type: Boolean, required},
 }, {
   timestamps: true

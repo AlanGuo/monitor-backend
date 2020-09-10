@@ -1,28 +1,28 @@
 import {Controller, GET, POST, DEL} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
-import likeModel from "../models/like";
-import postModel from "@src/models/post";
+import commentLikeModel from "../models/commentLike";
+import commentModel from "@src/models/comment";
 import { jsonResponse } from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
 import { Types } from "mongoose";
 
-@Controller({prefix: "/like"})
-export default class Like {
+@Controller({prefix: "/commentlike"})
+export default class CommentLike {
 
   @POST("/:id")
   @AuthRequired()
   async newLike(ctx: IRouterContext, next: any) {
-    const postId = ctx.params.id
+    const commentId = ctx.params.id
     const uuid = ctx.state.user.uuid;
-    const session = await likeModel.db.startSession();
+    const session = await commentLikeModel.db.startSession();
     session.startTransaction();
-    await likeModel.create([{
-      postId: Types.ObjectId(postId),
+    await commentLikeModel.create([{
+      commentId: Types.ObjectId(commentId),
       uuid
     }], { session });
-    await postModel.updateOne({
-      _id: Types.ObjectId(postId)
+    await commentModel.updateOne({
+      _id: Types.ObjectId(commentId)
     }, {
       $inc: {
         like: 1
@@ -37,15 +37,15 @@ export default class Like {
   @AuthRequired()
   async deleteLike(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
-    const postId = ctx.params.id
-    const session = await likeModel.db.startSession();
+    const commentId = ctx.params.id
+    const session = await commentLikeModel.db.startSession();
     session.startTransaction();
-    await likeModel.deleteOne({
+    await commentLikeModel.deleteOne({
       uuid,
-      postId: Types.ObjectId(postId)
+      commentId: Types.ObjectId(commentId),
     }, { session });
-    await postModel.updateOne({
-      _id: Types.ObjectId(postId)
+    await commentLikeModel.updateOne({
+      _id: Types.ObjectId(commentId)
     }, {
       $inc: {
         like: -1
