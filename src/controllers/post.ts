@@ -4,6 +4,7 @@ import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {IRouterContext} from "koa-router";
 import postModel from "@src/models/post";
 import userModel from "@src/models/user";
+import postPaymentModel from "@src/models/postPayment";
 import subscriberModel from "@src/models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
 import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
@@ -25,7 +26,7 @@ export default class PostsController {
     const fields = {
       _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
       "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1,
-      "isLiked.uuid": 1
+      "isLiked.uuid": 1, "payment.postId": 1
     };
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
     const matchFollowers = followers.map(item => item.target).concat([uuid])
@@ -34,13 +35,18 @@ export default class PostsController {
       match.content = {$regex: new RegExp(content, "i")}
     }
     const isLikeMatch: any = {
+      uuid,
       $expr: {
         $eq: ["$postId", "$$id"]
       }
     }
-    if (ctx.state.user) {
-      isLikeMatch.uuid = ctx.state.user.uuid;
+    const paymentMatch: any = {
+      uuid,
+      $expr: {
+        $eq: ["$postId", "$$id"]
+      }
     }
+
     const posts = await postModel.aggregate([
       {
         $match: match
@@ -54,6 +60,18 @@ export default class PostsController {
           localField: "from",
           foreignField: "uuid",
           as: "user"
+        }
+      },
+      {
+        $lookup: {
+          from: "postpayments",
+          let: {id: "$_id"},
+          pipeline: [
+            {
+              $match: paymentMatch,
+            }
+          ],
+          as: "payment"
         }
       },
       {
@@ -87,10 +105,16 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
-      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName);
-        media.ready = true;
-      })
+      if (item.price <= 0 || item.payment.length > 0 || item.from === uuid) {
+        item.payment = true
+        item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+          media.urls = getMediaUrl(media.type, media.fileName);
+          media.ready = true;
+        })
+      } else {
+        item.payment = false;
+        item.media = []
+      }
     });
     const total = await postModel.countDocuments(match);
     ctx.body = jsonResponse({
@@ -191,7 +215,8 @@ export default class PostsController {
       comment: 1,
       "media.type": 1,
       "media.fileName": 1,
-      "isLiked.uuid": 1
+      "isLiked.uuid": 1,
+      "payment.postId": 1
     };
     const content = ctx.query.content;
     const match: any = {from: Number(uuid), deleted: false};
@@ -199,18 +224,38 @@ export default class PostsController {
       match.content = {$regex: new RegExp(content, "i")}
     }
     const isLikeMatch: any = {
+      uuid: 0,
+      $expr: {
+        $eq: ["$postId", "$$id"]
+      }
+    }
+    const paymentMatch: any = {
+      uuid: 0,
       $expr: {
         $eq: ["$postId", "$$id"]
       }
     }
     if (ctx.state.user) {
       isLikeMatch.uuid = ctx.state.user.uuid;
+      paymentMatch.uuid = ctx.state.user.uuid;
     }
     const posts = await postModel.aggregate([
       {$match: match},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "postpayments",
+          let: {id: "$_id"},
+          pipeline: [
+            {
+              $match: paymentMatch,
+            }
+          ],
+          as: "payment"
+        }
+      },
       {
         $lookup: {
           from: "likes",
@@ -242,10 +287,16 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
-      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName);
-        media.ready = true;
-      })
+      if (item.price <= 0 || item.payment.length > 0 || item.from === uuid) {
+        item.payment = true
+        item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+          media.urls = getMediaUrl(media.type, media.fileName);
+          media.ready = true;
+        })
+      } else {
+        item.payment = false;
+        item.media = []
+      }
     });
     const total = await postModel.countDocuments(match);
     ctx.body = jsonResponse({
@@ -373,4 +424,22 @@ export default class PostsController {
 
   }
 
+  // should be in pay success callback
+  @GET("/pay/:id")
+  @AuthRequired()
+  async pay(ctx: IRouterContext, next: any) {
+    const uuid: number = ctx.state.user.uuid;
+    const postId: string = ctx.params.id;
+    const post = await postModel.findOne({_id: postId});
+    if (post && uuid !== post.from && (post.price ?? 0) > 0) {
+      try {
+        await postPaymentModel.create({uuid, postId: post._id})
+        ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
+      } catch (e) {
+        ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "has been payment"})
+      }
+    } else {
+      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "post not exists or post belong you or post is free"})
+    }
+  }
 }

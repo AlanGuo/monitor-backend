@@ -28,6 +28,7 @@ export enum Sequence {
 
 export enum RESPONSE_CODE {
   NORMAL = 0,
+  ERROR = 500,
   LOGIN_IN_ERR = "login in error",
   CAN_NOT_SUBSCRIBE_YOURSELF = "can not subscribe yourself",
   CAN_NOT_UNSUBSCRIBE_YOURSELF = "can not unsubscribe yourself"

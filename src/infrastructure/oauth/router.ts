@@ -37,7 +37,7 @@ export function OAuthRouter(app: any) {
       const sid = await getOnlineUser(uuid);
       if (sid) {
         const io = getSocketIO();
-        io.sockets.connected[sid].disconnect(true);
+        io.sockets.connected[sid]?.disconnect(true);
         await delOnlineUser(uuid);
       }
       await store.destroy(`koa:sess:${ctx.cookies.get(SESSION_KEY)}`);
