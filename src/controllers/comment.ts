@@ -17,7 +17,7 @@ export default class Comment {
   async getCommentList(ctx: IRouterContext, next: any) {
     const postId = ctx.params.id
     const uuid = ctx.state.user.uuid;
-    const fields = {_id: 1, content: 1, mention: 1, createdAt: 1, "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1, "isLiked.uuid": 1};
+    const fields = {_id: 1, content: 1, mention: 1, createdAt: 1, like: 1, "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1, "isLiked.uuid": 1};
     const isLikeMatch: any = {
       $expr: {
         $eq: ["$commentId", "$$id"]
