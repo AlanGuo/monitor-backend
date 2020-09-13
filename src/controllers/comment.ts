@@ -12,13 +12,12 @@ import { Types } from "mongoose";
 export default class Comment {
   // 查订阅列表
   @GET("/list/:id")
-  @AuthRequired()
   @PaginationDec()
   async getCommentList(ctx: IRouterContext, next: any) {
     const postId = ctx.params.id
-    const uuid = ctx.state.user.uuid;
     const fields = {_id: 1, content: 1, mention: 1, createdAt: 1, like: 1, "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1, "isLiked.uuid": 1};
     const isLikeMatch: any = {
+      uuid: 0,
       $expr: {
         $eq: ["$commentId", "$$id"]
       }
@@ -28,7 +27,7 @@ export default class Comment {
     }
     const pagination = ctx.state.pagination;
     const comments = await commentModel.aggregate([
-      {$match: {postId, uuid}},
+      {$match: {postId}},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
@@ -54,7 +53,7 @@ export default class Comment {
       },
       {$project: fields}
     ]);
-    const total = await commentModel.estimatedDocumentCount({postId, uuid});
+    const total = await commentModel.estimatedDocumentCount({postId});
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {comments, total}});
   }
 
