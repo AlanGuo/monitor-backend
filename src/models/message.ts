@@ -8,6 +8,7 @@ export interface Message extends Document {
   // media?: Schema.Types.ObjectId[],
   media?: string[],
   content?: string
+  price?: number
 }
 
 const MessageModel: Schema = new Schema({
@@ -15,7 +16,8 @@ const MessageModel: Schema = new Schema({
   to: {type: Number, required},
   // media: {type: Array(Schema.Types.ObjectId)},
   media: {type: Array(String), default: []},
-  content: {type: String}
+  content: {type: String},
+  price: {type: Number, default: 0}
 }, {
   timestamps: true
 });

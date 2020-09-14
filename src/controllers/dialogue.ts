@@ -8,6 +8,8 @@ import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
+import messageModel from "@src/models/message";
+import messagePaymentModel from "@src/models/messagePayment";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -153,5 +155,23 @@ export default class UserController {
     });
 
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
+  }
+
+  @GET("/message/pay/:id")
+  @AuthRequired()
+  async pay(ctx: IRouterContext, next: any) {
+    const uuid: number = ctx.state.user.uuid;
+    const msgId: string = ctx.params.id;
+    const msg = await messageModel.findOne({_id: msgId});
+    if (msg && uuid !== msg.to && (msg.price ?? 0) > 0) {
+      try {
+        await messagePaymentModel.create({uuid, messageId: msg._id})
+        ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
+      } catch (e) {
+        ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "has been payment"})
+      }
+    } else {
+      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "msg not exists or msg belong you or msg is free"})
+    }
   }
 }
