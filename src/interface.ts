@@ -1,4 +1,4 @@
-import {OAUTH} from "@src/infrastructure/utils/constants";
+import {MEDIA_TYPE, OAUTH} from "@src/infrastructure/utils/constants";
 
 
 export interface Profile {
@@ -20,6 +20,32 @@ export interface User {
   twitter?: string,
   facebook?: string
   profile?: Profile,
+}
+
+export interface Message {
+  from: number;
+  to: number;
+  content: string;
+  media: MessageMedia[];
+  price: number
+}
+
+export interface MessageMedia {
+  type: MEDIA_TYPE;
+  fileName?: string;
+  key?: string;
+  ready?: boolean;
+  urls: {
+    // for local preview
+    dataUri?: string;
+    // for image
+    url?: string;
+    thumbnail?: string;
+    // for video
+    screenshot?: string;
+    low?: string;
+    hd?: string;
+  };
 }
 
 export interface GoogleProfile {

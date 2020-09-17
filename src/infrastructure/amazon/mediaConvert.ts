@@ -56,3 +56,7 @@ export function getMediaUrl(type: MEDIA_TYPE, fileName: string): ImageAmazonUrl 
       throw Error("media type not exists")
   }
 }
+
+export function getMediaFileName(type: MEDIA_TYPE, key: string) {
+  return type === MEDIA_TYPE.VIDEO ? key.split("/")[1].split('.')[0] : key.split("/")[1]
+}

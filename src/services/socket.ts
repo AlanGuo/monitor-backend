@@ -48,7 +48,6 @@ export async function loadSocketService(io: socket.Server) {
     socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, async (msg: string) => {
       // when "to" exists then publish the msg to mq
       const tmp = JSON.parse(msg);
-      console.log(tmp)
       tmp.from = socket.user.uuid;
       if (tmp.to && await UserModel.exists({uuid: tmp.to})) {
         await messageProducer.publish(JSON.stringify(tmp));
@@ -57,7 +56,6 @@ export async function loadSocketService(io: socket.Server) {
 
     // 媒体转换通知
     socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async (msg: string) => {
-      // TODO
       // 客户端进行了媒体转换
       const {key}: { socketId: string, key: string } = JSON.parse(msg);
       const ext = key.split(".")[1];

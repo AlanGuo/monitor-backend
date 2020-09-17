@@ -22,6 +22,7 @@ import {loadUpdateDialogueConsumer} from "@src/services/consumer/updateDialogue"
 import {loadMediaProducer} from "@src/services/producer/mediaProducer";
 import {loadSaveMediaConsumer} from "@src/services/consumer/saveMedia";
 import cors from "@koa/cors"
+import {loadSaveAndSendMessageConsumer} from "@src/services/consumer/saveAndSendMessage";
 
 async function bootstrap() {
   await dbConnect();
@@ -63,8 +64,9 @@ async function bootstrap() {
   await loadSocketService(createSocket(server));
 
   // consumer can be start another service. Now, just for test
-  await loadSaveMessageConsumer();
-  await loadSendMessageConsumer();
+  // await loadSaveMessageConsumer();
+  // await loadSendMessageConsumer();
+  await loadSaveAndSendMessageConsumer()
   await loadUpdateDialogueConsumer();
   await loadSaveMediaConsumer();
   //producer
