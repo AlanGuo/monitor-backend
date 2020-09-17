@@ -24,7 +24,7 @@ export default class PostsController {
     const content = ctx.query.content;
 
     const fields = {
-      _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
+      _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, price: 1, "media.type": 1, "media.fileName": 1,
       "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1,
       "isLiked.uuid": 1, "payment.postId": 1
     };
@@ -136,6 +136,7 @@ export default class PostsController {
       createdAt: 1,
       like: 1,
       comment: 1,
+      price: 1,
       "media.type": 1,
       "media.fileName": 1,
       "isLiked.uuid": 1
@@ -213,6 +214,7 @@ export default class PostsController {
       createdAt: 1,
       like: 1,
       comment: 1,
+      price: 1,
       "media.type": 1,
       "media.fileName": 1,
       "isLiked.uuid": 1,
@@ -425,7 +427,7 @@ export default class PostsController {
   }
 
   // should be in pay success callback
-  @GET("/pay/:id")
+  @POST("/pay/:id")
   @AuthRequired()
   async pay(ctx: IRouterContext, next: any) {
     const uuid: number = ctx.state.user.uuid;

@@ -1,4 +1,4 @@
-import {Controller, GET} from "@src/infrastructure/decorators/koa";
+import {Controller, GET, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import DialogueModel from "../models/dialogue";
 import MessageModel from "../models/message"
@@ -107,13 +107,15 @@ export default class UserController {
   async messages(ctx: IRouterContext, next: any) {
     const pagination = ctx.state.pagination as Pagination;
     const fields = {
-      _id: 0,
+      _id: 1,
       from: 1,
       to: 1,
       content: 1,
       createdAt: 1,
+      price: 1,
       "media.type": 1,
-      "media.fileName": 1
+      "media.fileName": 1,
+      "payment.messageId": 1
     };
     const messages = await MessageModel.aggregate([
       {
@@ -128,6 +130,23 @@ export default class UserController {
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "messagepayments",
+          let: {id: "$_id"},
+          pipeline: [
+            {
+              $match: {
+                uuid: ctx.state.user.uuid,
+                $expr: {
+                  $eq: ["$messageId", "$$id"]
+                }
+              },
+            }
+          ],
+          as: "payment"
+        }
+      },
       {
         $lookup: {
           from: "media",
@@ -148,22 +167,28 @@ export default class UserController {
     ]);
 
     messages.forEach(item => {
-      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName);
-        media.ready = true;
-      })
+      if (item.price <= 0 || item.payment.length > 0 || item.from === ctx.state.user.uuid) {
+        item.payment = true
+        item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+          media.urls = getMediaUrl(media.type, media.fileName);
+          media.ready = true;
+        })
+      } else {
+        item.payment = false;
+        item.media = []
+      }
     });
 
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
   }
 
-  @GET("/message/pay/:id")
+  @POST("/message/pay/:id")
   @AuthRequired()
   async pay(ctx: IRouterContext, next: any) {
     const uuid: number = ctx.state.user.uuid;
     const msgId: string = ctx.params.id;
     const msg = await messageModel.findOne({_id: msgId});
-    if (msg && uuid !== msg.to && (msg.price ?? 0) > 0) {
+    if (msg && uuid === msg.to && (msg.price ?? 0) > 0) {
       try {
         await messagePaymentModel.create({uuid, messageId: msg._id})
         ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})

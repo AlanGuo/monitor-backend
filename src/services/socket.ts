@@ -48,6 +48,7 @@ export async function loadSocketService(io: socket.Server) {
     socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, async (msg: string) => {
       // when "to" exists then publish the msg to mq
       const tmp = JSON.parse(msg);
+      console.log(tmp)
       tmp.from = socket.user.uuid;
       if (tmp.to && await UserModel.exists({uuid: tmp.to})) {
         await messageProducer.publish(JSON.stringify(tmp));

@@ -25,6 +25,7 @@ export async function loadSaveMessageConsumer() {
       await MessageModel.create({
         from: tmp.from,
         to: tmp.to,
+        price: tmp.price || 0,
         content: tmp.content,
         media: media
       })
