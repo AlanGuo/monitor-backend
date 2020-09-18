@@ -216,7 +216,6 @@ export default class UserController {
     const from: number = ctx.state.user.uuid;
     const to = Number(ctx.params.uuid);
     const dialogue = await DialogueModel.findOne({from, to}, {_id: 0, canTalk: 1});
-
-    ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, data: dialogue ? dialogue.canTalk : -1})
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogue ? dialogue.canTalk : -1})
   }
 }
