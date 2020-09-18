@@ -16,7 +16,7 @@ import {SocketAddUser} from "@src/infrastructure/socket";
 import UserModel from "../models/user";
 import {Producer} from "@src/infrastructure/rabbitMq";
 import {mediaType} from "@src/infrastructure/utils";
-import {MediaConvertCache} from "@src/interface";
+import {MediaConvertCache, Message} from "@src/interface";
 
 const store = loadRedisStore();
 
@@ -48,7 +48,7 @@ export async function loadSocketService(io: socket.Server) {
 
     socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, async (msg: string) => {
       // when "to" exists then publish the msg to mq
-      const tmp = JSON.parse(msg);
+      const tmp: Message = JSON.parse(msg);
       tmp.from = socket.user.uuid;
       if (tmp.to && await UserModel.exists({uuid: tmp.to})) {
         await messageProducer.publish(JSON.stringify(tmp));

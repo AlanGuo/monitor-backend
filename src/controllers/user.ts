@@ -29,8 +29,8 @@ export default class UserController {
   @GET("/id/:id")
   async getUserById(ctx: IRouterContext, next: any) {
     const fields = {_id: 0, uuid: 1, name: 1, displayName: 1, avatar: 1, email: 1, about: 1, website: 1, bgImage: 1, location: 1};
-    let filter: any = {};
-    if (Number.isInteger(ctx.params.id)){
+    const filter: any = {};
+    if (!isNaN(Number(ctx.params.id))){
       filter.uuid = ctx.params.id;
     } else {
       filter.name = ctx.params.id;
@@ -42,7 +42,6 @@ export default class UserController {
       const sid = await getOnlineUser(ctx.params.id);
       rep.online = !!sid;
     }
-    console.log(rep)
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: rep ? rep : user})
   }
 
