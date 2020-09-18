@@ -6,7 +6,7 @@ check_mongo_status() {
   mongo2=$(mongo --host mongo2 --port 27018 --eval "rs.status().ok" | tail -n1)
   mongo3=$(mongo --host mongo3 --port 27019 --eval "rs.status().ok" | tail -n1)
   echo "$mongo1", "$mongo2", "$mongo3"
-  if [[ $mongo1 == 0 ]] && [[ $mongo1 == 0 ]] && [[ $mongo1 == 0 ]]
+  if [[ $mongo1 == 0 ]] && [[ $mongo2 == 0 ]] && [[ $mongo3 == 0 ]]
   then
     init_rs
   else
