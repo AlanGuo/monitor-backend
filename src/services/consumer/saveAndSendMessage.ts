@@ -13,7 +13,7 @@ import {getOnlineUser, redis} from "@src/infrastructure/redis";
 import {mediaType} from "@src/infrastructure/utils";
 import {getSocketIO} from "@src/infrastructure/socket";
 import SocketIO from "socket.io";
-import DialogueModel from "@src/models/dialogue";
+import DialogueModel, {Dialogue} from "@src/models/dialogue";
 
 export async function loadSaveAndSendMessageConsumer() {
   const io = getSocketIO();
@@ -27,17 +27,15 @@ export async function loadSaveAndSendMessageConsumer() {
     const users = await getMessageUsers(tmp)
     if (users) {
       const dialogue = await createDialogue(tmp, users);
-      if(dialogue!.canTalk > 0 || dialogue!.canTalk === -1) {
+      if (dialogue!.canTalk > 0 || dialogue!.canTalk === -1) {
         const message = await saveMessage(tmp);
         if (message) {
           await sendMessage({...tmp, _id: message._id, payment: message.price! <= 0}, io)
-          if(dialogue!.canTalk > 0) {
-            await DialogueModel.updateOne({_id: dialogue}, { $inc: {canTalk: -1}})
-          }
+          await updateDialogue(tmp);
+          await updateCanTalk(dialogue);
         }
       }
     }
-
   })
 }
 
@@ -121,6 +119,18 @@ async function createDialogue(message: Message, users: { from: User, to: User })
   );
   return sender;
 }
+
+async function updateDialogue(message: Message) {
+  await DialogueModel.updateOne({from: message.from, to: message.to}, {$set: {show: true}})
+  await DialogueModel.updateOne({from: message.to, to: message.from}, {$set: {show: true}})
+}
+
+async function updateCanTalk(dialogue: Dialogue) {
+  if (dialogue!.canTalk > 0) {
+    await DialogueModel.updateOne({_id: dialogue}, {$inc: {canTalk: -1}})
+  }
+}
+
 
 async function getMessageUsers(message: Message) {
   const users = await UserModel.find({uuid: {$in: [message.from, message.to]}})
