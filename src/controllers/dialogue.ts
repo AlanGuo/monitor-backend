@@ -205,7 +205,7 @@ export default class UserController {
   @AuthRequired()
   async talkPay(ctx: IRouterContext, next: any) {
     const from: number = ctx.state.user.uuid;
-    const to: number = ctx.params.id;
+    const to = Number(ctx.params.id);
     await DialogueModel.updateOne({from, to}, {$inc: {canTalk: 1}});
     ctx.body = jsonResponse()
   }
@@ -214,7 +214,7 @@ export default class UserController {
   @AuthRequired()
   async detail(ctx: IRouterContext, next: any) {
     const from: number = ctx.state.user.uuid;
-    const to: number = ctx.params.id;
+    const to = Number(ctx.params.id);
     const dialogue = await DialogueModel.findOne({from, to}, {canTalk: 1});
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogue?.canTalk || -1})
   }
