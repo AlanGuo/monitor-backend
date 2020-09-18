@@ -13,51 +13,57 @@ services:
     - 6379:6379
 
   # Mongo
-  mongo_primary:
-    hostname: mongo_primary
+  mongo1:
+    hostname: mongo1
     image: mongo
-    container_name: mongodb_fans_primary
+    container_name: mongo1
     restart: always
     volumes:
-    - ./test_data/mongodb_primary:/var/lib/mongodb
+    - ./test_data/mongo1:/var/lib/mongodb
+    expose:
+      - 27017
     ports:
     - 27017:27017
 #    networks:
 #      - mongo_cluster
-    command: mongod --replSet mongo_replSet
+    command: mongod --port 27017 --replSet mongo_replSet
 
-  mongo_replica1:
-    hostname: mongo_replica1
+  mongo2:
+    hostname: mongo2
     image: mongo
-    container_name: mongodb_fans_replica1
+    container_name: mongo2
     volumes:
-    - ./test_data/mongodb_rep1:/var/lib/mongodb
+    - ./test_data/mongo2:/var/lib/mongodb
+    expose:
+      - 27018
     ports:
-    - 27018:27017
+    - 27018:27018
 #    networks:
 #    - mongo_cluster
-    command: mongod --replSet mongo_replSet
+    command: mongod --port 27018 --replSet mongo_replSet
 
-  mongo_replica2:
-    hostname: mongo_replica2
+  mongo3:
+    hostname: mongo3
     image: mongo
-    container_name: mongodb_fans_replica2
+    container_name: mongo3
     volumes:
-    - ./test_data/mongodb_rep2:/var/lib/mongodb
+    - ./test_data/mongo3:/var/lib/mongodb
+    expose:
+      - 27019
     ports:
-    - 27019:27017
+    - 27019:27019
 #    networks:
 #    - mongo_cluster
-    command: mongod --replSet mongo_replSet
+    command: mongod --port 27019 --replSet mongo_replSet
 
   rsinit:
     build:
       context: ./static/dockerfile/rsinit
       dockerfile: Dockerfile
     depends_on:
-      - mongo_primary
-      - mongo_replica1
-      - mongo_replica2
+      - mongo1
+      - mongo2
+      - mongo3
     entrypoint: ["bash", "-c", "rs.sh"]
 #    networks:
 #      - mongo_cluster

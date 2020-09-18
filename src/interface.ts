@@ -129,6 +129,8 @@ export interface Config {
   },
   MONGODB: {
     Name: string,
+    DB: string,
+    ReplicaSet: string
     Connection_String_URI: string,
     Connection_String_URI_Test: string
   },

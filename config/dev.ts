@@ -47,9 +47,10 @@ module.exports = {
 
   MONGODB: {
     Name: "dev",
-    Connection_String_URI: "mongodb://mongo_primary:27017,mongo_replica1:27018,mongo_replica2:27019/justfans?replicaSet=mongo_replSet",
+    DB: "justfans",
+    ReplicaSet: "mongo_replSet",
+    Connection_String_URI: "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/",
     Connection_String_URI_Test: "mongodb://127.0.0.1:27017/justfans_test"
-
   },
 
   FACEBOOK: {
