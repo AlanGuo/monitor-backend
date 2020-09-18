@@ -99,7 +99,8 @@ async function createDialogue(message: Message, users: { from: User, to: User })
         from: message.from,
         to: message.to,
         timeline: 0,
-        canTalk: users.to.chatPrice! > 0 ? 0 : -1
+        canTalk: users.to.chatPrice! > 0 ? 0 : -1,
+        show: true,
       }
     },
     {upsert: true}
@@ -112,7 +113,8 @@ async function createDialogue(message: Message, users: { from: User, to: User })
         from: message.to,
         to: message.from,
         timeline: 0,
-        canTalk: users.from.chatPrice! > 0 ? 0 : -1
+        canTalk: users.from.chatPrice! > 0 ? 0 : -1,
+        show: true
       }
     },
     {upsert: true}

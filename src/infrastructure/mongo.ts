@@ -15,6 +15,5 @@ export async function dbConnect(test = false): Promise<void> {
       dbName: config.MONGODB.DB,
       replicaSet: config.MONGODB.ReplicaSet,
     });
-  console.log('=')
   console.log(`connected to ${config.MONGODB.Name}:${url}`)
 }
