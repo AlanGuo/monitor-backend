@@ -32,7 +32,7 @@ export async function loadSaveAndSendMessageConsumer() {
         if (message) {
           await sendMessage({...tmp, _id: message._id, payment: message.price! > 0 && message.media!.length > 0}, io)
           if(dialogue!.canTalk > 0) {
-            DialogueModel.updateOne({_id: dialogue}, { $inc: {canTalk: -1}})
+            await DialogueModel.updateOne({_id: dialogue}, { $inc: {canTalk: -1}})
           }
         }
       }
@@ -87,7 +87,7 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
     }
   }
   if (toSid) {
-    io.sockets.connected[toSid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(message))
+    io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(message))
   }
 }
 
@@ -103,7 +103,7 @@ async function createDialogue(message: Message, users: { from: User, to: User })
         show: true,
       }
     },
-    {upsert: true}
+    {new: true, upsert: true}
   )
 
   await DialogueModel.findOneAndUpdate(
@@ -117,7 +117,7 @@ async function createDialogue(message: Message, users: { from: User, to: User })
         show: true
       }
     },
-    {upsert: true}
+    {new: true, upsert: true}
   );
   return sender;
 }
