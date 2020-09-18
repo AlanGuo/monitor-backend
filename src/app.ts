@@ -66,8 +66,8 @@ async function bootstrap() {
   // consumer can be start another service. Now, just for test
   // await loadSaveMessageConsumer();
   // await loadSendMessageConsumer();
+  // await loadUpdateDialogueConsumer();
   await loadSaveAndSendMessageConsumer()
-  await loadUpdateDialogueConsumer();
   await loadSaveMediaConsumer();
   //producer
   await loadMediaProducer();
