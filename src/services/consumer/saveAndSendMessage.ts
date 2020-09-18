@@ -30,7 +30,7 @@ export async function loadSaveAndSendMessageConsumer() {
       if(dialogue!.canTalk > 0 || dialogue!.canTalk === -1) {
         const message = await saveMessage(tmp);
         if (message) {
-          await sendMessage({...tmp, _id: message._id, payment: message.price! > 0 && message.media!.length > 0}, io)
+          await sendMessage({...tmp, _id: message._id, payment: message.price! <= 0}, io)
           if(dialogue!.canTalk > 0) {
             await DialogueModel.updateOne({_id: dialogue}, { $inc: {canTalk: -1}})
           }
