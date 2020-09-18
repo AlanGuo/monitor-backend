@@ -6,20 +6,22 @@ const unique = true;
 const sparse = true;
 
 export interface IUser extends Document {
-  uuid: number,
-  name?: string,
-  displayName?: string,
-  email?: string,
-  avatar? :string,
+  uuid: number;
+  name?: string;
+  displayName?: string;
+  email?: string;
+  avatar?: string;
 
-  subPrice?: number,
-  chatPrice?: number,
-  desc?: string,
-  website?: string,
+  subPrice?: number;
+  chatPrice?: number;
+  about?: string;
+  website?: string;
+  bgImage?: string;
+  location?: string;
 
-  google?: string,
-  twitter?: string,
-  facebook?: string,
+  google?: string;
+  twitter?: string;
+  facebook?: string;
   oauthProfile?: Profile
 }
 
@@ -33,9 +35,10 @@ const UserModel: Schema = new Schema({
   avatar: {type: String, required: false, unique, sparse},
   subPrice: {type: Number, required: false, default: 0},
   chatPrice: {type: Number, required: false, default: 0},
-  desc: {type: String, required: false},
+  about: {type: String, required: false},
   website: {type: String, required: false},
   bgImage: {type: String, required: false},
+  location: {type: String, required: false},
 
   google: {type: String, required: false, unique, sparse},
   twitter: {type: String, required: false, unique, sparse},
