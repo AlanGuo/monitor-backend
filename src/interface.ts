@@ -27,7 +27,8 @@ export interface Message {
   to: number;
   content: string;
   media: MessageMedia[];
-  price: number
+  price: number,
+  payment?: boolean
 }
 
 export interface MessageMedia {
@@ -46,6 +47,13 @@ export interface MessageMedia {
     low?: string;
     hd?: string;
   };
+}
+
+export interface MediaConvertCache {
+  subscribers: number[],
+  owner: number,
+  fileCount: number,
+  key: string
 }
 
 export interface GoogleProfile {

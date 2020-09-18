@@ -9,7 +9,7 @@ import {isImage} from "@src/infrastructure/utils/image";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {mediaProducer} from "@src/services/producer/mediaProducer";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
-import {ImageAmazonUrl, VideoAmazonUrl} from "@src/interface";
+import {ImageAmazonUrl, MediaConvertCache, VideoAmazonUrl} from "@src/interface";
 
 
 // todo: need to verity the signatures of Amazon SNS messages
@@ -28,7 +28,7 @@ export default class CallbackController {
       redisKey = redisKey.split("_")[0];
       const data = await redis.get(redisKey);
       if (data) {
-        const decodedData = JSON.parse(data);
+        const decodedData: MediaConvertCache = JSON.parse(data);
         if (decodedData.fileCount > 1) {
           decodedData.fileCount--;
           await redis.set(redisKey, JSON.stringify(decodedData));

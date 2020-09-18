@@ -16,6 +16,7 @@ import {SocketAddUser} from "@src/infrastructure/socket";
 import UserModel from "../models/user";
 import {Producer} from "@src/infrastructure/rabbitMq";
 import {mediaType} from "@src/infrastructure/utils";
+import {MediaConvertCache} from "@src/interface";
 
 const store = loadRedisStore();
 
@@ -63,7 +64,7 @@ export async function loadSocketService(io: socket.Server) {
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "");
       const data = await redis.get(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt);
       if (data) {
-        const decodedData = JSON.parse(data);
+        const decodedData: MediaConvertCache = JSON.parse(data);
         decodedData.subscribers.push(socket.user.uuid);
         decodedData.owner = socket.user.uuid;
         await redis.set(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
