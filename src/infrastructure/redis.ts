@@ -18,8 +18,8 @@ export async function setOnlineUser(userId: string, sid: string) {
   await redis.hset(ONLINE_USER_KEY, userId, sid)
 }
 
-export async function getOnlineUser(userId: string) {
-  return await redis.hget(ONLINE_USER_KEY, userId)
+export async function getOnlineUser(userId: string | number) {
+  return await redis.hget(ONLINE_USER_KEY, userId.toString())
 }
 
 export async function delOnlineUser(userId: string) {

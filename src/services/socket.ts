@@ -56,7 +56,6 @@ export async function loadSocketService(io: socket.Server) {
 
     // 媒体转换通知
     socket.on(SOCKET_CHANNEL.MEDIA_CONVERTED, async (msg: string) => {
-      // TODO
       // 客户端进行了媒体转换
       const {key}: { socketId: string, key: string } = JSON.parse(msg);
       const ext = key.split(".")[1];

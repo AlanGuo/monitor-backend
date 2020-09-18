@@ -10,15 +10,9 @@ import {
 } from "@src/infrastructure/utils/constants";
 import {getSocketIO} from "@src/infrastructure/socket";
 import {getOnlineUser, redis} from "@src/infrastructure/redis";
-import {isVideo} from "@src/infrastructure/utils/video";
-import {isImage} from "@src/infrastructure/utils/image";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {mediaType} from "@src/infrastructure/utils";
 
-enum tmp {
-  videoSourceFolder = "videoSourceFolder",
-  imageSourceFolder = "imageSourceFolder"
-}
 
 export async function loadSendMessageConsumer() {
   const io = getSocketIO();
@@ -34,7 +28,6 @@ export async function loadSendMessageConsumer() {
     for (const m of jsonMsg.media) {
       if (!m.ready) {
         // 媒体未完成转换
-
         const ext = m.key.split(".")[1];
         const mediaInfo = mediaType(ext)
         const fileNameWithoutExt = m.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "");
