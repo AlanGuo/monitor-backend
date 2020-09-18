@@ -215,8 +215,7 @@ export default class UserController {
   async detail(ctx: IRouterContext, next: any) {
     const from: number = ctx.state.user.uuid;
     const to = Number(ctx.params.uuid);
-    const dialogue = await DialogueModel.findOne({from, to}, {canTalk: 1});
-    console.log(dialogue)
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogue?.canTalk || -1})
+    const dialogue = await DialogueModel.findOne({from, to}, {_id: 0, canTalk: 1});
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogue?.canTalk ?? -1})
   }
 }
