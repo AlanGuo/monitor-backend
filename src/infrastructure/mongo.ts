@@ -4,7 +4,7 @@ import {connect} from "mongoose";
 export async function dbConnect(test = false): Promise<void> {
   const url = test ? config.MONGODB.Connection_String_URI_Test : config.MONGODB.Connection_String_URI;
   if (config.MONGODB && url) {
-    const t = await connect(
+    await connect(
       url,
       {
         useNewUrlParser: true,
