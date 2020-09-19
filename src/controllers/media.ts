@@ -23,9 +23,7 @@ export default class MediaController {
   @GET("/prepare-upload-asset/:filename")
   async prepareUploadAsset(ctx: IRouterContext) {
     const filename = ctx.params.filename;
-    const res: any = await prepareUploadAsset(filename);
-    res.link = getSignedUrl(res.fields.key);
-    ctx.body = res;
+    ctx.body = await prepareUploadAsset(filename);
   }
 
   @GET("/convert")

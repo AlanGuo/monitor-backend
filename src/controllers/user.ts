@@ -1,10 +1,13 @@
 import {Controller, GET, PUT} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
-import UserModel from "../models/user"
+import UserModel, { IUser } from "../models/user"
 import { jsonResponse } from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
 import {getOnlineUser} from "@src/infrastructure/redis";
+import { getMediaUrl } from "@src/infrastructure/amazon/mediaConvert";
+import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
+import { AnyARecord } from "dns";
 
 @Controller({prefix: "/user"})
 export default class UserController {
@@ -16,9 +19,15 @@ export default class UserController {
     const uuid = ctx.state.user.uuid;
     const fields = {_id: 0, uuid: 1, name: 1, displayName: 1, avatar: 1, email: 1, about: 1, website: 1, bgImage: 1, location: 1};
     const user = await UserModel.findOne({uuid}, fields);
-    let rep;
+    let rep: any;
     if (user) {
       rep = user.toJSON();
+      if (rep.bgImage) {
+        rep.bgImage = getSignedUrl(rep.bgImage);
+      }
+      if (!/https?/i.test(rep.avatar)) {
+        rep.avatar = getSignedUrl(rep.avatar);
+      }
       const sid = await getOnlineUser(uuid);
       rep.online = !!sid;
     }
@@ -39,6 +48,12 @@ export default class UserController {
     let rep;
     if (user) {
       rep = user.toJSON();
+      if (rep.bgImage) {
+        rep.bgImage = getSignedUrl(rep.bgImage);
+      }
+      if (!/https?/i.test(rep.avatar)) {
+        rep.avatar = getSignedUrl(rep.avatar);
+      }
       const sid = await getOnlineUser(ctx.params.id);
       rep.online = !!sid;
     }
