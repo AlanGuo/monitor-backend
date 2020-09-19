@@ -1,5 +1,5 @@
 import config from "@src/infrastructure/utils/config";
-import {S3, CloudFront} from "aws-sdk";
+import { S3 } from "aws-sdk";
 import path from "path";
 import {newUniqId, newUuid} from "../utils/uuid";
 import { isImage } from "../utils/image";
@@ -24,6 +24,30 @@ export async function prepareUploadMedia(filename: string) {
   return new Promise((res, rej) => {
     s3.createPresignedPost({
       Bucket: config.AWS_MEDIA_CONVERT.sourceBucket,
+      Fields: {
+        key: sourcePath + `${id}`,
+        success_action_status: config.AWS_S3.successActionStatus,
+      }
+    }, (err, data) => {
+      if (err) {
+        rej(err)
+      } else {
+        res(data);
+      }
+    })
+  });
+}
+
+export async function prepareUploadAsset(filename: string) {
+  const ext = path.extname(filename);
+  const id = newUniqId() + ext;
+  let sourcePath = config.AWS_MEDIA_CONVERT.otherAssetFolder;
+  if (isImage(ext)) {
+    sourcePath = config.AWS_MEDIA_CONVERT.imageAssetFolder;
+  }
+  return new Promise((res, rej) => {
+    s3.createPresignedPost({
+      Bucket: config.AWS_MEDIA_CONVERT.publicBucket,
       Fields: {
         key: sourcePath + `${id}`,
         success_action_status: config.AWS_S3.successActionStatus,

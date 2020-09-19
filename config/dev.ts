@@ -7,6 +7,7 @@ module.exports = {
   AWS_SIGNATURE_VERSION: "v4",
   AWS_MEDIA_CONVERT: {
     "sourceBucket": "newonlyfans",
+    "publicBucket": "newonlyfans-public",
     "endpoint": "https://xdwfvckxc.mediaconvert.ap-southeast-1.amazonaws.com",
     "sourcePath": "s3://newonlyfans/",
     "videoDestination": "s3://newonlyfans-public/media/video/",
@@ -15,6 +16,8 @@ module.exports = {
     "videoSourceFolder": "video/",
     "imageSourceFolder": "image/",
     "otherSourceFolder": "other/",
+    "imageAssetFolder": "asset/image/",
+    "otherAssetFolder": "asset/other",
   },
   AWS_S3: {
     videoPrefix: "media/video/",
