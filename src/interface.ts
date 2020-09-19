@@ -100,6 +100,7 @@ export interface Config {
   AWS_SIGNATURE_VERSION: string,
   AWS_MEDIA_CONVERT: {
     "sourceBucket": string,
+    "publicBucket": string,
     "endpoint": string,
     "sourcePath": string,
     "videoDestination": string,
@@ -108,6 +109,8 @@ export interface Config {
     "videoSourceFolder": string,
     "imageSourceFolder": string,
     "otherSourceFolder": string,
+    "imageAssetFolder": string,
+    "otherAssetFolder": string
   },
   AWS_S3: {
     videoPrefix: string,
