@@ -8,8 +8,6 @@ import {
   SESSION_KEY,
   SOCKET_CHANNEL
 } from "@src/infrastructure/utils/constants";
-import {isVideo} from "@src/infrastructure/utils/video";
-import {isImage} from "@src/infrastructure/utils/image";
 import cookie from "cookie"
 import {loadRedisStore} from "@src/infrastructure/redisStore";
 import {SocketAddUser} from "@src/infrastructure/socket";
@@ -50,9 +48,7 @@ export async function loadSocketService(io: socket.Server) {
       // when "to" exists then publish the msg to mq
       const tmp: Message = JSON.parse(msg);
       tmp.from = socket.user.uuid;
-      if (tmp.to && await UserModel.exists({uuid: tmp.to})) {
-        await messageProducer.publish(JSON.stringify(tmp));
-      }
+      await messageProducer.publish(JSON.stringify(tmp));
     });
 
     // 媒体转换通知

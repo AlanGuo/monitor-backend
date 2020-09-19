@@ -12,9 +12,10 @@ export interface User {
   name?: string,
   show_name?: string,
   email?: string
-  sub_price?: number,
-  self_desc?: string,
-  self_web?: string,
+  subPrice?: number,
+  chatPrice: number
+  selfDesc?: string,
+  selfWeb?: string,
 
   google?: string,
   twitter?: string,

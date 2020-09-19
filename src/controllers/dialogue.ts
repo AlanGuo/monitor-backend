@@ -199,4 +199,23 @@ export default class UserController {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "msg not exists or msg belong you or msg is free"})
     }
   }
+
+  // for test
+  @POST("/pay/:uuid")
+  @AuthRequired()
+  async talkPay(ctx: IRouterContext, next: any) {
+    const from: number = ctx.state.user.uuid;
+    const to = Number(ctx.params.uuid);
+    await DialogueModel.updateOne({from, to}, {$inc: {canTalk: 1}});
+    ctx.body = jsonResponse()
+  }
+
+  @GET("/canTalk/:uuid")
+  @AuthRequired()
+  async detail(ctx: IRouterContext, next: any) {
+    const from: number = ctx.state.user.uuid;
+    const to = Number(ctx.params.uuid);
+    const dialogue = await DialogueModel.findOne({from, to}, {_id: 0, canTalk: 1});
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogue ? dialogue.canTalk : -1})
+  }
 }

@@ -28,7 +28,7 @@ export default class UserController {
   // 查别人的信息
   @GET("/id/:id")
   async getUserById(ctx: IRouterContext, next: any) {
-    const fields = {_id: 0, uuid: 1, name: 1, displayName: 1, avatar: 1, email: 1, about: 1, website: 1, bgImage: 1, location: 1};
+    const fields = {_id: 0, uuid: 1, name: 1, chatPrice: 1, displayName: 1, avatar: 1, email: 1, about: 1, website: 1, bgImage: 1, location: 1};
     const filter: any = {};
     if (!isNaN(Number(ctx.params.id))){
       filter.uuid = ctx.params.id;

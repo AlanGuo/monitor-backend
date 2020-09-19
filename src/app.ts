@@ -16,9 +16,6 @@ import passport from "koa-passport"
 import session from "koa-generic-session"
 import {initSequence} from "@src/infrastructure/utils/sequence";
 import {loadRedisStore} from "@src/infrastructure/redisStore";
-import {loadSendMessageConsumer} from "@src/services/consumer/sendMessage";
-import {loadSaveMessageConsumer} from "@src/services/consumer/saveMessage";
-import {loadUpdateDialogueConsumer} from "@src/services/consumer/updateDialogue";
 import {loadMediaProducer} from "@src/services/producer/mediaProducer";
 import {loadSaveMediaConsumer} from "@src/services/consumer/saveMedia";
 import cors from "@koa/cors"
@@ -66,8 +63,8 @@ async function bootstrap() {
   // consumer can be start another service. Now, just for test
   // await loadSaveMessageConsumer();
   // await loadSendMessageConsumer();
+  // await loadUpdateDialogueConsumer();
   await loadSaveAndSendMessageConsumer()
-  await loadUpdateDialogueConsumer();
   await loadSaveMediaConsumer();
   //producer
   await loadMediaProducer();

@@ -6,12 +6,14 @@ import {
   RABBITMQ_EXCHANGE_TYPE, SAVE_MESSAGE_QUEUE, SOCKET_CHANNEL,
 } from "@src/infrastructure/utils/constants";
 import MessageModel from "@src/models/message"
+import UserModel from "@src/models/user";
 import {getMediaFileName, getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
-import {Message} from "@src/interface";
+import {Message, User} from "@src/interface";
 import {getOnlineUser, redis} from "@src/infrastructure/redis";
 import {mediaType} from "@src/infrastructure/utils";
 import {getSocketIO} from "@src/infrastructure/socket";
 import SocketIO from "socket.io";
+import DialogueModel, {Dialogue} from "@src/models/dialogue";
 
 export async function loadSaveAndSendMessageConsumer() {
   const io = getSocketIO();
@@ -22,9 +24,17 @@ export async function loadSaveAndSendMessageConsumer() {
   await consumer.consume(async msg => {
     const tmp = JSON.parse(msg);
     console.log('save and send message:', msg);
-    const message = await saveMessage(tmp as Message);
-    if (message) {
-      await sendMessage({...tmp, _id: message._id, payment: message.price! > 0 && message.media!.length > 0}, io)
+    const users = await getMessageUsers(tmp)
+    if (users) {
+      const dialogue = await createDialogue(tmp, users);
+      if (dialogue!.canTalk > 0 || dialogue!.canTalk === -1) {
+        const message = await saveMessage(tmp);
+        if (message) {
+          await sendMessage({...tmp, _id: message._id, payment: message.price! <= 0}, io)
+          await updateDialogue(tmp);
+          await updateCanTalk(dialogue);
+        }
+      }
     }
   })
 }
@@ -75,6 +85,59 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
     }
   }
   if (toSid) {
-    io.sockets.connected[toSid].emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(message))
+    io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(message))
   }
+}
+
+async function createDialogue(message: Message, users: { from: User, to: User }) {
+  const sender = await DialogueModel.findOneAndUpdate(
+    {from: message.from, to: message.to},
+    {
+      $setOnInsert: {
+        from: message.from,
+        to: message.to,
+        timeline: 0,
+        canTalk: users.to.chatPrice! > 0 ? 0 : -1,
+        show: true,
+      }
+    },
+    {new: true, upsert: true}
+  )
+
+  await DialogueModel.findOneAndUpdate(
+    {from: message.to, to: message.from},
+    {
+      $setOnInsert: {
+        from: message.to,
+        to: message.from,
+        timeline: 0,
+        canTalk: users.from.chatPrice! > 0 ? 0 : -1,
+        show: true
+      }
+    },
+    {new: true, upsert: true}
+  );
+  return sender;
+}
+
+async function updateDialogue(message: Message) {
+  await DialogueModel.updateOne({from: message.from, to: message.to}, {$set: {show: true}})
+  await DialogueModel.updateOne({from: message.to, to: message.from}, {$set: {show: true}})
+}
+
+async function updateCanTalk(dialogue: Dialogue) {
+  if (dialogue!.canTalk > 0) {
+    await DialogueModel.updateOne({_id: dialogue}, {$inc: {canTalk: -1}})
+  }
+}
+
+
+async function getMessageUsers(message: Message) {
+  const users = await UserModel.find({uuid: {$in: [message.from, message.to]}})
+  const from = users.find(item => item.uuid === message.from)
+  const to = users.find(item => item.uuid === message.to)
+  if (from && to) {
+    return {from, to}
+  }
+  throw "message sender or message receiver not exists"
 }
