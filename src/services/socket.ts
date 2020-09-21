@@ -14,7 +14,8 @@ import {SocketAddUser} from "@src/infrastructure/socket";
 import UserModel from "../models/user";
 import {Producer} from "@src/infrastructure/rabbitMq";
 import {mediaType} from "@src/infrastructure/utils";
-import {MediaConvertCache, Message} from "@src/interface";
+import {CreateDialogue, MediaConvertCache, Message} from "@src/interface";
+import DialogueModel from "@src/models/dialogue";
 
 const store = loadRedisStore();
 
@@ -72,8 +73,34 @@ export async function loadSocketService(io: socket.Server) {
       }
     });
 
+    socket.on(SOCKET_CHANNEL.CREATE_DIALOGUE, async (msg) => {
+      const from = socket.user.uuid;
+      const to: CreateDialogue = msg;
+      await createDialogue(from, to.to)
+    })
+
     socket.on("disconnect", async () => {
       await delOnlineUser(socket.user.uuid.toString());
     })
   });
+}
+
+
+async function createDialogue(from: number, to: number) {
+  const toUser = await UserModel.findOne({uuid: to});
+  if (toUser) {
+    await DialogueModel.findOneAndUpdate(
+      {from, to},
+      {
+        $setOnInsert: {
+          from: from,
+          to: to,
+          timeline: 0,
+          canTalk: toUser.chatPrice! > 0 ? 0 : -1,
+          show: false,
+        }
+      },
+      {new: true, upsert: true}
+    )
+  }
 }

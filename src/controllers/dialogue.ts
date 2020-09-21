@@ -9,6 +9,7 @@ import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import messageModel from "@src/models/message";
+import userModel from "@src/models/user";
 import messagePaymentModel from "@src/models/messagePayment";
 
 @Controller({prefix: "/dialogue"})
@@ -212,7 +213,7 @@ export default class UserController {
 
   @GET("/canTalk/:uuid")
   @AuthRequired()
-  async detail(ctx: IRouterContext, next: any) {
+  async canTalk(ctx: IRouterContext, next: any) {
     const from: number = ctx.state.user.uuid;
     const to = Number(ctx.params.uuid);
     const dialogue = await DialogueModel.findOne({from, to}, {_id: 0, canTalk: 1});

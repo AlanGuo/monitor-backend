@@ -13,7 +13,8 @@ export enum OAUTH {
 
 export enum SOCKET_CHANNEL {
   CHAT_MESSAGE = "chat message",
-  MEDIA_CONVERTED = "media converted"
+  MEDIA_CONVERTED = "media converted",
+  CREATE_DIALOGUE = "create dialogue"
 }
 
 export enum MEDIA_TYPE {

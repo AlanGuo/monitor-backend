@@ -23,6 +23,10 @@ export interface User {
   profile?: Profile,
 }
 
+export interface CreateDialogue {
+  to: number
+}
+
 export interface Message {
   from: number;
   to: number;
