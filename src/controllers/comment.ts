@@ -53,7 +53,7 @@ export default class Comment {
       },
       {$project: fields}
     ]);
-    const total = await commentModel.estimatedDocumentCount({postId});
+    const total = await commentModel.countDocuments({postId});
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {comments, total}});
   }
 
