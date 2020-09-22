@@ -105,16 +105,11 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
-      if (item.price <= 0 || item.payment.length > 0 || item.from === uuid) {
-        item.payment = true
-        item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-          media.urls = getMediaUrl(media.type, media.fileName);
-          media.ready = true;
-        })
-      } else {
-        item.payment = false;
-        item.media = []
-      }
+      item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
+      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+        media.urls = getMediaUrl(media.type, media.fileName, item.payment);
+        media.ready = true;
+      })
     });
     const total = await postModel.countDocuments(match);
     ctx.body = jsonResponse({
@@ -289,16 +284,11 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
-      if (item.price <= 0 || item.payment.length > 0 || item.from === uuid) {
-        item.payment = true
-        item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-          media.urls = getMediaUrl(media.type, media.fileName);
-          media.ready = true;
-        })
-      } else {
-        item.payment = false;
-        item.media = []
-      }
+      item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
+      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+        media.urls = getMediaUrl(media.type, media.fileName);
+        media.ready = true;
+      })
     });
     const total = await postModel.countDocuments(match);
     ctx.body = jsonResponse({
@@ -400,6 +390,23 @@ export default class PostsController {
       },
       {
         $lookup: {
+          from: "postpayments",
+          let: {id: "$_id"},
+          pipeline: [
+            {
+              $match: {
+                uuid,
+                $expr: {
+                  $eq: ["$postId", "$$id"]
+                }
+              },
+            }
+          ],
+          as: "payment"
+        }
+      },
+      {
+        $lookup: {
           from: "media",
           let: {mediaIds: "$media"},
           pipeline: [
@@ -417,8 +424,9 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
+      item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName);
+        media.urls = getMediaUrl(media.type, media.fileName, item.payment);
         media.ready = true;
       })
     });

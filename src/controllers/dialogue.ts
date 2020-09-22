@@ -168,16 +168,11 @@ export default class UserController {
     ]);
 
     messages.forEach(item => {
-      if (item.price <= 0 || item.payment.length > 0 || item.from === ctx.state.user.uuid) {
-        item.payment = true
-        item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-          media.urls = getMediaUrl(media.type, media.fileName);
-          media.ready = true;
-        })
-      } else {
-        item.payment = false;
-        item.media = []
-      }
+      item.payment = item.price <= 0 || item.payment.length > 0 || item.from === ctx.state.user.uuid;
+      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+        media.urls = getMediaUrl(media.type, media.fileName, item.payment);
+        media.ready = true;
+      })
     });
 
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
