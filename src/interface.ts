@@ -86,13 +86,14 @@ export interface Pagination {
 
 export interface VideoAmazonUrl {
   screenshot: string,
-  low: string,
-  hd: string
+  low?: string,
+  hd?: string
 }
 
 export interface ImageAmazonUrl {
-  url: string,
-  thumbnail: string
+  url?: string,
+  thumbnail?: string
+  glass?: string
 }
 
 export interface Config {

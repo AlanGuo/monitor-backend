@@ -3,7 +3,7 @@ import {MediaConvert} from "aws-sdk";
 import {job} from "@config/mediaconvert/job";
 import {MEDIA_TYPE} from "@src/infrastructure/utils/constants";
 import {ImageAmazonUrl, VideoAmazonUrl} from "@src/interface";
-import { getSignedUrl } from "./cloudfront";
+import {getSignedUrl} from "./cloudfront";
 
 const mediaConvert = new MediaConvert({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -16,7 +16,7 @@ const mediaConvert = new MediaConvert({
 export async function createMediaConvertJob(s3FilePath: string) {
   job.Settings.Inputs[0].FileInput = s3FilePath;
   job.Settings.OutputGroups[0].OutputGroupSettings.FileGroupSettings.Destination =
-  config.AWS_MEDIA_CONVERT.videoDestination;
+    config.AWS_MEDIA_CONVERT.videoDestination;
   return new Promise((res, rej) => {
     mediaConvert.createJob(job, (err, data) => {
       if (err) {
@@ -42,15 +42,22 @@ export async function getJob(jobId: string) {
   });
 }
 
-export function getMediaUrl(type: MEDIA_TYPE, fileName: string): ImageAmazonUrl | VideoAmazonUrl {
+export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true): ImageAmazonUrl | VideoAmazonUrl {
   switch (type) {
     case MEDIA_TYPE.IMAGE:
-      return { url:getSignedUrl(config.AWS_S3.imagePrefix + fileName), thumbnail: getSignedUrl(config.AWS_S3.imagePrefix + fileName)};
+      return payment ?
+        {
+          url: getSignedUrl(config.AWS_S3.imagePrefix + fileName),
+          thumbnail: getSignedUrl(config.AWS_S3.imagePrefix + fileName)
+        }
+        : {glass: getSignedUrl(config.AWS_S3.imagePrefix + fileName.replace(".", "-glass."))};
     case MEDIA_TYPE.VIDEO:
-      return {
+      return payment ? {
         screenshot: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.screenshotSuffix),
         low: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.lowSuffix),
         hd: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.hdSuffix),
+      } : {
+        screenshot: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.screenshotSuffix)
       };
     default:
       throw Error("media type not exists")
