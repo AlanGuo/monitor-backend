@@ -1,5 +1,6 @@
 import {Schema, model, Document} from "mongoose";
 import {Profile} from "@src/interface";
+import {USER_STATUS} from "@src/infrastructure/utils/constants";
 
 const required = true;
 const unique = true;
@@ -23,6 +24,10 @@ export interface IUser extends Document {
   twitter?: string;
   facebook?: string;
   oauthProfile?: Profile
+
+  kyc: boolean
+  anchor: boolean
+  status: USER_STATUS
 }
 
 const UserModel: Schema = new Schema({
@@ -43,7 +48,11 @@ const UserModel: Schema = new Schema({
   google: {type: String, required: false, unique, sparse},
   twitter: {type: String, required: false, unique, sparse},
   facebook: {type: String, required: false, unique, sparse},
-  oauthProfile: {type: Object, required: false}
+  oauthProfile: {type: Object, required: false},
+
+  kyc: {type: Boolean, required, default: false},
+  anchor: {type: Boolean, required, default: false},
+  status: {type: USER_STATUS, required, default: USER_STATUS.NORMAL}
 }, {
   timestamps: true
 });

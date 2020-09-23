@@ -1,13 +1,11 @@
 import {Controller, GET, PUT} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
-import UserModel, { IUser } from "../models/user"
-import { jsonResponse } from "@src/infrastructure/utils";
+import UserModel, {IUser} from "../models/user"
+import {jsonResponse} from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
-import { AuthRequired } from "@src/infrastructure/decorators/auth";
+import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {getOnlineUser} from "@src/infrastructure/redis";
-import { getMediaUrl } from "@src/infrastructure/amazon/mediaConvert";
-import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
-import { AnyARecord } from "dns";
+import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 
 @Controller({prefix: "/user"})
 export default class UserController {
@@ -17,7 +15,18 @@ export default class UserController {
   @AuthRequired()
   async getMyInfo(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
-    const fields = {_id: 0, uuid: 1, name: 1, displayName: 1, avatar: 1, email: 1, about: 1, website: 1, bgImage: 1, location: 1};
+    const fields = {
+      _id: 0,
+      uuid: 1,
+      name: 1,
+      displayName: 1,
+      avatar: 1,
+      email: 1,
+      about: 1,
+      website: 1,
+      bgImage: 1,
+      location: 1
+    };
     const user = await UserModel.findOne({uuid}, fields);
     let rep: any;
     if (user) {
@@ -37,9 +46,21 @@ export default class UserController {
   // 查别人的信息
   @GET("/id/:id")
   async getUserById(ctx: IRouterContext, next: any) {
-    const fields = {_id: 0, uuid: 1, name: 1, chatPrice: 1, displayName: 1, avatar: 1, email: 1, about: 1, website: 1, bgImage: 1, location: 1};
+    const fields = {
+      _id: 0,
+      uuid: 1,
+      name: 1,
+      chatPrice: 1,
+      displayName: 1,
+      avatar: 1,
+      email: 1,
+      about: 1,
+      website: 1,
+      bgImage: 1,
+      location: 1
+    };
     const filter: any = {};
-    if (!isNaN(Number(ctx.params.id))){
+    if (!isNaN(Number(ctx.params.id))) {
       filter.uuid = ctx.params.id;
     } else {
       filter.name = ctx.params.id;
@@ -63,7 +84,7 @@ export default class UserController {
   @GET("/:user?")
   @AuthRequired()
   async getUsers(ctx: IRouterContext, next: any) {
-    const nameFilter: {displayName?: RegExp} = {};
+    const nameFilter: { displayName?: RegExp } = {};
     if (ctx.params.user) {
       nameFilter.displayName = new RegExp(ctx.params.user, "i");
     }
@@ -71,7 +92,18 @@ export default class UserController {
 
     filterArr.push({uuid: {$ne: ctx.state.user.uuid}});
 
-    const fields = { _id: 0, uuid: 1, name: 1, displayName: 1, avatar: 1, email: 1, about: 1, website: 1, bgImage: 1, location: 1 };
+    const fields = {
+      _id: 0,
+      uuid: 1,
+      name: 1,
+      displayName: 1,
+      avatar: 1,
+      email: 1,
+      about: 1,
+      website: 1,
+      bgImage: 1,
+      location: 1
+    };
     const users = await UserModel.find({$and: filterArr}, fields);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: users})
   }

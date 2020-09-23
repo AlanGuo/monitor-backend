@@ -41,6 +41,10 @@ export enum RABBITMQ_EXCHANGE_TYPE {
   TOPIC = "topic",
   HEADERS = "headers"
 }
+export enum USER_STATUS {
+  NORMAL,
+  BLOCKED
+}
 
 export const USER_SEQUENCE_INIT = 10000000;
 export const AUTH_TOKEN_OVERDUE_SECOND = 60 * 60 * 12;
