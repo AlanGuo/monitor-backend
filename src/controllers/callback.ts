@@ -35,14 +35,23 @@ export default class CallbackController {
         } else {
           const io = getSocketIO();
           let msg;
+          let unPaymentMsg;
           if (isImage(ext)) {
             const fileName = decodedData.key.replace(config.AWS_MEDIA_CONVERT.imageSourceFolder, "");
             await redis.del(redisKey);
             const urls = (getMediaUrl(MEDIA_TYPE.IMAGE, fileName) as ImageAmazonUrl);
+            const unPaymentUrls = getMediaUrl(MEDIA_TYPE.IMAGE, fileName, false) as VideoAmazonUrl
             msg = JSON.stringify({
               type: MEDIA_TYPE.IMAGE,
               key: decodedData.key,
               ...urls,
+              fileName,
+              owner: decodedData.owner
+            });
+            unPaymentMsg = JSON.stringify({
+              type: MEDIA_TYPE.IMAGE,
+              key: decodedData.key,
+              ...unPaymentUrls,
               fileName,
               owner: decodedData.owner
             });
@@ -52,10 +61,18 @@ export default class CallbackController {
             await redis.del(redisKey);
 
             const urls = getMediaUrl(MEDIA_TYPE.VIDEO, fileNameWithoutExt) as VideoAmazonUrl;
+            const unPaymentUrls = getMediaUrl(MEDIA_TYPE.VIDEO, fileNameWithoutExt, false) as VideoAmazonUrl
             msg = JSON.stringify({
               type: MEDIA_TYPE.IMAGE,
               key: decodedData.key,
               ...urls,
+              fileName: fileNameWithoutExt,
+              owner: decodedData.owner
+            });
+            unPaymentMsg = JSON.stringify({
+              type: MEDIA_TYPE.IMAGE,
+              key: decodedData.key,
+              ...unPaymentUrls,
               fileName: fileNameWithoutExt,
               owner: decodedData.owner
             });
@@ -66,7 +83,7 @@ export default class CallbackController {
             for (const uuid of decodedData.subscribers) {
               const sid = await getOnlineUser(uuid);
               if (sid) {
-                io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, msg);
+                io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, uuid === decodedData.owner ? msg : unPaymentMsg);
               }
             }
           }

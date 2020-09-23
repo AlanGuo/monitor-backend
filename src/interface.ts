@@ -58,7 +58,8 @@ export interface MediaConvertCache {
   subscribers: number[],
   owner: number,
   fileCount: number,
-  key: string
+  key: string,
+  free?: boolean
 }
 
 export interface GoogleProfile {

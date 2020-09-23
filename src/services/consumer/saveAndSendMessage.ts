@@ -56,31 +56,29 @@ async function saveMessage(message: Message) {
 
 async function sendMessage(message: Message, io: SocketIO.Server) {
   const toSid = await getOnlineUser(message.to);
-  if (message.payment) {
-    for (const media of message.media) {
-      if (!media.ready) {
-        // 媒体未完成转换
-        const ext = media.key!.split(".")[1];
-        const mediaInfo = mediaType(ext)
-        const fileNameWithoutExt = media.key!.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "");
-        const data = await redis.get(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt);
-        if (data) {
-          const decodedData = JSON.parse(data);
-          decodedData.subscribers.push(message.to);
-          console.log('add subscribers', message.to);
-          await redis.set(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
-        } else {
-          message.media.forEach(media => {
-            media.ready = true;
-            switch (media.type) {
-              case MEDIA_TYPE.IMAGE:
-                media.urls = getMediaUrl(MEDIA_TYPE.IMAGE, media.key!.split("/")[1]);
-                break;
-              case MEDIA_TYPE.VIDEO:
-                media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, media.key!.split("/")[1].split(".")[0]);
-            }
-          })
-        }
+  for (const media of message.media) {
+    if (!media.ready) {
+      // 媒体未完成转换
+      const ext = media.key!.split(".")[1];
+      const mediaInfo = mediaType(ext)
+      const fileNameWithoutExt = media.key!.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "");
+      const data = await redis.get(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt);
+      if (data) {
+        const decodedData = JSON.parse(data);
+        decodedData.subscribers.push(message.to);
+        decodedData.free = message.price <= 0
+        await redis.set(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
+      } else {
+        message.media.forEach(media => {
+          media.ready = true;
+          switch (media.type) {
+            case MEDIA_TYPE.IMAGE:
+              media.urls = getMediaUrl(MEDIA_TYPE.IMAGE, media.key!.split("/")[1], message.payment);
+              break;
+            case MEDIA_TYPE.VIDEO:
+              media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, media.key!.split("/")[1].split(".")[0], message.payment);
+          }
+        })
       }
     }
   }
