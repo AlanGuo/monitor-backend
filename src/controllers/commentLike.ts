@@ -44,7 +44,7 @@ export default class CommentLike {
       uuid,
       commentId: Types.ObjectId(commentId),
     }, { session });
-    await commentLikeModel.updateOne({
+    await commentModel.updateOne({
       _id: Types.ObjectId(commentId)
     }, {
       $inc: {
