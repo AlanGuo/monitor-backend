@@ -99,7 +99,7 @@ export default class UserController {
         sort, skip, limit, innerUser, getLastMessage, fields
       ];
     }
-    console.log(await DialogueModel.aggregate([
+    console.log(JSON.stringify(await DialogueModel.aggregate([
       {
         $match: {
           from: ctx.state.user.uuid,
@@ -107,9 +107,9 @@ export default class UserController {
         }
       },
       sort, skip, limit, innerUser, fields
-    ]))
+    ])))
     const dialogues = await DialogueModel.aggregate(aggregations);
-    console.log(dialogues)
+    console.log(JSON.stringify(dialogues))
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogues})
   }
 
