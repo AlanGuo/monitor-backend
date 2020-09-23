@@ -88,6 +88,7 @@ export default class UserController {
         sort, skip, limit, getLastMessage, fields
       ];
     } else {
+      console.log("1")
       aggregations = [
         {
           $match: {
@@ -98,7 +99,17 @@ export default class UserController {
         sort, skip, limit, innerUser, getLastMessage, fields
       ];
     }
+    console.log(await DialogueModel.aggregate([
+      {
+        $match: {
+          from: ctx.state.user.uuid,
+          show: true
+        }
+      },
+      sort, skip, limit, innerUser, fields
+    ]))
     const dialogues = await DialogueModel.aggregate(aggregations);
+    console.log(dialogues)
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogues})
   }
 
