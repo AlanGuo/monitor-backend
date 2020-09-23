@@ -36,6 +36,7 @@ export default class RecommendUser {
       },
       fields
     ])
+    recommend.forEach(item => {item.user = item.user[0]})
     const total = await RecommendUserModel.estimatedDocumentCount()
     ctx.body = jsonResponse({
       data: {
