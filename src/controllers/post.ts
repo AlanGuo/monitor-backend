@@ -367,11 +367,17 @@ export default class PostsController {
     const uuid = ctx.state.user.uuid;
     const fields = {
       _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
-      "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1
+      "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1, "payment.postId": 1, "isLiked.uuid": 1
     };
     const id = ctx.params.id;
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
-    const matchFollowers = followers.map(item => item.target).concat([uuid])
+    const matchFollowers = followers.map(item => item.target).concat([uuid]);
+    const isLikeMatch: any = {
+      uuid,
+      $expr: {
+        $eq: ["$postId", "$$id"]
+      }
+    }
     const posts = await postModel.aggregate([
       {
         $match: {
@@ -407,6 +413,18 @@ export default class PostsController {
       },
       {
         $lookup: {
+          from: "likes",
+          let: {id: "$_id"},
+          pipeline: [
+            {
+              $match: isLikeMatch,
+            }
+          ],
+          as: "isLiked"
+        }
+      },
+      {
+        $lookup: {
           from: "media",
           let: {mediaIds: "$media"},
           pipeline: [
@@ -424,6 +442,7 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
+      console.log(item)
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment);
