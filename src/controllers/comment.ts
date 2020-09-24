@@ -7,6 +7,7 @@ import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
 import { PaginationDec } from "@src/infrastructure/decorators/pagination";
 import { Types } from "mongoose";
+import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
 
 @Controller({prefix: "/comment"})
 export default class Comment {
@@ -54,6 +55,11 @@ export default class Comment {
       {$project: fields}
     ]);
     const total = await commentModel.countDocuments({postId});
+    comments.forEach((item) => {
+      if (!/https?/i.test(item.user[0].avatar)) {
+        item.user[0].avatar = getSignedUrl(item.user[0].avatar);
+      }
+    });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {comments, total}});
   }
 

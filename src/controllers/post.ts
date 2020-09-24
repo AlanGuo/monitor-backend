@@ -11,6 +11,7 @@ import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {Types} from "mongoose";
+import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
 
 @Controller({prefix: "/post"})
 export default class PostsController {
@@ -105,6 +106,9 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
+      if (!/https?/i.test(item.user[0].avatar)) {
+        item.user[0].avatar = getSignedUrl(item.user[0].avatar);
+      }
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment);
@@ -442,7 +446,9 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
-      console.log(item)
+      if (!/https?/i.test(item.user[0].avatar)) {
+        item.user[0].avatar = getSignedUrl(item.user.avatar);
+      }
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment);
