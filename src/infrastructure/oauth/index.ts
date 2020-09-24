@@ -143,14 +143,19 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
     default:
       throw Error("provider not exists")
   }
-  const tmp = await UserModel.findOneAndUpdate(
-    filter, update, {new: true, upsert: true, rawResult: true}
-  );
-  if (tmp.value && !tmp.lastErrorObject.updatedExisting) {
-    tmp.value.uuid = await getUserSequence();
-    await tmp.value.save()
+  let exist = await UserModel.findOne(filter);
+  if (!exist) {
+    const tmp = await UserModel.findOneAndUpdate(
+      filter, update, {new: true, upsert: true, rawResult: true}
+    );
+    if (tmp.value && !tmp.lastErrorObject.updatedExisting) {
+      tmp.value.uuid = await getUserSequence();
+      await tmp.value.save()
+    }
+    return tmp.value as User
+  } else {
+    return exist;
   }
-  return tmp.value as User
 }
 
 export async function bindUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile, uuid: number): Promise<User> {
