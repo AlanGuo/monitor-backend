@@ -77,6 +77,9 @@ export default class RecommendUser {
       data: {
         recommend: recommend.map(item => {
           const tmp = item.user[0]
+          if (tmp.bgImage) {
+            tmp.bgImage = getSignedUrl(tmp.bgImage);
+          }
           if (!/https?/i.test(tmp.avatar)) {
             tmp.avatar = getSignedUrl(tmp.avatar);
           }
