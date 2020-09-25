@@ -105,6 +105,11 @@ export default class UserController {
       location: 1
     };
     const users = await UserModel.find({$and: filterArr}, fields);
+    users.forEach((item) => {
+      if (item.avatar && !/https?/i.test(item.avatar)) {
+        item.avatar = getSignedUrl(item.avatar);
+      }
+    });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: users})
   }
 
