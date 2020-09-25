@@ -178,6 +178,74 @@ export default class UserController {
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
   }
 
+  @GET("/message/:id")
+  @AuthRequired()
+  async message(ctx: IRouterContext, next: any) {
+    const id = ctx.params.id;
+    const fields = {
+      _id: 1,
+      from: 1,
+      to: 1,
+      content: 1,
+      createdAt: 1,
+      price: 1,
+      "media.type": 1,
+      "media.fileName": 1,
+      "payment.messageId": 1
+    };
+    const messages = await MessageModel.aggregate([
+      {
+        $match: {
+          id
+        }
+      },
+      {
+        $lookup: {
+          from: "messagepayments",
+          let: {id: "$_id"},
+          pipeline: [
+            {
+              $match: {
+                uuid: ctx.state.user.uuid,
+                $expr: {
+                  $eq: ["$messageId", "$$id"]
+                }
+              },
+            }
+          ],
+          as: "payment"
+        }
+      },
+      {
+        $lookup: {
+          from: "media",
+          let: {mediaIds: "$media"},
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$fileName", "$$mediaIds"],
+                }
+              },
+            }
+          ],
+          as: "media"
+        }
+      },
+      {$project: fields},
+    ]);
+
+    messages.forEach(item => {
+      item.payment = item.price <= 0 || item.payment.length > 0 || item.from === ctx.state.user.uuid;
+      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+        media.urls = getMediaUrl(media.type, media.fileName, item.payment);
+        media.ready = true;
+      })
+    });
+
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages[0]})
+  }
+
   @POST("/message/pay/:id")
   @AuthRequired()
   async pay(ctx: IRouterContext, next: any) {

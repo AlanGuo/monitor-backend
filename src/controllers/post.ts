@@ -455,7 +455,7 @@ export default class PostsController {
         media.ready = true;
       })
     });
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts[0]})
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts[0]});
 
   }
 
