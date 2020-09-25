@@ -4,6 +4,7 @@ import {IRouterContext} from "koa-router";
 import {Pagination} from "@src/interface";
 import RecommendUserModel from "@src/models/recommendUser";
 import {jsonResponse} from "@src/infrastructure/utils";
+import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 
 @Controller({prefix: "/recommend"})
 export default class RecommendUser {
@@ -75,7 +76,11 @@ export default class RecommendUser {
     ctx.body = jsonResponse({
       data: {
         recommend: recommend.map(item => {
-          return item.user[0]
+          const tmp = item.user[0]
+          if (!/https?/i.test(tmp.avatar)) {
+            tmp.avatar = getSignedUrl(tmp.avatar);
+          }
+          return tmp
         })
       }
     })
