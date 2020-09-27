@@ -1,10 +1,11 @@
 import {IRouterContext} from "koa-router";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
+import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 
 export function jsonResponse({data, code, msg}: { data?: any, code?: number | string, msg?: string } = {}) {
   return {
-    code: code || 0,
+    code: code || RESPONSE_CODE.NORMAL,
     data: data ? data : undefined,
     msg: msg || ""
   }

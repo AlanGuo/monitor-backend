@@ -1,10 +1,11 @@
 import {Controller, GET, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import SubscriberModel from "../models/subscriber"
-import { jsonResponse } from "@src/infrastructure/utils";
+import {jsonResponse} from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
-import { AuthRequired } from "@src/infrastructure/decorators/auth";
-import { PaginationDec } from "@src/infrastructure/decorators/pagination";
+import {AuthRequired} from "@src/infrastructure/decorators/auth";
+import {PaginationDec} from "@src/infrastructure/decorators/pagination";
+import {Pagination} from "@src/interface";
 
 @Controller({prefix: "/subscriber"})
 export default class Subscriber {
@@ -39,7 +40,7 @@ export default class Subscriber {
       uuid,
       target
     });
-    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: !!sub });
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: !!sub});
   }
 
   @POST("/new/:target")
@@ -60,7 +61,7 @@ export default class Subscriber {
           target
         });
       }
-      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL });
+      ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
     }
   }
 
@@ -76,7 +77,75 @@ export default class Subscriber {
         uuid,
         target
       });
-      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL });
+      ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
     }
+  }
+
+  @GET("/my/following")
+  @AuthRequired()
+  @PaginationDec()
+  async following(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const pagination: Pagination = ctx.state.pagination;
+    const fields = {
+      $project: {
+        _id: 0,
+        "user.uuid": 1,
+        "user.avatar": 1,
+        "user.name": 1,
+        "user.displayName": 1
+      }
+    }
+    const following = await SubscriberModel.aggregate([
+      {$match: {uuid}},
+      {$sort: {_id: -1}},
+      {$skip: pagination.offset},
+      {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "users",
+          localField: "target",
+          foreignField: "uuid",
+          as: "user"
+        }
+      },
+      fields
+    ])
+
+    ctx.body = jsonResponse({data: following})
+  }
+
+  @GET("/my/fans")
+  @AuthRequired()
+  @PaginationDec()
+  async fans(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const pagination: Pagination = ctx.state.pagination;
+    const fields = {
+      $project: {
+        _id: 0,
+        "user.uuid": 1,
+        "user.avatar": 1,
+        "user.name": 1,
+        "user.displayName": 1
+      }
+    }
+    const fans = await SubscriberModel.aggregate([
+      {$match: {target: uuid}},
+      {$sort: {_id: -1}},
+      {$skip: pagination.offset},
+      {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "users",
+          localField: "target",
+          foreignField: "uuid",
+          as: "user"
+        }
+      },
+      fields
+    ])
+
+    ctx.body = jsonResponse({data: fans})
   }
 }
