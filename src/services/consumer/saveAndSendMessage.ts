@@ -83,15 +83,7 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
     } else {
       message.media.forEach(media => {
         media.ready = true;
-        media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, media.fileName!, message.payment);
-
-        // switch (media.type) {
-        //   case MEDIA_TYPE.IMAGE:
-        //     media.urls = getMediaUrl(MEDIA_TYPE.IMAGE, media.fileName!, message.payment);
-        //     break;
-        //   case MEDIA_TYPE.VIDEO:
-        //     media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, media.fileName!, message.payment);
-        // }
+        media.urls = getMediaUrl(media.type, media.fileName!, message.payment);
       })
     }
   }
