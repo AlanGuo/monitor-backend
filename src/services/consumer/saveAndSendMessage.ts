@@ -80,6 +80,17 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
           }
         })
       }
+    } else {
+      message.media.forEach(media => {
+        media.ready = true;
+        switch (media.type) {
+          case MEDIA_TYPE.IMAGE:
+            media.urls = getMediaUrl(MEDIA_TYPE.IMAGE, media.key!.split("/")[1], message.payment);
+            break;
+          case MEDIA_TYPE.VIDEO:
+            media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, media.key!.split("/")[1].split(".")[0], message.payment);
+        }
+      })
     }
   }
   if (toSid) {
