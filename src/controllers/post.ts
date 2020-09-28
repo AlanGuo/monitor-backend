@@ -447,7 +447,7 @@ export default class PostsController {
     ]);
     posts.forEach(item => {
       if (!/https?/i.test(item.user[0].avatar)) {
-        item.user[0].avatar = getSignedUrl(item.user.avatar);
+        item.user[0].avatar = getSignedUrl(item.user[0].avatar);
       }
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {

@@ -11,6 +11,7 @@ import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import messageModel from "@src/models/message";
 import userModel from "@src/models/user";
 import messagePaymentModel from "@src/models/messagePayment";
+import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -99,6 +100,11 @@ export default class UserController {
       ];
     }
     const dialogues = await DialogueModel.aggregate(aggregations);
+    dialogues.forEach((item) => {
+      if (!/https?/i.test(item.user[0].avatar)) {
+        item.user[0].avatar = getSignedUrl(item.user[0].avatar);
+      }
+    })
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogues})
   }
 
