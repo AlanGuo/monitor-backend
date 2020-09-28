@@ -102,7 +102,7 @@ export default class UserController {
     const dialogues = await DialogueModel.aggregate(aggregations);
     dialogues.forEach((item) => {
       if (!/https?/i.test(item.user[0].avatar)) {
-        item.user[0].avatar = getSignedUrl(item.user.avatar);
+        item.user[0].avatar = getSignedUrl(item.user[0].avatar);
       }
     })
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogues})
