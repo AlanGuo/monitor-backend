@@ -93,6 +93,7 @@ export default class Subscriber {
         "user.uuid": 1,
         "user.avatar": 1,
         "user.name": 1,
+        "user.bgImage": 1,
         "user.displayName": 1
       }
     }
@@ -127,6 +128,7 @@ export default class Subscriber {
         "user.uuid": 1,
         "user.avatar": 1,
         "user.name": 1,
+        "user.bgImage": 1,
         "user.displayName": 1
       }
     }

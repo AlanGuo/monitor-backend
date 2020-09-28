@@ -17,7 +17,8 @@ export default class MediaController {
   @GET("/prepare-upload/:filename")
   async prepareUpload(ctx: IRouterContext) {
     const filename = ctx.params.filename;
-    ctx.body = await prepareUploadMedia(filename);
+    const free = ctx.query.free ?? true;
+    ctx.body = await prepareUploadMedia(filename, free);
   }
 
   @GET("/prepare-upload-asset/:filename")

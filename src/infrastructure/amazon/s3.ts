@@ -12,9 +12,9 @@ const s3: S3 = new S3({
   signatureVersion: config.AWS_SIGNATURE_VERSION,
 });
 
-export async function prepareUploadMedia(filename: string) {
+export async function prepareUploadMedia(filename: string, free = true) {
   const ext = path.extname(filename);
-  const id = newUniqId() + ext;
+  const id = free ? "free-" + newUniqId() + ext : newUniqId() + ext;
   let sourcePath = config.AWS_MEDIA_CONVERT.otherSourceFolder;
   if (isImage(ext)) {
     sourcePath = config.AWS_MEDIA_CONVERT.imageSourceFolder;
