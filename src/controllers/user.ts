@@ -25,7 +25,9 @@ export default class UserController {
       about: 1,
       website: 1,
       bgImage: 1,
-      location: 1
+      location: 1,
+      chatPrice: 1,
+      subPrice: 1,
     };
     const user = await UserModel.findOne({uuid}, fields);
     let rep: any;
@@ -51,6 +53,7 @@ export default class UserController {
       uuid: 1,
       name: 1,
       chatPrice: 1,
+      subPrice: 1,
       displayName: 1,
       avatar: 1,
       email: 1,
@@ -102,7 +105,9 @@ export default class UserController {
       about: 1,
       website: 1,
       bgImage: 1,
-      location: 1
+      location: 1,
+      chatPrice: 1,
+      subPrice: 1,
     };
     const users = await UserModel.find({$and: filterArr}, fields);
     users.forEach((item) => {
