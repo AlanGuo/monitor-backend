@@ -147,7 +147,10 @@ export default class Subscriber {
       },
       fields
     ])
-
-    ctx.body = jsonResponse({data: fans})
+    fans.forEach(item => {
+      item.user = item.user[0]
+    })
+    const total = await SubscriberModel.countDocuments({target: uuid})
+    ctx.body = jsonResponse({data: {fans, total, page: pagination.page, size: pagination.size}})
   }
 }
