@@ -48,7 +48,7 @@ export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true):
       return payment ?
         {
           url: getSignedUrl(config.AWS_S3.imagePrefix + fileName),
-          thumbnail: getSignedUrl(config.AWS_S3.imagePrefix + fileName)
+          thumbnail: getSignedUrl(config.AWS_S3.imagePrefix + fileName.split(".").splice(1, 0, "-thumbnail"))
         }
         : {glass: getSignedUrl(config.AWS_S3.imagePrefix + fileName.replace(".", "-glass."))};
     case MEDIA_TYPE.VIDEO:
