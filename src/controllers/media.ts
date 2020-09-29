@@ -59,12 +59,12 @@ export default class MediaController {
       const data = await redis.get(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
-        decodedData.fileCount = 1;
+        decodedData.fileCount = 3;
         decodedData.key = key;
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify(decodedData));
       } else {
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
-          fileCount: 1,
+          fileCount: 3,
           key,
           subscribers: []
         }));

@@ -1,7 +1,7 @@
 import {IRouterContext} from "koa-router";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
-import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 
 export function jsonResponse({data, code, msg}: { data?: any, code?: number | string, msg?: string } = {}) {
   return {
@@ -31,19 +31,19 @@ export function unauthorized(ctx: IRouterContext) {
 }
 
 export function mediaType(ext: string): {
-  type: "Video" | "Image",
+  type: MEDIA_TYPE.VIDEO | MEDIA_TYPE.IMAGE,
   confKey: "videoFolder" | "imageFolder",
   sourceFolder: "videoSourceFolder" | "imageSourceFolder"
 } {
   if (isVideo(ext)) {
     return {
-      type: "Video",
+      type: MEDIA_TYPE.VIDEO,
       confKey: "videoFolder",
       sourceFolder: "videoSourceFolder"
     }
   } else if (isImage(ext)) {
     return {
-      type: "Image",
+      type: MEDIA_TYPE.IMAGE,
       confKey: "imageFolder",
       sourceFolder: "imageSourceFolder"
     }

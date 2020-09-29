@@ -42,15 +42,16 @@ export async function getJob(jobId: string) {
   });
 }
 
-export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true): ImageAmazonUrl | VideoAmazonUrl {
+//TODO size mediaConsumer
+export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, size?: { thumbnail: string[], glass: string[], image: string[] }): ImageAmazonUrl | VideoAmazonUrl {
   switch (type) {
     case MEDIA_TYPE.IMAGE:
       return payment ?
         {
-          url: getSignedUrl(config.AWS_S3.imagePrefix + fileName),
-          thumbnail: getSignedUrl(config.AWS_S3.imagePrefix + fileName.split(".")[0] + "-thumbnail." + fileName.split(".")[1])
+          url: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `(${size?.thumbnail[0]}*${size?.thumbnail[1]}).`)}`),
+          thumbnail: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `_thumbnail(${size?.thumbnail[0]}*${size?.thumbnail[1]}).`)}`)
         }
-        : {glass: getSignedUrl(config.AWS_S3.imagePrefix + fileName.replace(".", "-glass."))};
+        : {glass: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `_glass(${size?.thumbnail[0]}*${size?.thumbnail[1]}).`)}`)};
     case MEDIA_TYPE.VIDEO:
       return payment ? {
         screenshot: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.screenshotSuffix),

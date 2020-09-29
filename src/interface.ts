@@ -59,7 +59,10 @@ export interface MediaConvertCache {
   owner: number,
   fileCount: number,
   key: string,
-  free?: boolean
+  free?: boolean,
+  glassSize?: string[],
+  thumbnailSize?: string[],
+  imageSize?: string[]
 }
 
 export interface GoogleProfile {
