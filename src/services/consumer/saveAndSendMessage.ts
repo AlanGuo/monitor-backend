@@ -69,7 +69,7 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
         decodedData.free = message.price <= 0
         await redis.set(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
       } else {
-        message.media.forEach(media => {
+        // message.media.forEach(media => {
           media.ready = true;
           switch (media.type) {
             case MEDIA_TYPE.IMAGE:
@@ -78,7 +78,7 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
             case MEDIA_TYPE.VIDEO:
               media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, media.key!.split("/")[1].split(".")[0], message.payment);
           }
-        })
+        // })
       }
     } else {
       message.media.forEach(media => {
