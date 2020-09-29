@@ -15,6 +15,8 @@ export const job = {
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 50,
+              "Width": 540,
+              "Height": 960,
               "CodecSettings": {
                 "Codec": "FRAME_CAPTURE",
                 "FrameCaptureSettings": {
@@ -28,7 +30,7 @@ export const job = {
               "ColorMetadata": "INSERT"
             },
             "Extension": "jpg",
-            "NameModifier": "_screenshot"
+            "NameModifier": "_screenshot(540*960)"
           },
           {
             "ContainerSettings": {
@@ -45,6 +47,8 @@ export const job = {
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 100,
+              "Width": 1920,
+              "Height": 1080,
               "CodecSettings": {
                 "Codec": "H_264",
                 "H264Settings": {
@@ -112,7 +116,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_generic_low_mp4_800kbps"
+            "NameModifier": "_generic_low_mp4_800kbps(540*960)"
           },
           {
             "ContainerSettings": {
@@ -196,7 +200,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_generic_hd_mp4_4000kbps"
+            "NameModifier": "_generic_hd_mp4_4000kbps(1080*1920)"
           }
         ],
         "OutputGroupSettings": {
