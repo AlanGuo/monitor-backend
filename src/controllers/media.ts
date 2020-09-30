@@ -8,6 +8,7 @@ import {redis} from "../infrastructure/redis";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
 import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
+import {AuthRequired} from "@src/infrastructure/decorators/auth";
 
 @Controller({prefix: "/media"})
 export default class MediaController {

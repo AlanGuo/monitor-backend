@@ -17,7 +17,8 @@ export async function loadSaveMediaConsumer() {
     const fileName = tmp.fileName.split(".");
     await MediaModel.create({
       type: fileName.length > 1 ? MEDIA_TYPE.IMAGE : MEDIA_TYPE.VIDEO,
-      owner: tmp.owner,
+      size: tmp.size,
+      owner: tmp.owner || 0,
       fileName: tmp.fileName
     })
 

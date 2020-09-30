@@ -52,6 +52,7 @@ export interface MessageMedia {
     low?: string;
     hd?: string;
   };
+  size?: any
 }
 
 export interface MediaConvertCache {

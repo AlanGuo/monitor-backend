@@ -122,6 +122,7 @@ export default class UserController {
       price: 1,
       "media.type": 1,
       "media.fileName": 1,
+      "media.size": 1,
       "payment.messageId": 1
     };
     const messages = await MessageModel.aggregate([
@@ -176,7 +177,7 @@ export default class UserController {
     messages.forEach(item => {
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === ctx.state.user.uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName, item.payment);
+        media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
       })
     });
@@ -197,6 +198,7 @@ export default class UserController {
       price: 1,
       "media.type": 1,
       "media.fileName": 1,
+      "media.size": 1,
       "payment.messageId": 1
     };
     const messages = await MessageModel.aggregate([
@@ -244,7 +246,7 @@ export default class UserController {
     messages.forEach(item => {
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === ctx.state.user.uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName, item.payment);
+        media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
       })
     });
