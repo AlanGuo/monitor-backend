@@ -204,7 +204,7 @@ export default class UserController {
     const messages = await MessageModel.aggregate([
       {
         $match: {
-          id: Types.ObjectId(id)
+          _id: Types.ObjectId(id)
         }
       },
       {
