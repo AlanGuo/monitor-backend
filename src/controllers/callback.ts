@@ -64,8 +64,8 @@ export default class CallbackController {
               file = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "")
           }
           await redis.del(redisKey);
-          const urls = getMediaUrl(mediaInfo.type, file) as ImageAmazonUrl | VideoAmazonUrl;
-          const unPaymentUrls = getMediaUrl(mediaInfo.type, file, false) as ImageAmazonUrl | VideoAmazonUrl
+          const urls = getMediaUrl(mediaInfo.type, file, true, size) as ImageAmazonUrl | VideoAmazonUrl;
+          const unPaymentUrls = getMediaUrl(mediaInfo.type, file, false, size) as ImageAmazonUrl | VideoAmazonUrl
           const msg = JSON.stringify({
             type: mediaInfo.type,
             key: decodedData.key,

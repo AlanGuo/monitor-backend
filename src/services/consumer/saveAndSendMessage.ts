@@ -14,6 +14,8 @@ import {mediaType} from "@src/infrastructure/utils";
 import {getSocketIO} from "@src/infrastructure/socket";
 import SocketIO from "socket.io";
 import DialogueModel, {Dialogue} from "@src/models/dialogue";
+import MediaModel from "@src/models/media";
+
 
 export async function loadSaveAndSendMessageConsumer() {
   const io = getSocketIO();
@@ -70,21 +72,24 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
         await redis.set(config.AWS_MEDIA_CONVERT[mediaInfo.confKey] + fileNameWithoutExt, JSON.stringify(decodedData));
       } else {
         // message.media.forEach(media => {
-          media.ready = true;
-          switch (media.type) {
-            case MEDIA_TYPE.IMAGE:
-              media.urls = getMediaUrl(MEDIA_TYPE.IMAGE, media.key!.split("/")[1], message.payment);
-              break;
-            case MEDIA_TYPE.VIDEO:
-              media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, media.key!.split("/")[1].split(".")[0], message.payment);
-          }
+        media.ready = true;
+        switch (media.type) {
+          case MEDIA_TYPE.IMAGE:
+            const tmpImageMedia = await MediaModel.findOne({fileName: media.key!.split("/")[1]})
+            media.urls = getMediaUrl(MEDIA_TYPE.IMAGE, tmpImageMedia!.fileName, message.payment, tmpImageMedia!.size);
+            break;
+          case MEDIA_TYPE.VIDEO:
+            const tmpVideoMedia = await MediaModel.findOne({fileName: media.key!.split("/")[1].split(".")[0]})
+            media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, tmpVideoMedia!.fileName, message.payment, tmpVideoMedia!.size);
+        }
         // })
       }
     } else {
-      message.media.forEach(media => {
-        media.ready = true;
-        media.urls = getMediaUrl(media.type, media.fileName!, message.payment);
-      })
+      // message.media.forEach(media => {
+      media.ready = true;
+      const tmpMedia = await MediaModel.findOne({fileName: media.fileName});
+      media.urls = getMediaUrl(media.type, tmpMedia!.fileName, message.payment, tmpMedia!.size);
+      // })
     }
   }
   if (toSid) {

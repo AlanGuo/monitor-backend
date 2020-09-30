@@ -11,7 +11,7 @@ import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {Types} from "mongoose";
-import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
+import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 
 @Controller({prefix: "/post"})
 export default class PostsController {
@@ -26,7 +26,7 @@ export default class PostsController {
 
     const fields = {
       _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, price: 1, "media.type": 1, "media.fileName": 1,
-      "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1,
+      "media.size": 1, "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1,
       "isLiked.uuid": 1, "payment.postId": 1
     };
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
@@ -110,8 +110,8 @@ export default class PostsController {
         item.user[0].avatar = getSignedUrl(item.user[0].avatar);
       }
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
-      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName, item.payment);
+      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any, size: any }) => {
+        media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
       })
     });
@@ -190,7 +190,7 @@ export default class PostsController {
     ]);
     posts.forEach(item => {
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName);
+        media.urls = getMediaUrl(media.type, media.fileName, true, media.size);
         media.ready = true;
       })
     });
@@ -290,7 +290,7 @@ export default class PostsController {
     posts.forEach(item => {
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName);
+        media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
       })
     });
@@ -370,8 +370,21 @@ export default class PostsController {
   async get(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
     const fields = {
-      _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, "media.type": 1, "media.fileName": 1,
-      "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1, "payment.postId": 1, "isLiked.uuid": 1
+      _id: 1,
+      from: 1,
+      content: 1,
+      createdAt: 1,
+      like: 1,
+      comment: 1,
+      "media.type": 1,
+      "media.fileName": 1,
+      "media.size": 1,
+      "user.uuid": 1,
+      "user.name": 1,
+      "user.displayName": 1,
+      "user.avatar": 1,
+      "payment.postId": 1,
+      "isLiked.uuid": 1
     };
     const id = ctx.params.id;
     const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
@@ -451,7 +464,7 @@ export default class PostsController {
       }
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName, item.payment);
+        media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
       })
     });
