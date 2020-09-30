@@ -242,7 +242,7 @@ export default class UserController {
       },
       {$project: fields},
     ]);
-
+    console.log(messages);
     messages.forEach(item => {
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === ctx.state.user.uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
