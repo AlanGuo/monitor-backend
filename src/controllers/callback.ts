@@ -32,6 +32,7 @@ export default class CallbackController {
       const mediaInfo = mediaType(ext)
       if (data) {
         const decodedData: MediaConvertCache = JSON.parse(data);
+        console.log("callback")
         if (decodedData.fileCount > 1) {
           switch (mediaInfo.type) {
             case MEDIA_TYPE.IMAGE:
