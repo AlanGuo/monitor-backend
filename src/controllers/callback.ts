@@ -29,6 +29,8 @@ export default class CallbackController {
       // 图片文件分 glass, thumbnail 有下划线
       redisKey = redisKey.split("_")[0];
       const data = await redis.get(redisKey);
+      console.log(JSON.stringify(body))
+      console.log(ext)
       const mediaInfo = mediaType(ext)
       if (data) {
         const decodedData: MediaConvertCache = JSON.parse(data);
