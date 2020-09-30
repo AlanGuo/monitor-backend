@@ -22,15 +22,13 @@ export default class CallbackController {
     const message = JSON.parse(body.Message);
     const records = message.Records;
     for (const recordItem of records) {
-      const fileName: string = recordItem.s3.object.key;
+      const fileName: string = decodeURIComponent(recordItem.s3.object.key);
       const ext = fileName.split(".")[1];
       let redisKey = fileName.split(".")[0];
       // 视频文件有下划线分割"_"，这里把下划线也滤除
       // 图片文件分 glass, thumbnail 有下划线
       redisKey = redisKey.split("_")[0];
       const data = await redis.get(redisKey);
-      console.log(JSON.stringify(body))
-      console.log(ext)
       const mediaInfo = mediaType(ext)
       if (data) {
         const decodedData: MediaConvertCache = JSON.parse(data);
