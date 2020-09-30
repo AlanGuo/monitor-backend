@@ -32,23 +32,22 @@ export default class CallbackController {
       const mediaInfo = mediaType(ext)
       if (data) {
         const decodedData: MediaConvertCache = JSON.parse(data);
-        console.log("callback", decodedData.fileCount, fileName)
+        switch (mediaInfo.type) {
+          case MEDIA_TYPE.IMAGE:
+            const sizeInfo = fileName.replace(/.*\((.+)\).*/g, "$1");
+            const size = sizeInfo.indexOf(".") === -1 ? sizeInfo.split("*") : [];
+            if (fileName.indexOf("_glass") !== -1) {
+              decodedData.glassSize = size
+            } else if (fileName.indexOf("_thumbnail") !== -1) {
+              decodedData.thumbnailSize = size
+            } else {
+              decodedData.imageSize = size
+            }
+            break
+          case MEDIA_TYPE.VIDEO:
+            break
+        }
         if (decodedData.fileCount > 1) {
-          switch (mediaInfo.type) {
-            case MEDIA_TYPE.IMAGE:
-              const sizeInfo = fileName.replace(/.*\((.+)\).*/g, "$1");
-              const size = sizeInfo.indexOf(".") === -1 ? sizeInfo.split("*") : [];
-              if (fileName.indexOf("_glass") !== -1) {
-                decodedData.glassSize = size
-              } else if (fileName.indexOf("_thumbnail") !== -1) {
-                decodedData.thumbnailSize = size
-              } else {
-                decodedData.imageSize = size
-              }
-              break
-            case MEDIA_TYPE.VIDEO:
-              break
-          }
           decodedData.fileCount--;
           await redis.set(redisKey, JSON.stringify(decodedData));
         } else {
