@@ -49,6 +49,7 @@ export default class CallbackController {
               break
           }
           decodedData.fileCount--;
+          console.log(decodedData.fileCount)
           await redis.set(redisKey, JSON.stringify(decodedData));
         } else {
           const io = getSocketIO();
