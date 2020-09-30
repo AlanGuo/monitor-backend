@@ -28,11 +28,9 @@ export default class MediaController {
   }
 
   @GET("/convert")
-  @AuthRequired()
   async convert(ctx: IRouterContext) {
     const key = decodeURIComponent(ctx.query.key);
     const ext = key.split(".")[1];
-    const uuid = ctx.state.user.uuid
     if (isVideo(ext)) {
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
       const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + key;
@@ -42,14 +40,12 @@ export default class MediaController {
         const decodedData = JSON.parse(data);
         decodedData.fileCount = 3;
         decodedData.key = key;
-        decodedData.owner = uuid
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify(decodedData));
       } else {
         // media convertion job, three jobs
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify({
           fileCount: 3,
           key,
-          owner: uuid,
           subscribers: []
         }));
       }
