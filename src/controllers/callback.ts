@@ -49,7 +49,6 @@ export default class CallbackController {
               break
           }
           decodedData.fileCount--;
-          console.log(decodedData.fileCount)
           await redis.set(redisKey, JSON.stringify(decodedData));
         } else {
           const io = getSocketIO();
@@ -84,7 +83,7 @@ export default class CallbackController {
             size
           });
           await mediaProducer.publish(msg);
-
+          console.log("media Producer")
           if (decodedData.subscribers.length) {
             for (const uuid of decodedData.subscribers) {
               const sid = await getOnlineUser(uuid);
