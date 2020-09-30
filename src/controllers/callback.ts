@@ -86,7 +86,7 @@ export default class CallbackController {
             for (const uuid of decodedData.subscribers) {
               const sid = await getOnlineUser(uuid);
               if (sid) {
-                io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, uuid === decodedData.owner ? msg : unPaymentMsg);
+                io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, uuid === decodedData.owner || decodedData.free? msg : unPaymentMsg);
               }
             }
           }
