@@ -21,7 +21,6 @@ export default class CallbackController {
     const body = ctx.request.body;
     const message = JSON.parse(body.Message);
     const records = message.Records;
-    console.log(JSON.stringify(records))
     for (const recordItem of records) {
       const fileName: string = decodeURIComponent(recordItem.s3.object.key);
       const ext = fileName.split(".")[1];
@@ -29,6 +28,7 @@ export default class CallbackController {
       // 视频文件有下划线分割"_"，这里把下划线也滤除
       // 图片文件分 glass, thumbnail 有下划线
       redisKey = redisKey.split("_")[0];
+      console.log(redisKey)
       const data = await redis.get(redisKey);
       const mediaInfo = mediaType(ext)
       if (data) {
