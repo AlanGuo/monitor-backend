@@ -21,7 +21,7 @@ export default class CallbackController {
     const body = ctx.request.body;
     const message = JSON.parse(body.Message);
     const records = message.Records;
-    console.log(records.length, records)
+    console.log(JSON.stringify(records))
     for (const recordItem of records) {
       const fileName: string = decodeURIComponent(recordItem.s3.object.key);
       const ext = fileName.split(".")[1];
