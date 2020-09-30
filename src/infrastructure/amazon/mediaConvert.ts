@@ -48,10 +48,10 @@ export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, 
     case MEDIA_TYPE.IMAGE:
       return payment ?
         {
-          url: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `(_${size?.thumbnail![0]}*${size?.thumbnail![1]}).`)}`),
+          url: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `(_${size?.image![0]}*${size?.image![1]}).`)}`),
           thumbnail: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `_thumbnail(${size?.thumbnail![0]}*${size?.thumbnail![1]}).`)}`)
         }
-        : {glass: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `_glass(${size?.thumbnail![0]}*${size?.thumbnail![1]}).`)}`)};
+        : {glass: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `_glass(${size?.glass![0]}*${size?.glass![1]}).`)}`)};
     case MEDIA_TYPE.VIDEO:
       return payment ? {
         screenshot: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.screenshotSuffix),

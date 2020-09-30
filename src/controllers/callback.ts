@@ -28,7 +28,6 @@ export default class CallbackController {
       // 视频文件有下划线分割"_"，这里把下划线也滤除
       // 图片文件分 glass, thumbnail 有下划线
       redisKey = redisKey.split("_")[0];
-      console.log(redisKey)
       const data = await redis.get(redisKey);
       const mediaInfo = mediaType(ext)
       if (data) {
@@ -65,7 +64,6 @@ export default class CallbackController {
               size = {screenshot: [540, 960], low: [540, 960], hd: [1080, 1920]}
               file = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "")
           }
-          await redis.del(redisKey);
           const urls = getMediaUrl(mediaInfo.type, file, true, size) as ImageAmazonUrl | VideoAmazonUrl;
           const unPaymentUrls = getMediaUrl(mediaInfo.type, file, false, size) as ImageAmazonUrl | VideoAmazonUrl
           const msg = JSON.stringify({
@@ -85,7 +83,6 @@ export default class CallbackController {
             size
           });
           await mediaProducer.publish(msg);
-          console.log("media Producer")
           if (decodedData.subscribers.length) {
             for (const uuid of decodedData.subscribers) {
               const sid = await getOnlineUser(uuid);
