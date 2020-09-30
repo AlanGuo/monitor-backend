@@ -9,9 +9,9 @@ import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import messageModel from "@src/models/message";
-import userModel from "@src/models/user";
 import messagePaymentModel from "@src/models/messagePayment";
 import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
+import {Types} from "mongoose";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -204,7 +204,7 @@ export default class UserController {
     const messages = await MessageModel.aggregate([
       {
         $match: {
-          id
+          id: Types.ObjectId(id)
         }
       },
       {
