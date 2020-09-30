@@ -136,6 +136,7 @@ export default class PostsController {
       like: 1,
       comment: 1,
       price: 1,
+      "media.size": 1,
       "media.type": 1,
       "media.fileName": 1,
       "isLiked.uuid": 1
@@ -214,6 +215,7 @@ export default class PostsController {
       like: 1,
       comment: 1,
       price: 1,
+      "media.size": 1,
       "media.type": 1,
       "media.fileName": 1,
       "isLiked.uuid": 1,
