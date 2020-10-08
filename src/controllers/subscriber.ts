@@ -97,7 +97,7 @@ export default class Subscriber {
         "user.displayName": 1
       }
     }
-    const following = await SubscriberModel.aggregate([
+    const tmp = await SubscriberModel.aggregate([
       {$match: {uuid}},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
@@ -112,8 +112,11 @@ export default class Subscriber {
       },
       fields
     ])
-
-    ctx.body = jsonResponse({data: following})
+    const following = tmp.map(item => {
+      return item.user[0]
+    })
+    const total = await SubscriberModel.countDocuments({uuid})
+    ctx.body = jsonResponse({data: {following, total, page: pagination.page, size: pagination.size}})
   }
 
   @GET("/my/fans")
