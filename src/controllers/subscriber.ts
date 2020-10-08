@@ -140,7 +140,7 @@ export default class Subscriber {
       {
         $lookup: {
           from: "users",
-          localField: "target",
+          localField: "uuid",
           foreignField: "uuid",
           as: "user"
         }
