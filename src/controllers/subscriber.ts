@@ -102,13 +102,13 @@ export default class Subscriber {
     if (ctx.query.search) {
       const reg = new RegExp(ctx.query.search, "i")
       let filter = {}
-      if(!isNaN(Number(ctx.query.search))){
+      if (!isNaN(Number(ctx.query.search))) {
         filter = {uuid: {$ne: uuid}, $or: [{uuid: ctx.query.search}, {displayName: reg}, {name: reg}]}
       } else {
         filter = {uuid: {$ne: uuid}, $or: [{displayName: reg}, {name: reg}]}
       }
-      const tmp = await UserModel.find(filter, {_id:0, uuid: 1})
-      match.target = {$in: tmp.map(item=>item.uuid)}
+      const tmp = await UserModel.find(filter, {_id: 0, uuid: 1})
+      match.target = {$in: tmp.map(item => item.uuid)}
     }
     const tmp = await SubscriberModel.aggregate([
       {$match: match},
@@ -145,20 +145,21 @@ export default class Subscriber {
         "user.avatar": 1,
         "user.name": 1,
         "user.bgImage": 1,
-        "user.displayName": 1
+        "user.displayName": 1,
+        "followed": 1
       }
     }
     const match: any = {target: uuid};
     if (ctx.query.search) {
       const reg = new RegExp(ctx.query.search, "i")
       let filter = {}
-      if(!isNaN(Number(ctx.query.search))){
+      if (!isNaN(Number(ctx.query.search))) {
         filter = {uuid: {$ne: uuid}, $or: [{uuid: ctx.query.search}, {displayName: reg}, {name: reg}]}
       } else {
         filter = {uuid: {$ne: uuid}, $or: [{displayName: reg}, {name: reg}]}
       }
-      const tmp = await UserModel.find(filter, {_id:0, uuid: 1})
-      match.uuid = {$in: tmp.map(item=>item.uuid)}
+      const tmp = await UserModel.find(filter, {_id: 0, uuid: 1})
+      match.uuid = {$in: tmp.map(item => item.uuid)}
     }
     const tmp = await SubscriberModel.aggregate([
       {$match: match},
@@ -173,10 +174,27 @@ export default class Subscriber {
           as: "user"
         }
       },
+      {
+        $lookup: {
+          from: "subscribers",
+          let: {uuid: "$uuid"},
+          pipeline: [
+            {
+              $match: {
+                uuid,
+                $expr: {
+                  $eq: ["$target", "$$uuid"]
+                }
+              }
+            }
+          ],
+          as: "followed"
+        }
+      },
       fields
     ])
     const fans = tmp.map(item => {
-      return item.user[0]
+      return {...item.user[0], followed: item.followed.length > 0}
     })
     const total = await SubscriberModel.countDocuments(match)
     ctx.body = jsonResponse({data: {fans, total, page: pagination.page, size: pagination.size}})
