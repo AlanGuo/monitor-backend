@@ -128,7 +128,7 @@ export default class Subscriber {
     const following = tmp.map(item => {
       return item.user[0]
     })
-    const total = await SubscriberModel.countDocuments({uuid})
+    const total = await SubscriberModel.countDocuments(match)
     ctx.body = jsonResponse({data: {following, total, page: pagination.page, size: pagination.size}})
   }
 
@@ -178,7 +178,7 @@ export default class Subscriber {
     const fans = tmp.map(item => {
       return item.user[0]
     })
-    const total = await SubscriberModel.countDocuments({target: uuid})
+    const total = await SubscriberModel.countDocuments(match)
     ctx.body = jsonResponse({data: {fans, total, page: pagination.page, size: pagination.size}})
   }
 }
