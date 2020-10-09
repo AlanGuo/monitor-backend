@@ -1,6 +1,7 @@
 import {Controller, GET, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import SubscriberModel from "../models/subscriber"
+import UserModel from "../models/user"
 import {jsonResponse} from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
@@ -97,8 +98,20 @@ export default class Subscriber {
         "user.displayName": 1
       }
     }
+    const match: any = {uuid};
+    if (ctx.query.search) {
+      const reg = new RegExp(ctx.query.search, "i")
+      let filter = {}
+      if(!isNaN(Number(ctx.query.search))){
+        filter = {uuid: {$ne: uuid}, $or: [{uuid: ctx.query.search}, {displayName: reg}, {name: reg}]}
+      } else {
+        filter = {uuid: {$ne: uuid}, $or: [{displayName: reg}, {name: reg}]}
+      }
+      const tmp = await UserModel.find(filter, {_id:0, uuid: 1})
+      match.target = {$in: tmp.map(item=>item.uuid)}
+    }
     const tmp = await SubscriberModel.aggregate([
-      {$match: {uuid}},
+      {$match: match},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
@@ -135,8 +148,20 @@ export default class Subscriber {
         "user.displayName": 1
       }
     }
+    const match: any = {target: uuid};
+    if (ctx.query.search) {
+      const reg = new RegExp(ctx.query.search, "i")
+      let filter = {}
+      if(!isNaN(Number(ctx.query.search))){
+        filter = {uuid: {$ne: uuid}, $or: [{uuid: ctx.query.search}, {displayName: reg}, {name: reg}]}
+      } else {
+        filter = {uuid: {$ne: uuid}, $or: [{displayName: reg}, {name: reg}]}
+      }
+      const tmp = await UserModel.find(filter, {_id:0, uuid: 1})
+      match.uuid = {$in: tmp.map(item=>item.uuid)}
+    }
     const tmp = await SubscriberModel.aggregate([
-      {$match: {target: uuid}},
+      {$match: match},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
