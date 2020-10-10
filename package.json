@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/paypal-rest-sdk": "^1.7.5",
     "amqplib": "^0.6.0",
     "aws-cloudfront-sign": "^2.2.0",
     "aws-sdk": "^2.717.0",
@@ -42,6 +43,7 @@
     "passport-facebook": "^3.0.0",
     "passport-google-oauth": "^2.0.0",
     "passport-twitter": "^1.0.4",
+    "paypal-rest-sdk": "^1.8.1",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^2.3.0",
     "ts-node": "^8.10.2",
@@ -61,7 +63,6 @@
   },
   "devDependencies": {
     "@koa/cors": "^3.1.0",
-    "@types/koa__cors": "^3.0.1",
     "@types/amqplib": "^0.5.13",
     "@types/async": "^3.2.3",
     "@types/bluebird": "^3.5.32",
@@ -78,6 +79,7 @@
     "@types/koa-redis": "^4.0.0",
     "@types/koa-router": "^7.4.1",
     "@types/koa-static": "^4.0.1",
+    "@types/koa__cors": "^3.0.1",
     "@types/log4js": "^2.3.5",
     "@types/mongoose": "^5.7.32",
     "@types/node": "^14.0.19",

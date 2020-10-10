@@ -11,7 +11,13 @@ import {mediaProducer} from "@src/services/producer/mediaProducer";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {ImageAmazonUrl, MediaConvertCache, VideoAmazonUrl} from "@src/interface";
 import {mediaType} from "@src/infrastructure/utils";
+import paypal from "paypal-rest-sdk";
 
+paypal.configure({
+  "mode": config.PAYPAL.mode, //sandbox or live
+  "client_id": config.PAYPAL.clientId,
+  "client_secret": config.PAYPAL.clientSecret,
+});
 
 // todo: need to verity the signatures of Amazon SNS messages
 @Controller({prefix: "/callback"})
@@ -94,5 +100,25 @@ export default class CallbackController {
       }
       ctx.body = jsonResponse();
     }
+  }
+  @POST("/paypal/success")
+  async paypalSuccess(ctx: IRouterContext) {
+    const headers = ctx.request.headers,
+      body = ctx.request.body
+    //验证webhook是否合法
+    paypal.notification.webhookEvent.verify(headers, body, config.PAYPAL.paymentWebhookId, function (error, response) {
+      if (error) {
+        console.log(error.response.details);
+        throw error;
+      } else {
+        // Verification status must be SUCCESS
+        if (response.verification_status === "SUCCESS") {
+          const paymentId = body.resource.parent_payment
+        } else {
+          console.error("It was a failed verification from", headers["x-real-ip"]);
+        }
+      }
+    });
+    ctx.body = jsonResponse(ctx.request)
   }
 }

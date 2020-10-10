@@ -1,5 +1,17 @@
 import {MEDIA_TYPE, OAUTH} from "@src/infrastructure/utils/constants";
 
+export enum Currency {
+  usd = "usd"
+}
+
+export enum OrderStatus {
+  created = "created",
+  payed = "payed",
+}
+
+export enum OrderType {
+  deposit = "deposit"
+}
 
 export interface Profile {
   [OAUTH.GOOGLE]: GoogleProfile,
@@ -135,6 +147,17 @@ export interface Config {
     url: string,
     // 一小时
     timeLimit: number
+  },
+  PAYPAL: {
+    payment: {
+      name: string,
+      currency: string,
+      sign: string
+    },
+    clientId: string,
+    clientSecret: string,
+    mode: string,
+    paymentWebhookId: string
   },
   CORS: {
     origin: string

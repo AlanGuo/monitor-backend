@@ -33,6 +33,17 @@ module.exports = {
     // 一小时
     timeLimit: 3600 * 1000
   },
+  PAYPAL: {
+    payment: {
+      name: "MFans Deposit",
+      currency: "usd",
+      sign: "$"
+    },
+    clientId:"AWJ18jbDJ0f11jkoMbKfonnW-YfcyweVc73COBOxeYIONSkyuiIOhgr_v0Q4elyAptjbEEbr1M5H3ZWv",
+    clientSecret:"EEBTsHvdFdxvhGY3Jwq2OIoeI_7GkGdSCe-Bwbcu-pJI0v0Eba3d_R1EIZhH5tkYQTmizl99_qBAfUbz",
+    mode: "sandbox",
+    paymentWebhookId: "9FF26720B8007994B"
+  },
   CORS: {
     origin: "*"
   },
