@@ -12,7 +12,7 @@ export interface IUser extends Document {
   displayName?: string;
   email?: string;
   avatar?: string;
-
+  balance: number;
   subPrice?: number;
   chatPrice: number;
   about?: string;

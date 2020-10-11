@@ -9,6 +9,8 @@ export interface IOrder extends Document {
   currency: String;
   amount: Number;
   status: OrderStatus;
+  method: String;
+  orderId?: String
   payAt?: Date;
   paymentId?: String;
   ip?: String;
@@ -21,7 +23,8 @@ const orderModel: Schema = new Schema({
   amount: {type: Number, required, default: 0},
   ip: {type: String, required: false},
   payAt: {type: Date, required: false},
-  paymentId: {type: String, required: false},
+  method: {type: String, required},
+  orderId: {type: String, required: false},
   status: {type: OrderStatus, default: 0}
 }, {
   timestamps: true
