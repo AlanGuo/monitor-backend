@@ -15,3 +15,5 @@ const messagePaymentModel: Schema = new Schema({
 });
 messagePaymentModel.index({uuid: 1, messageId:1}, {unique: true})
 export default model<MessagePayment>("messagePayment", messagePaymentModel);
+
+//TODO add price amount

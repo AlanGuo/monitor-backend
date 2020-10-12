@@ -4,16 +4,16 @@ import {Schema, model, Document} from "mongoose";
 const required = true;
 
 export interface IOrder extends Document {
-  uuid: Number,
+  uuid: number,
   type: OrderType,
-  currency: String;
-  amount: Number;
+  currency: string;
+  amount: number;
   status: OrderStatus;
-  method: String;
-  orderId?: String
+  method: string;
+  orderId?: string
   payAt?: Date;
-  paymentId?: String;
-  ip?: String;
+  paymentId?: string;
+  ip?: string;
 }
 
 const orderModel: Schema = new Schema({

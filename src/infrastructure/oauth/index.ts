@@ -143,7 +143,7 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
     default:
       throw Error("provider not exists")
   }
-  let exist = await UserModel.findOne(filter);
+  const exist = await UserModel.findOne(filter);
   if (!exist) {
     const tmp = await UserModel.findOneAndUpdate(
       filter, update, {new: true, upsert: true, rawResult: true}

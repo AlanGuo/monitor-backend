@@ -1,6 +1,7 @@
 import {Controller, GET, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import SubscriberModel from "../models/subscriber"
+import SubscriberPaymentModel from "../models/subscriberPayment"
 import UserModel from "../models/user"
 import {jsonResponse} from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
@@ -52,17 +53,44 @@ export default class Subscriber {
     if (target === uuid) {
       ctx.body = jsonResponse({code: RESPONSE_CODE.CAN_NOT_SUBSCRIBE_YOURSELF});
     } else {
-      const sub = await SubscriberModel.findOne({
-        uuid,
-        target
+      const session = await SubscriberModel.db.startSession({
+        defaultTransactionOptions: {
+          readConcern: {level: "snapshot"},
+          writeConcern: {w: "majority"}
+        }
       });
-      if (!sub) {
-        await SubscriberModel.create({
-          uuid,
-          target
-        });
+      session.startTransaction()
+      const targetUser = await UserModel.findOne({uuid: target}, {subPrice: 1}, {session});
+      const user = await UserModel.findOne({uuid}, {balance: 1}, {session})
+      if (targetUser && user) {
+        if (user.balance >= targetUser.subPrice) {
+          user.balance -= targetUser.subPrice
+          await user.save();
+          await SubscriberPaymentModel.create([{
+            uuid,
+            target,
+            amount: targetUser.subPrice,
+            price: targetUser.subPrice
+          }], {session})
+          const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session})
+          if (sub) {
+            // TODO 自然月
+            sub.expireAt += 1000 * 60 * 60 * 24 * 30
+            await sub.save()
+          } else {
+            // TODO 自然月
+            const createAt = Date.now()
+            await SubscriberModel.create([{uuid, target, createAt, expireAt: createAt + 1000 * 60 * 60 * 24 * 30}], {session})
+          }
+          await session.commitTransaction()
+          session.endSession()
+          ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
+        } else {
+          ctx.body = jsonResponse({code: RESPONSE_CODE.BALANCE_NOT_ENOUGH});
+        }
+      } else {
+        ctx.body = jsonResponse({code: RESPONSE_CODE.USER_NOT_EXISTS});
       }
-      ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
     }
   }
 
@@ -146,7 +174,10 @@ export default class Subscriber {
         "user.name": 1,
         "user.bgImage": 1,
         "user.displayName": 1,
-        "followed": 1
+        "followed": 1,
+        "createdAt": 1,
+        "expireAt": 1,
+        "reBill": 1
       }
     }
     const match: any = {target: uuid};

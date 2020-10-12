@@ -15,3 +15,5 @@ const postPaymentModel: Schema = new Schema({
 });
 postPaymentModel.index({uuid: 1, postId:1}, {unique: true})
 export default model<PostPayment>("postPayment", postPaymentModel);
+
+//TODO add price amount

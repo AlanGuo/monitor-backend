@@ -1,7 +1,7 @@
 import {OAUTH} from "../src/infrastructure/utils/constants";
 import {bindUser, findOrCreateUser} from "../src/infrastructure/oauth";
 import {dbConnect} from "../src/infrastructure/mongo";
-import UserModel from "../src/models/user";
+import UserModel, {IUser} from "../src/models/user";
 import {initSequence} from "../src/infrastructure/utils/sequence";
 
 
@@ -32,7 +32,7 @@ describe("uuid-test", () => {
   test("bindUser", async () => {
     const uuid = Math.floor(Math.random() * 100 );
     const profile = {id: String(Math.random())};
-    await UserModel.create({uuid});
+    await UserModel.create({uuid} as IUser);
     await bindUser(OAUTH.GOOGLE, profile, uuid);
     const user = await UserModel.findOne({uuid});
     expect(user!.google).toBe(profile.id);

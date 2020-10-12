@@ -32,7 +32,9 @@ export enum RESPONSE_CODE {
   ERROR = 500,
   LOGIN_IN_ERR = "login in error",
   CAN_NOT_SUBSCRIBE_YOURSELF = "can not subscribe yourself",
-  CAN_NOT_UNSUBSCRIBE_YOURSELF = "can not unsubscribe yourself"
+  CAN_NOT_UNSUBSCRIBE_YOURSELF = "can not unsubscribe yourself",
+  USER_NOT_EXISTS = "user not exists",
+  BALANCE_NOT_ENOUGH = "balance not enough"
 }
 
 export enum RABBITMQ_EXCHANGE_TYPE {
