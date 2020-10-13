@@ -28,6 +28,7 @@ export default class UserController {
       location: 1,
       chatPrice: 1,
       subPrice: 1,
+      balance: 1,
     };
     const user = await UserModel.findOne({uuid}, fields);
     let rep: any;
@@ -60,7 +61,8 @@ export default class UserController {
       about: 1,
       website: 1,
       bgImage: 1,
-      location: 1
+      location: 1,
+      balance: 1,
     };
     const filter: any = {};
     if (!isNaN(Number(ctx.params.id))) {

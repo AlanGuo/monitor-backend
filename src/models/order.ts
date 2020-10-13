@@ -10,7 +10,8 @@ export interface IOrder extends Document {
   amount: number;
   status: OrderStatus;
   method: string;
-  orderId: string
+  orderId: string;
+  payerId?: string;
   payAt?: Date;
   ip?: string;
 }
@@ -23,7 +24,8 @@ const orderModel: Schema = new Schema({
   ip: {type: String, required: false},
   payAt: {type: Date, required: false},
   method: {type: String, required},
-  orderId: {type: String, required: false},
+  payerId: {type: String, required: false},
+  orderId: {type: String, required},
   status: {type: OrderStatus, default: 0}
 }, {
   timestamps: true

@@ -6,7 +6,6 @@ import orderModel, { IOrder } from "@src/models/order";
 import userModel, { IUser } from "@src/models/user";
 import { OrderType, OrderStatus } from "@src/interface";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
-import { Types } from "mongoose";
 const paypal = require("@paypal/checkout-server-sdk");
 
 // paypal.configure({
@@ -64,26 +63,26 @@ export default class PaypalController {
     });
   }
 
-  @AuthRequired()
   @POST("/execute")
+  @AuthRequired()
   async execute(ctx: IRouterContext) {
     //执行支付
     const body = ctx.request.body
-    const orderId = body.orderId
-    const paypalOrderId = body.paypalOrderId
+    const paypalOrderId = body.orderId
+    const payerId = body.payerId
     const uuid = ctx.state.user.uuid
 
-    const request = new paypal.orders.OrdersAuthorizeRequest(paypalOrderId);
+    const request = new paypal.orders.OrdersCaptureRequest(paypalOrderId);
     request.requestBody({});
     
     //执行订单
-    const authorization = await client.execute(request);
-    const amount = Number(authorization.result.purchase_units[0]
-        .amount.value)
-
+    const capture = await client.execute(request);
+    const amount = Number(capture.result.purchase_units[0].payments.captures[0].amount.value);
+      
     const updateObj = {
       ip: ctx.request.headers["x-real-ip"],
       status: OrderStatus.payed,
+      payerId,
       payAt: new Date()
     }
     const session = await orderModel.db.startSession();
@@ -103,6 +102,10 @@ export default class PaypalController {
     session.endSession();
 
     ctx.status = 200
-    ctx.body = jsonResponse()
+    ctx.body = jsonResponse({
+      data: {
+        orderId: paypalOrderId
+      }
+    });
   }
 }
