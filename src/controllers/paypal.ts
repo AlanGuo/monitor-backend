@@ -45,20 +45,21 @@ export default class PaypalController {
       ]
     });
     //创建订单
-    const order = await client.execute(request);
+    const paypalOrder = await client.execute(request);
     //写入数据库
     await orderModel.create<IOrder>({
       type: OrderType.deposit,
       amount: body.amount,
       currency: paymentConfig.currency,
       uuid: ctx.state.user.uuid,
+      orderId: paypalOrder.result.id,
       status: OrderStatus.created,
       method: "paypal"
     });
     ctx.status = 200
     ctx.body = jsonResponse({
       data: {
-        orderId: order.result.id,
+        orderId: paypalOrder.result.id,
       }
     });
   }
@@ -83,14 +84,13 @@ export default class PaypalController {
     const updateObj = {
       ip: ctx.request.headers["x-real-ip"],
       status: OrderStatus.payed,
-      orderId: paypalOrderId,
       payAt: new Date()
     }
     const session = await orderModel.db.startSession();
     session.startTransaction();
     
     await orderModel.updateOne({
-      _id: Types.ObjectId(orderId)
+      orderId: paypalOrderId
     }, updateObj, { session });
     await userModel.updateOne({
       uuid

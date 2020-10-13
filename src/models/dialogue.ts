@@ -19,5 +19,5 @@ const DialogueModel: Schema = new Schema({
 }, {
   timestamps: true,
 });
-DialogueModel.index({from: 1, to:1}, {unique: true})
+DialogueModel.index({from: 1, to:1}, {unique: true});
 export default model<Dialogue>("dialogue", DialogueModel);

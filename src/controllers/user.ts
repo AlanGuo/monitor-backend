@@ -108,6 +108,7 @@ export default class UserController {
       location: 1,
       chatPrice: 1,
       subPrice: 1,
+      balance: 1,
     };
     const users = await UserModel.find({$and: filterArr}, fields);
     users.forEach((item) => {
