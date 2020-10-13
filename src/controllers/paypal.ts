@@ -34,6 +34,9 @@ export default class PaypalController {
     const request = new paypal.orders.OrdersCreateRequest();
     request.requestBody({
       "intent": "CAPTURE",
+      "application_context": {
+        "shipping_preference": "NO_SHIPPING"
+      },
       "purchase_units": [
         {
           "amount": {
