@@ -8,6 +8,7 @@ import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
+import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 
 @Controller({prefix: "/subscriber"})
 export default class Subscriber {
@@ -154,7 +155,14 @@ export default class Subscriber {
       fields
     ])
     const following = tmp.map(item => {
-      return item.user[0]
+      const user = item.user[0]
+      if (user.bgImage) {
+        user.bgImage = getSignedUrl(user.bgImage);
+      }
+      if (!/https?/i.test(user.avatar)) {
+        user.avatar = getSignedUrl(user.avatar);
+      }
+      return user
     })
     const total = await SubscriberModel.countDocuments(match)
     ctx.body = jsonResponse({data: {following, total, page: pagination.page, size: pagination.size}})
@@ -225,7 +233,14 @@ export default class Subscriber {
       fields
     ])
     const fans = tmp.map(item => {
-      return {...item.user[0], followed: item.followed.length > 0}
+      const user = item.user[0]
+      if (user.bgImage) {
+        user.bgImage = getSignedUrl(user.bgImage);
+      }
+      if (!/https?/i.test(user.avatar)) {
+        user.avatar = getSignedUrl(user.avatar);
+      }
+      return {...user, followed: item.followed.length > 0}
     })
     const total = await SubscriberModel.countDocuments(match)
     ctx.body = jsonResponse({data: {fans, total, page: pagination.page, size: pagination.size}})
