@@ -261,7 +261,7 @@ export default class UserController {
     const msg = await messageModel.findOne({_id: msgId});
     if (msg && uuid === msg.to && (msg.price ?? 0) > 0) {
       try {
-        await messagePaymentModel.create({uuid, messageId: msg._id})
+        await messagePaymentModel.create({uuid, messageId: msg._id, price: msg.price, amount: msg.price})
         ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
       } catch (e) {
         ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "has been payment"})

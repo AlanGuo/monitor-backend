@@ -42,7 +42,6 @@ export async function getJob(jobId: string) {
   });
 }
 
-//TODO size mediaConsumer
 export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, size?: { thumbnail?: string[], glass?: string[], image?: string[] }): ImageAmazonUrl | VideoAmazonUrl {
   switch (type) {
     case MEDIA_TYPE.IMAGE:

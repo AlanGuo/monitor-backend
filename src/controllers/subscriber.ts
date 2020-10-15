@@ -103,10 +103,10 @@ export default class Subscriber {
     if (target === uuid) {
       ctx.body = jsonResponse({code: RESPONSE_CODE.CAN_NOT_UNSUBSCRIBE_YOURSELF});
     } else {
-      await SubscriberModel.deleteOne({
+      await SubscriberModel.updateOne({
         uuid,
         target
-      });
+      }, {$set: {expireAt: Date.now()}});
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
     }
   }

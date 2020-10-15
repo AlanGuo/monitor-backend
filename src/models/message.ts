@@ -8,7 +8,7 @@ export interface Message extends Document {
   // media?: Schema.Types.ObjectId[],
   media?: string[],
   content?: string
-  price?: number
+  price: number
 }
 
 const MessageModel: Schema = new Schema({

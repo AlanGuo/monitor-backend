@@ -325,7 +325,8 @@ export default class PostsController {
       from: uuid,
       media,
       price: userSubPrice,
-      content: data.content
+      content: data.content,
+      deleted: false
     });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
@@ -480,14 +481,36 @@ export default class PostsController {
   async pay(ctx: IRouterContext, next: any) {
     const uuid: number = ctx.state.user.uuid;
     const postId: string = ctx.params.id;
-    const post = await postModel.findOne({_id: postId});
-    if (post && uuid !== post.from && (post.price ?? 0) > 0) {
-      try {
-        await postPaymentModel.create({uuid, postId: post._id})
-        ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
-      } catch (e) {
-        ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "has been payment"})
+    const session = await postModel.db.startSession({
+      defaultTransactionOptions: {
+        readConcern: {level: "snapshot"},
+        writeConcern: {w: "majority"}
       }
+    });
+    session.startTransaction();
+    const user = await userModel.findOne({uuid}, {balance: 1}, {session});
+    const post = await postModel.findOne({_id: postId}, {from: 1, price: 1}, {session});
+    if (post && uuid !== post.from && (post.price ?? 0) > 0) {
+      if (user!.balance >= post.price) {
+        const tmp = await postPaymentModel.findOneAndUpdate(
+          {uuid, postId: post._id},
+          {$setOnInsert: {uuid, postId: post._id, price: post.price, amount: post.price}},
+          {upsert: true, new: true, rawResult: true, session}
+        );
+        if (!tmp.lastErrorObject.updatedExisting) {
+          user!.balance -= post.price;
+          await user!.save()
+          await session.commitTransaction();
+          session.endSession();
+        } else {
+          // await session.abortTransaction()
+          // session.endSession()
+          ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "has been payment"})
+        }
+      } else {
+        ctx.body = jsonResponse({code: RESPONSE_CODE.BALANCE_NOT_ENOUGH})
+      }
+
     } else {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "post not exists or post belong you or post is free"})
     }
