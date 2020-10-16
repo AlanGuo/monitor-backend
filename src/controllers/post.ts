@@ -29,7 +29,7 @@ export default class PostsController {
       "media.size": 1, "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1,
       "isLiked.uuid": 1, "payment.postId": 1
     };
-    const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
+    const followers = await subscriberModel.find({uuid, expireAt: {$gt: Date.now()}}, {_id: 0, target: 1});
     const matchFollowers = followers.map(item => item.target).concat([uuid])
     const match: any = {from: {$in: matchFollowers}, deleted: false};
     if (content) {
@@ -390,7 +390,7 @@ export default class PostsController {
       "isLiked.uuid": 1
     };
     const id = ctx.params.id;
-    const followers = await subscriberModel.find({uuid}, {_id: 0, target: 1});
+    const followers = await subscriberModel.find({uuid, expireAt: {$gt: Date.now()}}, {_id: 0, target: 1});
     const matchFollowers = followers.map(item => item.target).concat([uuid]);
     const isLikeMatch: any = {
       uuid,

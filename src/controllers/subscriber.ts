@@ -183,12 +183,12 @@ export default class Subscriber {
         "user.bgImage": 1,
         "user.displayName": 1,
         "followed": 1,
-        "createdAt": 1,
+        "createAt": 1,
         "expireAt": 1,
         "reBill": 1
       }
     }
-    const match: any = {target: uuid};
+    const match: any = {target: uuid, expireAt: {$gt: Date.now()}};
     if (ctx.query.search) {
       const reg = new RegExp(ctx.query.search, "i")
       let filter = {}
@@ -221,6 +221,7 @@ export default class Subscriber {
             {
               $match: {
                 uuid,
+                expireAt: {$gt: Date.now()},
                 $expr: {
                   $eq: ["$target", "$$uuid"]
                 }
@@ -240,7 +241,10 @@ export default class Subscriber {
       if (!/https?/i.test(user.avatar)) {
         user.avatar = getSignedUrl(user.avatar);
       }
-      return {...user, followed: item.followed.length > 0}
+      delete item.user;
+      const followed = item.followed.length > 0
+      delete item.followed;
+      return {...user, followed, ...item}
     })
     const total = await SubscriberModel.countDocuments(match)
     ctx.body = jsonResponse({data: {fans, total, page: pagination.page, size: pagination.size}})
