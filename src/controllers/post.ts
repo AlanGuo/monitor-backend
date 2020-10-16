@@ -502,6 +502,7 @@ export default class PostsController {
           await user!.save()
           await session.commitTransaction();
           session.endSession();
+          ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
         } else {
           // await session.abortTransaction()
           // session.endSession()

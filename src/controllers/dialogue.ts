@@ -282,6 +282,7 @@ export default class UserController {
           await user!.save();
           await session.commitTransaction();
           session.endSession();
+          ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
         } else {
           ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "has been payment"})
         }
@@ -320,6 +321,7 @@ export default class UserController {
         }, {session});
         await session.commitTransaction();
         session.endSession();
+        ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
       } else {
         ctx.body = jsonResponse({code: RESPONSE_CODE.BALANCE_NOT_ENOUGH})
       }

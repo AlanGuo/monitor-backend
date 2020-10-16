@@ -60,9 +60,9 @@ export default class Subscriber {
           writeConcern: {w: "majority"}
         }
       });
-      session.startTransaction()
+      session.startTransaction();
       const targetUser = await UserModel.findOne({uuid: target}, {subPrice: 1}, {session});
-      const user = await UserModel.findOne({uuid}, {balance: 1}, {session})
+      const user = await UserModel.findOne({uuid}, {balance: 1}, {session});
       if (targetUser && user) {
         if (user.balance >= targetUser.subPrice) {
           user.balance -= targetUser.subPrice
@@ -73,18 +73,23 @@ export default class Subscriber {
             amount: targetUser.subPrice,
             price: targetUser.subPrice
           }], {session})
-          const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session})
+          const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session});
           if (sub) {
             // TODO 自然月
-            sub.expireAt += 1000 * 60 * 60 * 24 * 30
-            await sub.save()
+            sub.expireAt += 1000 * 60 * 60 * 24 * 30;
+            await sub.save();
           } else {
             // TODO 自然月
-            const createAt = Date.now()
-            await SubscriberModel.create([{uuid, target, createAt, expireAt: createAt + 1000 * 60 * 60 * 24 * 30}], {session})
+            const createAt = Date.now();
+            await SubscriberModel.create([{
+              uuid,
+              target,
+              createAt,
+              expireAt: createAt + 1000 * 60 * 60 * 24 * 30
+            }], {session});
           }
-          await session.commitTransaction()
-          session.endSession()
+          await session.commitTransaction();
+          session.endSession();
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         } else {
           ctx.body = jsonResponse({code: RESPONSE_CODE.BALANCE_NOT_ENOUGH});
