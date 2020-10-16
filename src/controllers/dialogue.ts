@@ -10,6 +10,7 @@ import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import messageModel from "@src/models/message";
 import messagePaymentModel from "@src/models/messagePayment";
+import talkPaymentModel from "@src/models/talkPayment";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {Types} from "mongoose";
 import userModel from "@src/models/user";
@@ -311,6 +312,12 @@ export default class UserController {
         userFrom!.balance -= userTo!.chatPrice
         await userFrom!.save()
         await DialogueModel.updateOne({from, to}, {$inc: {canTalk: 1}}, {session});
+        await talkPaymentModel.create({
+          uuid: from,
+          target: to,
+          price: userTo!.chatPrice,
+          amount: userTo!.chatPrice
+        }, {session});
         await session.commitTransaction();
         session.endSession();
       } else {
