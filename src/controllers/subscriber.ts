@@ -29,8 +29,12 @@ export default class Subscriber {
   @AuthRequired()
   async getSubcribers(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
-    const following = await SubscriberModel.find({uuid}).countDocuments();
-    const fans = await SubscriberModel.find({target: uuid}).countDocuments();
+    const following = await SubscriberModel.find({uuid, expireAt: {
+      $gt: Date.now()
+    }}).countDocuments();
+    const fans = await SubscriberModel.find({target: uuid, expireAt: {
+      $gt: Date.now()
+    }}).countDocuments();
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {following, fans}});
   }
 
@@ -41,7 +45,10 @@ export default class Subscriber {
     const target = Number(ctx.params.target);
     const sub = await SubscriberModel.findOne({
       uuid,
-      target
+      target,
+      expireAt: {
+        $gt: Date.now()
+      }
     });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: !!sub});
   }
@@ -76,6 +83,7 @@ export default class Subscriber {
           const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session});
           if (sub) {
             // TODO 自然月
+            sub.expireAt = sub.expireAt ?? 0;
             sub.expireAt += 1000 * 60 * 60 * 24 * 30;
             await sub.save();
           } else {
@@ -132,7 +140,7 @@ export default class Subscriber {
         "user.displayName": 1
       }
     }
-    const match: any = {uuid};
+    const match: any = {uuid, expireAt: {$gt: Date.now()}};
     if (ctx.query.search) {
       const reg = new RegExp(ctx.query.search, "i")
       let filter = {}

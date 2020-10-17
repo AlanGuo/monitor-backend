@@ -10,7 +10,7 @@ export function AuthRequired() {
       } else {
         // 模拟本地登录态
         // ctx.state.user = {
-        //   uuid: 10000003
+        //   uuid: 10000001
         // }
         // await fn(ctx, next);
         unauthorized(ctx);
