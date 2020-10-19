@@ -230,6 +230,7 @@ export const job = {
     "AdAvailOffset": 0,
     "Inputs": [
       {
+        "FileInput": "",
         "AudioSelectors": {
           "Audio Selector 1": {
             "Offset": 0,
