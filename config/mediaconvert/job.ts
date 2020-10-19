@@ -1,5 +1,4 @@
 export const job = {
-  "Name": "newonlyfans-videoconvert-job",
   "Queue": "arn:aws:mediaconvert:ap-southeast-1:052435670811:queues/Default",
   "Settings": {
     "OutputGroups": [
