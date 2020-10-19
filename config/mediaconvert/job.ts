@@ -216,6 +216,9 @@ export const job = {
       }
     ],
     "AdAvailOffset": 0,
+    "TimecodeConfig": {
+      "Source": "ZEROBASED"
+    },
     "Inputs": [
       {
         "AudioSelectors": {
@@ -251,11 +254,7 @@ export const job = {
       }
     ]
   },
-  "AccelerationSettings": {
-    "Mode": "DISABLED"
-  },
   "Priority": 0,
-  "HopDestinations": [],
   "JobTemplate": "newonlyfans-template",
   "Role": "arn:aws:iam::052435670811:role/mediaconvert_role"
 }
