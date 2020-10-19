@@ -212,12 +212,9 @@ export const job = {
               {
                 "ManifestNameModifier": "_$Time$",
                 "SelectedOutputs": [
-                  "_screenshot_$Time$(540*960)",
-                  "_generic_low_mp4_800kbps_$Time$(540*960)",
-                  "_generic_hd_mp4_4000kbps_$Time$(1080*1920)",
-                  "_screenshot_$Time$",
-                  "_low_mp4_800kbps_$Time$",
-                  "_hd_mp4_4000kbps_$Time$"
+                  "_screenshot",
+                  "_low_mp4_800kbps",
+                  "_hd_mp4_4000kbps"
                 ]
               }
             ],
