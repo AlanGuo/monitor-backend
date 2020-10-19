@@ -29,7 +29,7 @@ export const job = {
               "ColorMetadata": "INSERT"
             },
             "Extension": "jpg",
-            "NameModifier": "_screenshot"
+            "NameModifier": "_screenshot_$Time$"
           },
           {
             "ContainerSettings": {
@@ -115,7 +115,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_low_mp4_800kbps"
+            "NameModifier": "_low_mp4_800kbps_$Time$"
           },
           {
             "ContainerSettings": {
@@ -201,7 +201,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_hd_mp4_4000kbps"
+            "NameModifier": "_hd_mp4_4000kbps_$Time$"
           }
         ],
         "OutputGroupSettings": {
@@ -212,9 +212,9 @@ export const job = {
               {
                 "ManifestNameModifier": "_$Time$",
                 "SelectedOutputs": [
-                  "_screenshot",
-                  "_low_mp4_800kbps",
-                  "_hd_mp4_4000kbps"
+                  "_screenshot_$Time$",
+                  "_low_mp4_800kbps_$Time$",
+                  "_hd_mp4_4000kbps_$Time$"
                 ]
               }
             ],
@@ -264,6 +264,6 @@ export const job = {
     ]
   },
   "Priority": 0,
-  "JobTemplate": "newonlyfans-template",
+  // "JobTemplate": "newonlyfans-template",
   "Role": "arn:aws:iam::052435670811:role/mediaconvert_role"
 }
