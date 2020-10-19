@@ -116,7 +116,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_generic_low_mp4_800kbps(540*960)"
+            "NameModifier": "_low_mp4_800kbps_$Time$(540*960)"
           },
           {
             "ContainerSettings": {
@@ -200,7 +200,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_generic_hd_mp4_4000kbps(1080*1920)"
+            "NameModifier": "_hd_mp4_4000kbps_$Time$(1080*1920)"
           }
         ],
         "OutputGroupSettings": {
