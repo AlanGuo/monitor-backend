@@ -30,7 +30,7 @@ export const job = {
               "ColorMetadata": "INSERT"
             },
             "Extension": "jpg",
-            "NameModifier": "_screenshot(540*960)"
+            "NameModifier": "_screenshot_$Time$(540*960)"
           },
           {
             "ContainerSettings": {
