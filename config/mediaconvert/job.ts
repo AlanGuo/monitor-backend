@@ -4,7 +4,7 @@ export const job = {
     "OutputGroups": [
       {
         "CustomName": "newonlyfans-videoconvert-template",
-        "Name": "File Group",
+        "Name": "DASH ISO",
         "Outputs": [
           {
             "ContainerSettings": {
@@ -30,7 +30,7 @@ export const job = {
               "ColorMetadata": "INSERT"
             },
             "Extension": "jpg",
-            "NameModifier": "_screenshot_$Bandwidth$($w$*$h$)"
+            "NameModifier": "_screenshot_$Time$($w$*$h$)"
           },
           {
             "ContainerSettings": {
@@ -116,7 +116,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_low_mp4_800kbps_$Bandwidth$($w$*$h$)"
+            "NameModifier": "_low_mp4_800kbps_$Time$($w$*$h$)"
           },
           {
             "ContainerSettings": {
@@ -200,15 +200,19 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_hd_mp4_4000kbps_$Bandwidth$($w$*$h$)"
+            "NameModifier": "_hd_mp4_4000kbps_$Time$($w$*$h$)"
           }
         ],
         "OutputGroupSettings": {
-          "Type": "FILE_GROUP_SETTINGS",
-          "FileGroupSettings": {
-            "Destination": ""
+          "Type": "DASH_ISO_GROUP_SETTINGS",
+          "DashIsoGroupSettings": {
+            "SegmentLength": 30,
+            "FragmentLength": 2,
+            "SegmentControl": "SINGLE_FILE",
+            "MpdProfile": "MAIN_PROFILE",
+            "HbbtvCompliance": "NONE"
           }
-        }
+        },
       }
     ],
     "AdAvailOffset": 0,
