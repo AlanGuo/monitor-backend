@@ -29,7 +29,7 @@ export const job = {
               "ColorMetadata": "INSERT"
             },
             "Extension": "jpg",
-            "NameModifier": "_screenshot_$Time$"
+            "NameModifier": "_screenshot"
           },
           {
             "ContainerSettings": {
@@ -115,7 +115,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_low_mp4_800kbps_$Time$"
+            "NameModifier": "_low_mp4_800kbps"
           },
           {
             "ContainerSettings": {
@@ -201,7 +201,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_hd_mp4_4000kbps_$Time$"
+            "NameModifier": "_hd_mp4_4000kbps"
           }
         ],
         "OutputGroupSettings": {
@@ -210,8 +210,11 @@ export const job = {
             "SegmentLength": 30,
             "AdditionalManifests": [
               {
-                "ManifestNameModifier": "$Time$",
+                "ManifestNameModifier": "_$Time$",
                 "SelectedOutputs": [
+                  "_screenshot_$Time$(540*960)",
+                  "_generic_low_mp4_800kbps_$Time$(540*960)",
+                  "_generic_hd_mp4_4000kbps_$Time$(1080*1920)",
                   "_screenshot_$Time$",
                   "_low_mp4_800kbps_$Time$",
                   "_hd_mp4_4000kbps_$Time$"
@@ -221,16 +224,12 @@ export const job = {
             "FragmentLength": 2,
             "SegmentControl": "SINGLE_FILE",
             "MpdProfile": "MAIN_PROFILE",
-            "HbbtvCompliance": "NONE",
-            "Destination": ""
+            "HbbtvCompliance": "NONE"
           }
         }
       }
     ],
     "AdAvailOffset": 0,
-    "TimecodeConfig": {
-      "Source": "ZEROBASED"
-    },
     "Inputs": [
       {
         "AudioSelectors": {
@@ -257,12 +256,11 @@ export const job = {
               "ImageX": 40,
               "ImageY": 40,
               "Layer": 10,
-              "ImageInserterInput": "s3://newonlyfans/asset/BitApp-white.png",
+              "ImageInserterInput": "s3://newonlyfans/image/BitApp-white.png",
               "Opacity": 50
             }
           ]
-        },
-        "FileInput": ""
+        }
       }
     ]
   },
