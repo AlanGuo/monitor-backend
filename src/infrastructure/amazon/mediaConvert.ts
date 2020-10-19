@@ -15,7 +15,7 @@ const mediaConvert = new MediaConvert({
 
 export async function createMediaConvertJob(s3FilePath: string) {
   job.Settings.Inputs[0].FileInput = s3FilePath;
-  job.Settings.OutputGroups[0].OutputGroupSettings.FileGroupSettings.Destination =
+  job.Settings.OutputGroups[0].OutputGroupSettings.DashIsoGroupSettings.Destination =
     config.AWS_MEDIA_CONVERT.videoDestination;
   return new Promise((res, rej) => {
     mediaConvert.createJob(job, (err, data) => {

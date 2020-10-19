@@ -12,9 +12,7 @@ export const job = {
             "FragmentLength": 2,
             "SegmentControl": "SINGLE_FILE",
             "MpdProfile": "MAIN_PROFILE",
-            "HbbtvCompliance": "NONE"
-          },
-          "FileGroupSettings": {
+            "HbbtvCompliance": "NONE",
             "Destination": ""
           }
         },
