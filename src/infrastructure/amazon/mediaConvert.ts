@@ -18,7 +18,6 @@ export async function createMediaConvertJob(s3FilePath: string) {
   job.Settings.OutputGroups[0].OutputGroupSettings.DashIsoGroupSettings.Destination =
     config.AWS_MEDIA_CONVERT.videoDestination;
   
-  console.log(JSON.stringify(job));
   return new Promise((res, rej) => {
     mediaConvert.createJob(job, (err, data) => {
       if (err) {

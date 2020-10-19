@@ -255,6 +255,5 @@ export const job = {
     ]
   },
   "Priority": 0,
-  "JobTemplate": "newonlyfans-template",
   "Role": "arn:aws:iam::052435670811:role/mediaconvert_role"
 }
