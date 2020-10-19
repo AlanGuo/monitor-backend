@@ -3,19 +3,20 @@ export const job = {
   "Settings": {
     "OutputGroups": [
       {
-        "Name": "DASH ISO",
+        "CustomName": "newonlyfans-videoconvert-template",
+        "Name": "File Group",
         "Outputs": [
           {
             "ContainerSettings": {
               "Container": "RAW"
             },
             "VideoDescription": {
-              "Width": 540,
               "ScalingBehavior": "DEFAULT",
-              "Height": 960,
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 50,
+              "Width": 540,
+              "Height": 960,
               "CodecSettings": {
                 "Codec": "FRAME_CAPTURE",
                 "FrameCaptureSettings": {
@@ -29,7 +30,7 @@ export const job = {
               "ColorMetadata": "INSERT"
             },
             "Extension": "jpg",
-            "NameModifier": "_screenshot_$Time$"
+            "NameModifier": "_screenshot($w$*$h$)"
           },
           {
             "ContainerSettings": {
@@ -42,12 +43,12 @@ export const job = {
               }
             },
             "VideoDescription": {
-              "Width": 540,
               "ScalingBehavior": "DEFAULT",
-              "Height": 960,
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 100,
+              "Width": 1920,
+              "Height": 1080,
               "CodecSettings": {
                 "Codec": "H_264",
                 "H264Settings": {
@@ -115,7 +116,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_low_mp4_800kbps_$Time$"
+            "NameModifier": "_low_mp4_800kbps($w$*$h$)"
           },
           {
             "ContainerSettings": {
@@ -128,9 +129,7 @@ export const job = {
               }
             },
             "VideoDescription": {
-              "Width": 1080,
               "ScalingBehavior": "DEFAULT",
-              "Height": 1920,
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 100,
@@ -201,27 +200,12 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_hd_mp4_4000kbps_$Time$"
+            "NameModifier": "_hd_mp4_4000kbps($w$*$h$)"
           }
         ],
         "OutputGroupSettings": {
-          "Type": "DASH_ISO_GROUP_SETTINGS",
-          "DashIsoGroupSettings": {
-            "SegmentLength": 30,
-            "AdditionalManifests": [
-              {
-                "ManifestNameModifier": "_$Time$",
-                "SelectedOutputs": [
-                  "_screenshot_$Time$",
-                  "_low_mp4_800kbps_$Time$",
-                  "_hd_mp4_4000kbps_$Time$"
-                ]
-              }
-            ],
-            "FragmentLength": 2,
-            "SegmentControl": "SINGLE_FILE",
-            "MpdProfile": "MAIN_PROFILE",
-            "HbbtvCompliance": "NONE",
+          "Type": "FILE_GROUP_SETTINGS",
+          "FileGroupSettings": {
             "Destination": ""
           }
         }
@@ -230,7 +214,6 @@ export const job = {
     "AdAvailOffset": 0,
     "Inputs": [
       {
-        "FileInput": "",
         "AudioSelectors": {
           "Audio Selector 1": {
             "Offset": 0,
@@ -259,11 +242,16 @@ export const job = {
               "Opacity": 50
             }
           ]
-        }
+        },
+        "FileInput": ""
       }
     ]
   },
+  "AccelerationSettings": {
+    "Mode": "DISABLED"
+  },
   "Priority": 0,
-  // "JobTemplate": "newonlyfans-template",
+  "HopDestinations": [],
+  "JobTemplate": "newonlyfans-template",
   "Role": "arn:aws:iam::052435670811:role/mediaconvert_role"
 }
