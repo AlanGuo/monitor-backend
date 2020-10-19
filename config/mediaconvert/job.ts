@@ -4,7 +4,6 @@ export const job = {
     "OutputGroups": [
       {
         "CustomName": "newonlyfans-videoconvert-template",
-        "Name": "DASH ISO",
         "OutputGroupSettings": {
           "Type": "DASH_ISO_GROUP_SETTINGS",
           "DashIsoGroupSettings": {
