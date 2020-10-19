@@ -30,7 +30,7 @@ export const job = {
               "ColorMetadata": "INSERT"
             },
             "Extension": "jpg",
-            "NameModifier": "_screenshot_$time$($w$*$h$)"
+            "NameModifier": "_screenshot_$Bandwidth$($w$*$h$)"
           },
           {
             "ContainerSettings": {
@@ -116,7 +116,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_low_mp4_800kbps_$time$($w$*$h$)"
+            "NameModifier": "_low_mp4_800kbps_$Bandwidth$($w$*$h$)"
           },
           {
             "ContainerSettings": {
@@ -200,7 +200,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_hd_mp4_4000kbps_$time$($w$*$h$)"
+            "NameModifier": "_hd_mp4_4000kbps_$Bandwidth$($w$*$h$)"
           }
         ],
         "OutputGroupSettings": {
