@@ -23,8 +23,8 @@ module.exports = {
     videoPrefix: "media/video/",
     imagePrefix: "media/image/",
     screenshotSuffix: "_screenshot(540*960).0000000.jpg",
-    lowSuffix: "_generic_low_mp4_800kbps(540*960).mp4",
-    hdSuffix: "_generic_hd_mp4_4000kbps(1080*1920).mp4",
+    lowSuffix: "_low_mp4_800kbps(540*960).mp4",
+    hdSuffix: "_hd_mp4_4000kbps(1080*1920).mp4",
     successActionStatus: "201",
   },
   AWS_CLOUDFRONT: {
