@@ -4,29 +4,18 @@ export const job = {
     "OutputGroups": [
       {
         "Name": "DASH ISO",
-        "OutputGroupSettings": {
-          "Type": "DASH_ISO_GROUP_SETTINGS",
-          "DashIsoGroupSettings": {
-            "SegmentLength": 30,
-            "FragmentLength": 2,
-            "SegmentControl": "SINGLE_FILE",
-            "MpdProfile": "MAIN_PROFILE",
-            "HbbtvCompliance": "NONE",
-            "Destination": ""
-          }
-        },
         "Outputs": [
           {
             "ContainerSettings": {
               "Container": "RAW"
             },
             "VideoDescription": {
+              "Width": 540,
               "ScalingBehavior": "DEFAULT",
+              "Height": 960,
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 50,
-              "Width": 540,
-              "Height": 960,
               "CodecSettings": {
                 "Codec": "FRAME_CAPTURE",
                 "FrameCaptureSettings": {
@@ -40,7 +29,7 @@ export const job = {
               "ColorMetadata": "INSERT"
             },
             "Extension": "jpg",
-            "NameModifier": "_screenshot_$Time$($w$*$h$)"
+            "NameModifier": "_screenshot_$Time$(540*960)"
           },
           {
             "ContainerSettings": {
@@ -53,12 +42,12 @@ export const job = {
               }
             },
             "VideoDescription": {
+              "Width": 540,
               "ScalingBehavior": "DEFAULT",
+              "Height": 960,
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 100,
-              "Width": 1920,
-              "Height": 1080,
               "CodecSettings": {
                 "Codec": "H_264",
                 "H264Settings": {
@@ -126,7 +115,7 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_low_mp4_800kbps_$Time$($w$*$h$)"
+            "NameModifier": "_generic_low_mp4_800kbps_$Time$(540*960)"
           },
           {
             "ContainerSettings": {
@@ -139,7 +128,9 @@ export const job = {
               }
             },
             "VideoDescription": {
+              "Width": 1080,
               "ScalingBehavior": "DEFAULT",
+              "Height": 1920,
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 100,
@@ -210,9 +201,19 @@ export const job = {
                 "LanguageCodeControl": "FOLLOW_INPUT"
               }
             ],
-            "NameModifier": "_hd_mp4_4000kbps_$Time$($w$*$h$)"
+            "NameModifier": "_generic_hd_mp4_4000kbps_$Time$(1080*1920)"
           }
         ],
+        "OutputGroupSettings": {
+          "Type": "DASH_ISO_GROUP_SETTINGS",
+          "DashIsoGroupSettings": {
+            "SegmentLength": 30,
+            "FragmentLength": 2,
+            "SegmentControl": "SINGLE_FILE",
+            "MpdProfile": "MAIN_PROFILE",
+            "HbbtvCompliance": "NONE"
+          }
+        }
       }
     ],
     "AdAvailOffset": 0,
@@ -255,5 +256,6 @@ export const job = {
     ]
   },
   "Priority": 0,
+  "JobTemplate": "newonlyfans-template",
   "Role": "arn:aws:iam::052435670811:role/mediaconvert_role"
 }
