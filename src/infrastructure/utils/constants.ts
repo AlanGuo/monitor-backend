@@ -56,8 +56,10 @@ export const ONLINE_USER_KEY = "online_user";
 
 export const MESSAGE_ROUTING_KEY = "message";
 export const MEDIA_ROUTING_KEY = "media";
+export const USER_SUB_PRICE_ROUTING_KEY = "user_sub_price";
 export const JUSTFANS_EXCHANGE = "justfans";
 export const SAVE_MESSAGE_QUEUE = "save_message";
 export const SAVE_MEDIA_QUEUE = "save_media";
+export const UPDATE_USER_SUB_PRICE_QUEUE = "update_user_sub_price"
 export const SEND_MESSAGE_QUEUE = "send_message";
 export const UPDATE_DIALOGUE_QUEUE = "update_dialogue";

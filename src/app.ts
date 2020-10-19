@@ -20,6 +20,10 @@ import {loadMediaProducer} from "@src/services/producer/mediaProducer";
 import {loadSaveMediaConsumer} from "@src/services/consumer/saveMedia";
 import cors from "@koa/cors"
 import {loadSaveAndSendMessageConsumer} from "@src/services/consumer/saveAndSendMessage";
+import {loadUserSubPriceProducer} from "@src/services/producer/userSubPriceProducer";
+import {loadUpdateUserSubPriceConsumer} from "@src/services/consumer/updateUserSubPrice";
+import {loadConsumer} from "@src/services/consumer";
+import {loadProducer} from "@src/services/producer";
 
 async function bootstrap() {
   await dbConnect();
@@ -61,13 +65,9 @@ async function bootstrap() {
   await loadSocketService(createSocket(server));
 
   // consumer can be start another service. Now, just for test
-  // await loadSaveMessageConsumer();
-  // await loadSendMessageConsumer();
-  // await loadUpdateDialogueConsumer();
-  await loadSaveAndSendMessageConsumer()
-  await loadSaveMediaConsumer();
-  //producer
-  await loadMediaProducer();
+  // load mq consumer producer
+  await loadConsumer();
+  await loadProducer();
 
   app.proxy = true;
   server.listen(Number(config.HTTPS_PORT), "0.0.0.0", () => serviceLogger.info(`Server started at http://localhost:${config.HTTPS_PORT}`));
