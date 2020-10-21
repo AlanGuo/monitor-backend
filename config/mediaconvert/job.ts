@@ -47,8 +47,8 @@ export const job = {
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 100,
-              "Width": 1080,
-              "Height": 1920,
+              "Width": 540,
+              "Height": 960,
               "CodecSettings": {
                 "Codec": "H_264",
                 "H264Settings": {
@@ -133,6 +133,8 @@ export const job = {
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 100,
+              "Width": 1080,
+              "Height": 1920,
               "CodecSettings": {
                 "Codec": "H_264",
                 "H264Settings": {
