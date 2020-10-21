@@ -5,8 +5,6 @@ import {getOnlineUser, redis} from "@src/infrastructure/redis";
 import {getSocketIO} from "@src/infrastructure/socket";
 import {MEDIA_TYPE, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
 import {jsonResponse} from "@src/infrastructure/utils/helper";
-import {isImage} from "@src/infrastructure/utils/image";
-import {isVideo} from "@src/infrastructure/utils/video";
 import {mediaProducer} from "@src/services/producer/mediaProducer";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {ImageAmazonUrl, MediaConvertCache, VideoAmazonUrl} from "@src/interface";
@@ -87,6 +85,7 @@ export default class CallbackController {
             owner: decodedData.owner,
             size
           });
+          console.log("media Producer", msg)
           await mediaProducer.publish(msg);
           if (decodedData.subscribers.length) {
             for (const uuid of decodedData.subscribers) {
