@@ -93,10 +93,7 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
     }
   }
   if (toSid) {
-    console.log("send msg", message)
     io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(message))
-  } else {
-    console.log("can't send msg")
   }
 }
 

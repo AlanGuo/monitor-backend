@@ -85,7 +85,6 @@ export default class CallbackController {
             owner: decodedData.owner,
             size
           });
-          console.log("media Producer", msg)
           await mediaProducer.publish(msg);
           if (decodedData.subscribers.length) {
             for (const uuid of decodedData.subscribers) {

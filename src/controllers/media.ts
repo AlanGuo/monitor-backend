@@ -4,11 +4,13 @@ import KoaRouter, {IRouterContext} from "koa-router";
 import {prepareUploadAsset, prepareUploadMedia} from "@src/infrastructure/amazon/s3";
 import {createMediaConvertJob, getJob} from "@src/infrastructure/amazon/mediaConvert";
 import {jsonResponse} from "@src/infrastructure/utils/helper";
-import {redis} from "../infrastructure/redis";
+import {getOnlineUser, redis} from "../infrastructure/redis";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
 import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
+import {getSocketIO} from "@src/infrastructure/socket";
+import {SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
 
 @Controller({prefix: "/media"})
 export default class MediaController {
@@ -41,6 +43,12 @@ export default class MediaController {
         decodedData.fileCount = 3;
         decodedData.key = key;
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify(decodedData));
+        // SOCKET_CHANNEL.MEDIA_CONVERT before the s3 call convert
+        const io = getSocketIO();
+        const toSid = await getOnlineUser(decodedData.owner);
+        if (toSid) {
+          io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
+        }
       } else {
         // media convertion job, three jobs
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify({
@@ -63,6 +71,12 @@ export default class MediaController {
         decodedData.fileCount = 3;
         decodedData.key = key;
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify(decodedData));
+        // SOCKET_CHANNEL.MEDIA_CONVERT before the s3 call convert
+        const io = getSocketIO();
+        const toSid = await getOnlineUser(decodedData.owner);
+        if (toSid) {
+          io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
+        }
       } else {
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
           fileCount: 3,
