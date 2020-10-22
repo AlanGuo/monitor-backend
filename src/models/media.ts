@@ -7,7 +7,7 @@ export interface Media extends Document {
   type: MEDIA_TYPE,
   owner: number,
   fileName: string,
-  size: { thumbnail?: string[], glass?: string[], image?: string[] }
+  size: { thumbnail?: string[], glass?: string[], image?: string[], duration?: number}
 }
 
 const MediaModel: Schema = new Schema({

@@ -23,6 +23,7 @@
     "colors": "^1.4.0",
     "config": "^3.3.1",
     "cookie": "^0.4.1",
+    "get-video-duration": "^3.0.2",
     "ioredis": "^4.17.3",
     "json-loader": "^0.5.7",
     "koa": "^2.13.0",

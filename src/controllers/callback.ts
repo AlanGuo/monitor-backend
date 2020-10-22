@@ -10,6 +10,7 @@ import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {ImageAmazonUrl, MediaConvertCache, VideoAmazonUrl} from "@src/interface";
 import {mediaType} from "@src/infrastructure/utils";
 import paypal from "paypal-rest-sdk";
+import {getVideoDurationInSeconds} from "get-video-duration"
 
 paypal.configure({
   "mode": config.PAYPAL.mode, //sandbox or live
@@ -57,7 +58,7 @@ export default class CallbackController {
         } else {
           const io = getSocketIO();
           let file = "";
-          let size = {}
+          let size: any = {}
           switch (mediaInfo.type) {
             case MEDIA_TYPE.IMAGE:
               size = {thumbnail: decodedData.thumbnailSize, glass: decodedData.glassSize, image: decodedData.imageSize}
@@ -65,6 +66,8 @@ export default class CallbackController {
               break
             case MEDIA_TYPE.VIDEO:
               size = {screenshot: [540, 960], low: [540, 960], hd: [1080, 1920]}
+              const tmp = getMediaUrl(mediaInfo.type, file, true, size) as VideoAmazonUrl;
+              size.duration = await getVideoDurationInSeconds(tmp.low!);
               file = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "")
           }
           const urls = getMediaUrl(mediaInfo.type, file, true, size) as ImageAmazonUrl | VideoAmazonUrl;
