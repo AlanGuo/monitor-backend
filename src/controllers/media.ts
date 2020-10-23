@@ -48,6 +48,8 @@ export default class MediaController {
         const toSid = await getOnlineUser(decodedData.owner);
         if (toSid) {
           io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
+        } else {
+          console.log("user offline")
         }
       } else {
         // media convertion job, three jobs
@@ -76,6 +78,8 @@ export default class MediaController {
         const toSid = await getOnlineUser(decodedData.owner);
         if (toSid) {
           io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
+        } else {
+          console.log("user offline")
         }
       } else {
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
