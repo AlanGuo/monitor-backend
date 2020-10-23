@@ -177,7 +177,10 @@ export default class UserController {
     ]);
 
     messages.forEach(item => {
+      // 针对当前用户是否付款 免费消息和发送人默认已付费
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === ctx.state.user.uuid;
+      // 是否有人付款过
+      item.payed = item.payment.length > 0;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
@@ -245,7 +248,10 @@ export default class UserController {
       {$project: fields},
     ]);
     messages.forEach(item => {
+      // 针对当前用户是否付款 免费消息和发送人默认已付费
       item.payment = item.price <= 0 || item.payment.length > 0 || item.from === ctx.state.user.uuid;
+      // 是否有人付款过
+      item.payed = item.payment.length > 0;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
