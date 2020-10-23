@@ -82,7 +82,7 @@ module.exports = {
     Consumer_Secret: ""
   },
 
-  HOST: "https://test-justfans.bitapp.net",
+  HOST: "https://www.mfans.com",
 
   RABBITMQ: "amqp://localhost:5672"
 

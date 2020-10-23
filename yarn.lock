@@ -4145,11 +4145,6 @@ node-uuid@^1.4.8:
   resolved "https://registry.yarnpkg.com/node-uuid/-/node-uuid-1.4.8.tgz#b040eb0923968afabf8d32fb1f17f1167fdab907"
   integrity sha1-sEDrCSOWivq/jTL7HxfxFn/auQc=
 
-node-video-duration@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/node-video-duration/-/node-video-duration-1.0.1.tgz#5cb992578d9d6118d07ca18dae50fb1be433ee7b"
-  integrity sha512-ANTYUmOWaY7agaMs38a3ij9ChnI1yHxqdGiEelt0vMtQckK4AlPyQuOmU3lnC70pXCO7bXzge9kdD0J7nTjmYA==
-
 normalize-package-data@^2.3.2, normalize-package-data@^2.3.4:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/normalize-package-data/-/normalize-package-data-2.5.0.tgz#e66db1838b200c1dfc233225d12cb36520e234a8"
