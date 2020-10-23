@@ -52,6 +52,7 @@ export default class MediaController {
           console.log("user offline")
         }
       } else {
+        console.log("not data")
         // media convertion job, three jobs
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify({
           fileCount: 3,
@@ -82,6 +83,7 @@ export default class MediaController {
           console.log("user offline")
         }
       } else {
+        console.log("not data")
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
           fileCount: 3,
           key,
