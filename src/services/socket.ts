@@ -12,17 +12,13 @@ import cookie from "cookie"
 import {loadRedisStore} from "@src/infrastructure/redisStore";
 import {SocketAddUser} from "@src/infrastructure/socket";
 import UserModel from "../models/user";
-import {Producer} from "@src/infrastructure/rabbitMq";
 import {mediaType} from "@src/infrastructure/utils";
 import {CreateDialogue, MediaConvertCache, Message} from "@src/interface";
 import DialogueModel from "@src/models/dialogue";
-
+import {messageProducer} from "@src/services/producer/messageProducer";
 const store = loadRedisStore();
 
 export async function loadSocketService(io: socket.Server) {
-
-  const messageProducer = new Producer(MESSAGE_ROUTING_KEY, JUSTFANS_EXCHANGE);
-  await messageProducer.connection(config.RABBITMQ, RABBITMQ_EXCHANGE_TYPE.DIRECT);
 
   io.use(async (socket: socket.Socket, next) => {
     if (!socket.handshake.headers.cookie) {
@@ -46,7 +42,6 @@ export async function loadSocketService(io: socket.Server) {
   io.on("connection", function (socket: SocketAddUser) {
 
     socket.on(SOCKET_CHANNEL.CHAT_MESSAGE, async (msg: string) => {
-      // when "to" exists then publish the msg to mq
       const tmp: Message = JSON.parse(msg);
       tmp.from = socket.user.uuid;
       await messageProducer.publish(JSON.stringify(tmp));
