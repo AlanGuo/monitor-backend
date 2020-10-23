@@ -147,7 +147,6 @@ export default class UserController {
           pipeline: [
             {
               $match: {
-                uuid: ctx.state.user.uuid,
                 $expr: {
                   $eq: ["$messageId", "$$id"]
                 }
@@ -219,7 +218,6 @@ export default class UserController {
           pipeline: [
             {
               $match: {
-                uuid: ctx.state.user.uuid,
                 $expr: {
                   $eq: ["$messageId", "$$id"]
                 }
