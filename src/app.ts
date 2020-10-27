@@ -16,12 +16,7 @@ import passport from "koa-passport"
 import session from "koa-generic-session"
 import {initSequence} from "@src/infrastructure/utils/sequence";
 import {loadRedisStore} from "@src/infrastructure/redisStore";
-import {loadMediaProducer} from "@src/services/producer/mediaProducer";
-import {loadSaveMediaConsumer} from "@src/services/consumer/saveMedia";
 import cors from "@koa/cors"
-import {loadSaveAndSendMessageConsumer} from "@src/services/consumer/saveAndSendMessage";
-import {loadUserSubPriceProducer} from "@src/services/producer/userSubPriceProducer";
-import {loadUpdateUserSubPriceConsumer} from "@src/services/consumer/updateUserSubPrice";
 import {loadConsumer} from "@src/services/consumer";
 import {loadProducer} from "@src/services/producer";
 
