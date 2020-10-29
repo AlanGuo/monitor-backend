@@ -28,6 +28,12 @@ export enum Sequence {
   USER = "user"
 }
 
+export enum KYC_APPLY_STATUS {
+  AUDIT = "audit",
+  PASS = "pass",
+  VETO = "veto"
+}
+
 export enum RESPONSE_CODE {
   NORMAL = 0,
   ERROR = 500,
