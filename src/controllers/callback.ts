@@ -23,7 +23,6 @@ paypal.configure({
 export default class CallbackController {
   @POST("/mediaconvertcomplete/notification")
   async notify(ctx: IRouterContext) {
-    console.log(ctx.request, ctx.request.body);
     const body = ctx.request.body;
     const message = JSON.parse(body.Message);
     const records = message.Records;
