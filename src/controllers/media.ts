@@ -1,7 +1,7 @@
 import config from "@src/infrastructure/utils/config";
 import {Controller, GET} from "@src/infrastructure/decorators/koa";
 import KoaRouter, {IRouterContext} from "koa-router";
-import {prepareUploadAsset, prepareUploadMedia} from "@src/infrastructure/amazon/s3";
+import {prepareUploadAsset, prepareUploadKyc, prepareUploadMedia} from "@src/infrastructure/amazon/s3";
 import {createMediaConvertJob, getJob} from "@src/infrastructure/amazon/mediaConvert";
 import {jsonResponse} from "@src/infrastructure/utils/helper";
 import {getOnlineUser, redis} from "../infrastructure/redis";
@@ -27,6 +27,12 @@ export default class MediaController {
   async prepareUploadAsset(ctx: IRouterContext) {
     const filename = ctx.params.filename;
     ctx.body = await prepareUploadAsset(filename);
+  }
+
+  @GET("/prepare-upload-kyc/:filename")
+  async prepareUploadKyc(ctx: IRouterContext) {
+    const filename = ctx.params.filename;
+    ctx.body = await prepareUploadKyc(filename);
   }
 
   @GET("/convert")

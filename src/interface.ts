@@ -126,6 +126,7 @@ export interface Config {
     "endpoint": string,
     "sourcePath": string,
     "videoDestination": string,
+    "kycFolder": string,
     "imageFolder": string,
     "videoFolder": string,
     "videoSourceFolder": string,

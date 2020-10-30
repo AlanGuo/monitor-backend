@@ -61,3 +61,24 @@ export async function prepareUploadAsset(filename: string) {
     })
   });
 }
+
+export async function prepareUploadKyc(filename: string) {
+  const ext = path.extname(filename);
+  const id = newUniqId() + ext;
+  let sourcePath = config.AWS_MEDIA_CONVERT.kycFolder;
+  return new Promise((res, rej) => {
+    s3.createPresignedPost({
+      Bucket: config.AWS_MEDIA_CONVERT.publicBucket,
+      Fields: {
+        key: sourcePath + `${id}`,
+        success_action_status: config.AWS_S3.successActionStatus,
+      }
+    }, (err, data) => {
+      if (err) {
+        rej(err)
+      } else {
+        res(data);
+      }
+    })
+  });
+}
