@@ -23,11 +23,11 @@ export interface IUser extends Document {
   google?: string;
   twitter?: string;
   facebook?: string;
-  oauthProfile?: Profile
+  oauthProfile?: Profile;
 
-  kyc: boolean
-  anchor: boolean
-  status: USER_STATUS
+  kyc: boolean;
+  broardcaster: boolean;
+  status: USER_STATUS;
 }
 
 const UserModel: Schema = new Schema({
@@ -52,7 +52,7 @@ const UserModel: Schema = new Schema({
   oauthProfile: {type: Object, required: false},
 
   kyc: {type: Boolean, required, default: false},
-  anchor: {type: Boolean, required, default: false},
+  broardcaster: {type: Boolean, required, default: false},
   status: {type: USER_STATUS, required, default: USER_STATUS.NORMAL}
 }, {
   timestamps: true
