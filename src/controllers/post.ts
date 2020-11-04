@@ -8,10 +8,11 @@ import postPaymentModel from "@src/models/postPayment";
 import subscriberModel from "@src/models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
 import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
-import {Pagination} from "@src/interface";
+import {BillType, ConsumeType, Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {Types} from "mongoose";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
+import BillModel from "@src/models/bill";
 
 @Controller({prefix: "/post"})
 export default class PostsController {
@@ -475,7 +476,6 @@ export default class PostsController {
 
   }
 
-  // should be in pay success callback
   @POST("/pay/:id")
   @AuthRequired()
   async pay(ctx: IRouterContext, next: any) {
@@ -500,6 +500,13 @@ export default class PostsController {
         if (!tmp.lastErrorObject.updatedExisting) {
           user!.balance -= post.price;
           await user!.save()
+          await BillModel.create([{
+            uuid: uuid,
+            type: BillType.consume,
+            amount: post.price,
+            consumeType: ConsumeType.post,
+            consumeId: tmp.value!._id
+          }], {session})
           await session.commitTransaction();
           session.endSession();
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})

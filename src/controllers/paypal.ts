@@ -1,11 +1,13 @@
 import config from "@src/infrastructure/utils/config";
-import { Controller, POST } from "@src/infrastructure/decorators/koa";
-import { jsonResponse } from "@src/infrastructure/utils/helper";
-import { IRouterContext } from "koa-router";
-import orderModel, { IOrder } from "@src/models/order";
-import userModel, { IUser } from "@src/models/user";
-import { OrderType, OrderStatus } from "@src/interface";
-import { AuthRequired } from "@src/infrastructure/decorators/auth";
+import {Controller, POST} from "@src/infrastructure/decorators/koa";
+import {jsonResponse} from "@src/infrastructure/utils/helper";
+import {IRouterContext} from "koa-router";
+import orderModel, {IOrder} from "@src/models/order";
+import userModel, {IUser} from "@src/models/user";
+import BillModel, {IBill} from "@src/models/bill";
+import {OrderType, OrderStatus, BillType} from "@src/interface";
+import {AuthRequired} from "@src/infrastructure/decorators/auth";
+
 const paypal = require("@paypal/checkout-server-sdk");
 
 // paypal.configure({
@@ -77,11 +79,11 @@ export default class PaypalController {
 
     const request = new paypal.orders.OrdersCaptureRequest(paypalOrderId);
     request.requestBody({});
-    
+
     //执行订单
     const capture = await client.execute(request);
     const amount = Number(capture.result.purchase_units[0].payments.captures[0].amount.value);
-      
+
     const updateObj = {
       ip: ctx.request.headers["x-real-ip"],
       status: OrderStatus.payed,
@@ -90,10 +92,10 @@ export default class PaypalController {
     }
     const session = await orderModel.db.startSession();
     session.startTransaction();
-    
+
     await orderModel.updateOne({
       orderId: paypalOrderId
-    }, updateObj, { session });
+    }, updateObj, {session});
     await userModel.updateOne({
       uuid
     }, {
@@ -101,6 +103,7 @@ export default class PaypalController {
         balance: amount
       }
     }, {session});
+    await BillModel.create([{uuid: uuid, type: BillType.deposit, rechargeId: paypalOrderId, amount}], {session})
     await session.commitTransaction();
     session.endSession();
 

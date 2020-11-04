@@ -7,8 +7,9 @@ import {jsonResponse} from "@src/infrastructure/utils";
 import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
-import {Pagination} from "@src/interface";
+import {BillType, ConsumeType, Pagination} from "@src/interface";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
+import BillModel from "@src/models/bill";
 
 @Controller({prefix: "/subscriber"})
 export default class Subscriber {
@@ -74,11 +75,18 @@ export default class Subscriber {
         if (user.balance >= targetUser.subPrice) {
           user.balance -= targetUser.subPrice
           await user.save();
-          await SubscriberPaymentModel.create([{
+          const payments = await SubscriberPaymentModel.create([{
             uuid,
             target,
             amount: targetUser.subPrice,
             price: targetUser.subPrice
+          }], {session})
+          await BillModel.create([{
+            uuid: uuid,
+            type: BillType.consume,
+            amount: targetUser.subPrice,
+            consumeType: ConsumeType.subscriber,
+            consumeId: payments[0]._id
           }], {session})
           const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session});
           if (sub) {

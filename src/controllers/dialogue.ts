@@ -6,7 +6,7 @@ import {jsonResponse} from "@src/infrastructure/utils";
 import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
-import {Pagination} from "@src/interface";
+import {BillType, ConsumeType, Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import messageModel from "@src/models/message";
 import messagePaymentModel from "@src/models/messagePayment";
@@ -14,6 +14,7 @@ import talkPaymentModel from "@src/models/talkPayment";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {Types} from "mongoose";
 import userModel from "@src/models/user";
+import BillModel from "@src/models/bill";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -281,9 +282,17 @@ export default class UserController {
           {$setOnInsert: {uuid, messageId: msg._id, price: msg.price, amount: msg.price}},
           {upsert: true, new: true, rawResult: true, session}
         )
+        console.log(tmp)
         if (!tmp.lastErrorObject.updatedExisting) {
           user!.balance -= msg.price;
           await user!.save();
+          await BillModel.create([{
+            uuid: uuid,
+            type: BillType.consume,
+            amount: msg.price,
+            consumeType: ConsumeType.message,
+            consumeId: tmp.value!._id
+          }], {session})
           await session.commitTransaction();
           session.endSession();
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
@@ -311,18 +320,25 @@ export default class UserController {
     });
     session.startTransaction();
     const userFrom = await userModel.findOne({uuid: from}, {balance: 1}, {session});
-    const userTo = await userModel.findOne({uuid: from}, {chatPrice: 1}, {session});
+    const userTo = await userModel.findOne({uuid: to}, {chatPrice: 1}, {session});
     if (userTo!.chatPrice !== 0) {
       if (userFrom!.balance >= userTo!.chatPrice) {
         userFrom!.balance -= userTo!.chatPrice
         await userFrom!.save()
         await DialogueModel.updateOne({from, to}, {$inc: {canTalk: 1}}, {session});
-        await talkPaymentModel.create({
+        const payments = await talkPaymentModel.create([{
           uuid: from,
           target: to,
           price: userTo!.chatPrice,
           amount: userTo!.chatPrice
-        }, {session});
+        }], {session});
+        await BillModel.create([{
+          uuid: from,
+          type: BillType.consume,
+          amount: userTo!.chatPrice,
+          consumeType: ConsumeType.talk,
+          consumeId: payments[0]._id
+        }], {session})
         await session.commitTransaction();
         session.endSession();
         ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})

@@ -13,6 +13,18 @@ export enum OrderType {
   deposit = "deposit"
 }
 
+export enum BillType {
+  deposit = "deposit",
+  consume = "consume"
+}
+
+export enum ConsumeType {
+  message = "messagePayment",
+  post = "postPayment",
+  subscriber = "subscriberPayment",
+  talk = "talkPayment"
+}
+
 export interface Profile {
   [OAUTH.GOOGLE]: GoogleProfile,
   [OAUTH.FACEBOOK]: FaceBookProfile,
