@@ -6,6 +6,7 @@ const required = true;
 export interface IKYCApply extends Document {
   uuid: number,
   idNumber: string,
+  idName: string,
   idCardFront: string,
   idCardReverse: string,
   handheld: string,
@@ -16,6 +17,7 @@ export interface IKYCApply extends Document {
 const KYCApplyModel: Schema = new Schema({
   uuid: {type: Number, required},
   idNumber: {type: String, required},
+  idName: {type: String, required},
   idCardFront: {type: String, required},
   idCardReverse: {type: String, required},
   handheld: {type: String, required},

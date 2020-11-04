@@ -15,11 +15,13 @@ export default class Kyc {
   async getKyc(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
     const fields = {
-      idNumber: 1, idCardFront: 1, idCardReverse: 1, handheld: 1, status: 1, reply: 1
+      idNumber: 1, idCardFront: 1, idCardReverse: 1, handheld: 1, status: 1, reply: 1, idName: 1
     };
     const kyc = await kycApplyModel.findOne({
       uuid
-    }, fields);
+    }, fields).sort({
+      _id: -1
+    });
     let kycData: any = null;
     if (kyc) {
       kycData = Object.assign({}, kyc.toJSON());
@@ -38,6 +40,7 @@ export default class Kyc {
     const kyc = await kycApplyModel.create({
       uuid,
       idNumber: body.idNumber,
+      idName: body.idName,
       idCardFront: body.idFrontKey,
       idCardReverse: body.idBackKey,
       handheld: body.idHandKey,

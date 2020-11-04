@@ -84,7 +84,7 @@ module.exports = {
   },
 
   // HOST: "http://localhost:3010"
-  HOST: "http://local.justfans.com",
+  HOST: "http://local.mfans.com",
 
   RABBITMQ: "amqp://localhost:5672"
 };
