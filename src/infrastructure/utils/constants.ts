@@ -36,6 +36,7 @@ export enum KYC_APPLY_STATUS {
 
 export enum RESPONSE_CODE {
   NORMAL = 0,
+  SHOW_MESSAGE= 1,
   ERROR = 500,
   LOGIN_IN_ERR = "login in error",
   CAN_NOT_SUBSCRIBE_YOURSELF = "can not subscribe yourself",
