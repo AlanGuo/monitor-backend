@@ -6,7 +6,7 @@ const required = true;
 //账单
 export interface IBill extends Document {
   uuid: number,
-  type: BillType
+  type: BillType,
   amount: number,
   consumeType?: ConsumeType,
   consumeId?: Types.ObjectId,
