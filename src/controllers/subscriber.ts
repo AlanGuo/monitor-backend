@@ -4,7 +4,7 @@ import SubscriberModel from "../models/subscriber"
 import SubscriberPaymentModel from "../models/subscriberPayment"
 import UserModel from "../models/user"
 import {jsonResponse} from "@src/infrastructure/utils";
-import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {RESPONSE_CODE, SUBSCRIBER_STATUS} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {BillType, ConsumeType, Pagination} from "@src/interface";
@@ -30,12 +30,16 @@ export default class Subscriber {
   @AuthRequired()
   async getSubcribers(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
-    const following = await SubscriberModel.find({uuid, expireAt: {
-      $gt: Date.now()
-    }}).countDocuments();
-    const fans = await SubscriberModel.find({target: uuid, expireAt: {
-      $gt: Date.now()
-    }}).countDocuments();
+    const following = await SubscriberModel.find({
+      uuid, expireAt: {
+        $gt: Date.now()
+      }
+    }).countDocuments();
+    const fans = await SubscriberModel.find({
+      target: uuid, expireAt: {
+        $gt: Date.now()
+      }
+    }).countDocuments();
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {following, fans}});
   }
 
@@ -148,10 +152,18 @@ export default class Subscriber {
         "user.displayName": 1
       }
     }
-    const match: any = {uuid, expireAt: {$gt: Date.now()}};
+    const match: any = {uuid};
+    switch (Number(ctx.query.tab)) {
+      case SUBSCRIBER_STATUS.EXPIRED:
+        match.expireAt = {$lte: Date.now()}
+        break;
+      case SUBSCRIBER_STATUS.ACTIVE:
+      default:
+        match.expireAt = {$gt: Date.now()}
+    }
     if (ctx.query.search) {
       const reg = new RegExp(ctx.query.search, "i")
-      let filter = {}
+      let filter;
       if (!isNaN(Number(ctx.query.search))) {
         filter = {uuid: {$ne: uuid}, $or: [{uuid: ctx.query.search}, {displayName: reg}, {name: reg}]}
       } else {
@@ -209,10 +221,18 @@ export default class Subscriber {
         "reBill": 1
       }
     }
-    const match: any = {target: uuid, expireAt: {$gt: Date.now()}};
+    const match: any = {target: uuid};
+    switch (Number(ctx.query.tab)) {
+      case SUBSCRIBER_STATUS.EXPIRED:
+        match.expireAt = {$lte: Date.now()}
+        break;
+      case SUBSCRIBER_STATUS.ACTIVE:
+      default:
+        match.expireAt = {$gt: Date.now()}
+    }
     if (ctx.query.search) {
       const reg = new RegExp(ctx.query.search, "i")
-      let filter = {}
+      let filter;
       if (!isNaN(Number(ctx.query.search))) {
         filter = {uuid: {$ne: uuid}, $or: [{uuid: ctx.query.search}, {displayName: reg}, {name: reg}]}
       } else {

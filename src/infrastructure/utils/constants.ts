@@ -45,6 +45,11 @@ export enum RESPONSE_CODE {
   BALANCE_NOT_ENOUGH = "balance not enough"
 }
 
+export enum SUBSCRIBER_STATUS {
+  ACTIVE,
+  EXPIRED
+}
+
 export enum RABBITMQ_EXCHANGE_TYPE {
   FANOUT = "fanout",
   DIRECT = "direct",
