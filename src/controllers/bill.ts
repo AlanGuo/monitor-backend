@@ -24,8 +24,17 @@ export default class BillController {
     const uuid = ctx.state.user.uuid;
     const pagination = ctx.state.pagination as Pagination;
     const fields = {_id: 1, type: 1, amount: 1, consumeType: 1, createdAt: 1}
-    const bill = await BillModel.find({uuid}, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit)
-    const total = await BillModel.countDocuments({uuid})
+    const match: any = {uuid}
+    switch (ctx.query.type) {
+      case BillType.consume:
+        match.type = BillType.consume;
+        break;
+      case BillType.deposit:
+        match.type = BillType.deposit;
+        break;
+    }
+    const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit)
+    const total = await BillModel.countDocuments(match)
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL,
       data: {bill, total, page: pagination.page, size: pagination.size}
