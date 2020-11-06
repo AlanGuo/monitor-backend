@@ -25,7 +25,11 @@ export default class BillController {
     const pagination = ctx.state.pagination as Pagination;
     const fields = {_id: 1, type: 1, amount: 1, consumeType: 1, createdAt: 1}
     const bill = await BillModel.find({uuid}, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit)
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: bill});
+    const total = await BillModel.countDocuments({uuid})
+    ctx.body = jsonResponse({
+      code: RESPONSE_CODE.NORMAL,
+      data: {bill, total, page: pagination.page, size: pagination.size}
+    });
   }
 
   @GET("/detail/:id")

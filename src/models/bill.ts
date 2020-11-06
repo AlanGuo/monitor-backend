@@ -10,7 +10,8 @@ export interface IBill extends Document {
   amount: number,
   consumeType?: ConsumeType,
   consumeId?: Types.ObjectId,
-  rechargeId?: string
+  rechargeId?: string,
+  createdAt: Date
 }
 
 const BillModel: Schema = new Schema({
