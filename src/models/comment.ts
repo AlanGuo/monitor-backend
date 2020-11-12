@@ -9,6 +9,7 @@ export interface IComment extends Document {
   content: string;
   like?: number;
   deleted: boolean;
+  joinId?: Types.ObjectId
 }
 
 const commentModel: Schema = new Schema({

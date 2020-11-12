@@ -25,6 +25,30 @@ export enum ConsumeType {
   talk = "talkPayment"
 }
 
+export enum NotificationType {
+  chat = "chat",                // 聊天消息
+  newPost = "newPost",          // 关注的人新发了post
+  postComment = "postComment",  // post 被评论
+  postLike = "postLike",        // post 被点赞
+  postTip = "postTip",          // post 被打赏
+  commentLike = "commentLike",  // 评论被点赞
+  commentReply = "commentReply", // 评论被回复
+  postPay = "postPay",          // 对post付费解锁
+  messagePay = "messagePay",    // 对message付费解锁
+  followExpired = "followExpired", // 订阅过期
+  followReBill = "followReBill", // 订阅自动续费
+  subExpired = "subExpired",    // 被订阅过期
+  subCancel = "subCancel",      // 被取消订阅
+  sub = "sub",                  // 被关注
+  tip = "tip",                  // 被打赏
+  other = "other",              //
+
+  // interactions = "interactions",
+  // purchases = "purchases",
+  // subscribed = "subscribed",
+  // unSubscribed = "unSubscribed"
+}
+
 export interface Profile {
   [OAUTH.GOOGLE]: GoogleProfile,
   [OAUTH.FACEBOOK]: FaceBookProfile,
