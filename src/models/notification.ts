@@ -1,5 +1,5 @@
 import {Schema, model, Types, Document} from "mongoose";
-import {NotificationType} from "@src/infrastructure/utils/constants";
+import {NotificationStatus, NotificationType} from "@src/infrastructure/utils/constants";
 
 const required = true;
 
@@ -13,12 +13,14 @@ export interface INotification extends Document {
   message?: string,
   lastCommentId?: Types.ObjectId,
   messageId?: Types.ObjectId
+  status: NotificationStatus
 }
 
 const NotificationModel: Schema = new Schema({
   uuid: {type: Number, required},
   from: {type: Number, required},
   type: {type: NotificationType, required},
+  status: {type: NotificationStatus, required, default: NotificationStatus.unread},
   postId: {type: Types.ObjectId, required: false},
   commentId: {type: Types.ObjectId, required: false},
   lastCommentId: {type: Types.ObjectId, required: false},

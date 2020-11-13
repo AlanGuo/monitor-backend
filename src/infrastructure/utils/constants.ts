@@ -85,6 +85,11 @@ export enum NotificationType {
   // unSubscribed = "unSubscribed"
 }
 
+export enum NotificationStatus {
+  unread,
+  read
+}
+
 export enum RESPONSE_CODE {
   NORMAL = 0,
   SHOW_MESSAGE= 1,

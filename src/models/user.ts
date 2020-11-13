@@ -28,7 +28,6 @@ export interface IUser extends Document {
   kyc: boolean;
   broardcaster: boolean;
   status: USER_STATUS;
-  notificationTime: number
 }
 
 const UserModel: Schema = new Schema({
@@ -42,7 +41,6 @@ const UserModel: Schema = new Schema({
   balance: {type: Number, required, default: 0},
   subPrice: {type: Number, required, default: 0},
   chatPrice: {type: Number, required, default: 0},
-  notificationTime: {type: Number, required, default: 0},
   about: {type: String, required: false},
   website: {type: String, required: false},
   bgImage: {type: String, required: false},
