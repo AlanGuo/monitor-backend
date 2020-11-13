@@ -74,7 +74,7 @@ export default class Notification {
       displayName: 1,
       avatar: 1,
     };
-    const notifications = tmpNotifications.map(async item => {
+    const notifications = await Promise.all(tmpNotifications.map(async item => {
       switch (item.type) {
         case NotificationType.newPost:
         case NotificationType.postComment:
@@ -97,7 +97,7 @@ export default class Notification {
         case NotificationType.subExpired:
           return {...item}
       }
-    })
+    }))
 
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL,
