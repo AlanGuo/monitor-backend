@@ -78,12 +78,43 @@ export enum NotificationType {
   kycPass = "kycPass",          // KYC通过
   kycVeto = "kycVeto",          // KYC拒绝
   other = "other",              //
-
-  // interactions = "interactions",
-  // purchases = "purchases",
-  // subscribed = "subscribed",
-  // unSubscribed = "unSubscribed"
 }
+
+export enum NotificationClassify {
+  interactions,
+  purchases,
+  subscription,
+  other
+}
+
+export const NotificationInteractions = [
+  NotificationType.newPost,
+  NotificationType.postComment,
+  NotificationType.postLike,
+  NotificationType.commentLike,
+  NotificationType.commentReply
+]
+
+export const NotificationPurchases = [
+  NotificationType.postTip,
+  NotificationType.postPay,
+  NotificationType.messagePay,
+  NotificationType.tip
+]
+
+export const NotificationSubscription = [
+  NotificationType.followExpired,
+  NotificationType.followReBill,
+  NotificationType.subExpired,
+  NotificationType.subCancel,
+  NotificationType.sub
+]
+
+export const NotificationOther = [
+  NotificationType.kycVeto,
+  NotificationType.kycPass,
+  NotificationType.other
+]
 
 export enum NotificationStatus {
   unread,
@@ -92,7 +123,7 @@ export enum NotificationStatus {
 
 export enum RESPONSE_CODE {
   NORMAL = 0,
-  SHOW_MESSAGE= 1,
+  SHOW_MESSAGE = 1,
   ERROR = 500,
   LOGIN_IN_ERR = "login in error",
   CAN_NOT_SUBSCRIBE_YOURSELF = "can not subscribe yourself",
@@ -112,6 +143,7 @@ export enum RABBITMQ_EXCHANGE_TYPE {
   TOPIC = "topic",
   HEADERS = "headers"
 }
+
 export enum USER_STATUS {
   NORMAL,
   BLOCKED
@@ -119,7 +151,7 @@ export enum USER_STATUS {
 
 export const USER_SEQUENCE_INIT = 10000000;
 export const AUTH_TOKEN_OVERDUE_SECOND = 60 * 60 * 12;
-export const SESSION_OVERDUE_SECOND = 60 * 60 * 24 * 7 * 1000 ;
+export const SESSION_OVERDUE_SECOND = 60 * 60 * 24 * 7 * 1000;
 export const SESSION_KEY = "justfans";
 export const ONLINE_USER_KEY = "online_user";
 

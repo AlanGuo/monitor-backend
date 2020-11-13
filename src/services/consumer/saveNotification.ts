@@ -123,6 +123,7 @@ async function handlePostLike(msg: any) {
       type: NotificationType.postLike,
       uuid: post.from,
       postId: msg.postId,
+      from: msg.from,
       status: NotificationStatus.unread
     })
   }
