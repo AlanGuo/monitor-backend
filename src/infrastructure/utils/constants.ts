@@ -15,7 +15,9 @@ export enum SOCKET_CHANNEL {
   CHAT_MESSAGE = "chat message",
   MEDIA_CONVERTED = "media converted",
   CREATE_DIALOGUE = "create dialogue",
-  MEDIA_CONVERT_START = "media convert start"
+  MEDIA_CONVERT_START = "media convert start",
+  NEW_NOTIFICATION = "new notification",
+  NEW_MSG = "new msg",
 }
 
 export enum MEDIA_TYPE {

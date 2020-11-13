@@ -4,7 +4,7 @@ import {
   JUSTFANS_EXCHANGE,
   NOTIFICATION_ROUTING_KEY, NotificationStatus, NotificationType,
   RABBITMQ_EXCHANGE_TYPE,
-  SAVE_NOTIFICATION_QUEUE,
+  SAVE_NOTIFICATION_QUEUE, SOCKET_CHANNEL,
 
 } from "@src/infrastructure/utils/constants";
 import {Types} from "mongoose";
@@ -12,6 +12,8 @@ import NotificationModel from "@src/models/notification";
 import SubscriberModel from "@src/models/subscriber";
 import PostModel from "@src/models/post";
 import CommentModel from "@src/models/comment";
+import {getOnlineUser} from "@src/infrastructure/redis";
+import {getSocketIO} from "@src/infrastructure/socket";
 
 
 export async function loadSaveNotificationConsume() {
@@ -19,7 +21,7 @@ export async function loadSaveNotificationConsume() {
   await consumer.connection(config.RABBITMQ, RABBITMQ_EXCHANGE_TYPE.DIRECT);
 
   await consumer.consume(async msg => {
-    const tmp: { type: NotificationType, [propName: string]: any } = JSON.parse(msg);
+    const tmp: { type: NotificationType, uuid: number, [propName: string]: any } = JSON.parse(msg);
     console.log('save notification:', msg);
     switch (tmp.type) {
       case NotificationType.chat:
@@ -73,6 +75,12 @@ export async function loadSaveNotificationConsume() {
       case NotificationType.followReBill:
         await handleFollowReBill(tmp);
         break
+    }
+
+    const sid = await getOnlineUser(tmp.uuid);
+    if(sid) {
+      const io = getSocketIO();
+      io.sockets.connected[sid]?.emit(SOCKET_CHANNEL.NEW_NOTIFICATION, JSON.stringify(tmp))
     }
   })
 }
