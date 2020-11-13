@@ -89,7 +89,7 @@ export default class Notification {
         case NotificationType.followReBill:
           const user = await UserModel.findOne({uuid: item.from}, userFields);
           const sid = await getOnlineUser(item.from!);
-          return {...item, from: {...user, bgImage: getSignedUrl(user!.bgImage!), avatar: getSignedUrl(user!.avatar!), online: !!sid}}
+          return {...item.toJSON(), from: {...user!.toJSON(), bgImage: getSignedUrl(user!.bgImage!), avatar: getSignedUrl(user!.avatar!), online: !!sid}}
         case NotificationType.kycPass:
         case NotificationType.kycVeto:
         case NotificationType.postTip:
