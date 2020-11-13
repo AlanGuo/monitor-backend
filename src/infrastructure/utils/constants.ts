@@ -123,6 +123,11 @@ export enum NotificationStatus {
   read
 }
 
+export enum DialogueStatus {
+  read,
+  newMessage
+}
+
 export enum RESPONSE_CODE {
   NORMAL = 0,
   SHOW_MESSAGE = 1,

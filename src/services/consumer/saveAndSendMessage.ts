@@ -1,6 +1,7 @@
 import config from "@src/infrastructure/utils/config";
 import {Consumer} from "@src/infrastructure/rabbitMq";
 import {
+  DialogueStatus,
   JUSTFANS_EXCHANGE, MEDIA_TYPE,
   MESSAGE_ROUTING_KEY, NotificationType,
   RABBITMQ_EXCHANGE_TYPE, SAVE_MESSAGE_QUEUE, SOCKET_CHANNEL,
@@ -134,7 +135,7 @@ async function createDialogue(message: Message, users: { from: User, to: User })
 
 async function updateDialogue(message: Message) {
   await DialogueModel.updateOne({from: message.from, to: message.to}, {$set: {show: true}})
-  await DialogueModel.updateOne({from: message.to, to: message.from}, {$set: {show: true}})
+  await DialogueModel.updateOne({from: message.to, to: message.from}, {$set: {show: true, status: DialogueStatus.newMessage}})
 }
 
 async function updateCanTalk(dialogue: Dialogue) {

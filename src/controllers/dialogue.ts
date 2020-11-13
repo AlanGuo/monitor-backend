@@ -3,7 +3,14 @@ import {IRouterContext} from "koa-router";
 import DialogueModel from "../models/dialogue";
 import MessageModel from "../models/message"
 import {jsonResponse} from "@src/infrastructure/utils";
-import {BillType, ConsumeType, MEDIA_TYPE, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {
+  BillType,
+  ConsumeType,
+  DialogueStatus,
+  MEDIA_TYPE,
+  NotificationType,
+  RESPONSE_CODE
+} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
@@ -31,6 +38,7 @@ export default class UserController {
         _id: 0,
         from: 1,
         to: 1,
+        status: 1,
         "user.uuid": 1,
         "user.avatar": 1,
         "user.name": 1,
@@ -112,6 +120,15 @@ export default class UserController {
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogues})
   }
 
+  @GET("/unread")
+  @AuthRequired()
+  async unreadNum(ctx: IRouterContext) {
+    const uuid = ctx.state.user.uuid;
+    const unread = await DialogueModel.find({from: uuid, status: DialogueStatus.newMessage})
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: unread.length})
+
+  }
+
   @GET("/messages/:uuid")
   @AuthRequired()
   @PaginationDec()
@@ -187,7 +204,7 @@ export default class UserController {
         media.ready = true;
       })
     });
-
+    await DialogueModel.updateOne({from: ctx.state.user.uuid, to: ctx.params.uuid}, {$set: {status: DialogueStatus.read}})
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
   }
 
