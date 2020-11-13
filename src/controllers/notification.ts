@@ -13,7 +13,7 @@ export default class Notification {
   async unReadNum(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const user = await UserModel.findOne({uuid})
-    const unreadNum = await NotificationModel.find({uuid, createAt: {$gt: user!.notificationTime || 0}})
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: unreadNum})
+    const unread = await NotificationModel.find({uuid, createAt: {$gt: new Date(user!.notificationTime || 0)}})
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: unread.length})
   }
 }
