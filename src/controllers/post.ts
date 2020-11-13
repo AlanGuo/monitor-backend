@@ -515,7 +515,7 @@ export default class PostsController {
           await session.commitTransaction();
           session.endSession();
 
-          const msg = {type: NotificationType.postPay, postId, uuid};
+          const msg = {type: NotificationType.postPay, postId, from: uuid, uuid: post.from};
           await notificationProducer.publish(JSON.stringify(msg))
 
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})

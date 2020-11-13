@@ -118,7 +118,7 @@ export default class Subscriber {
           await session.commitTransaction();
           session.endSession();
 
-          const msg = {type: NotificationType.sub, uuid, target};
+          const msg = {type: NotificationType.sub, uuid: target, from: uuid};
           await notificationProducer.publish(JSON.stringify(msg))
 
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
@@ -143,7 +143,7 @@ export default class Subscriber {
         uuid,
         target
       }, {$set: {expireAt: Date.now()}});
-      const msg = {type: NotificationType.subCancel, uuid, target};
+      const msg = {type: NotificationType.subCancel, uuid: target, from: uuid};
       await notificationProducer.publish(JSON.stringify(msg))
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
     }

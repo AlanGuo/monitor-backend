@@ -7,14 +7,23 @@ const required = true;
 export interface INotification extends Document {
   uuid: number,
   type: NotificationType,
-  joinId: Types.ObjectId
-
+  postId?: Types.ObjectId,
+  commentId?: Types.ObjectId
+  from?: number,
+  message?: string,
+  lastCommentId?: Types.ObjectId,
+  messageId?: Types.ObjectId
 }
 
 const NotificationModel: Schema = new Schema({
   uuid: {type: Number, required},
+  from: {type: Number, required},
   type: {type: NotificationType, required},
-  joinId: {type: Types.ObjectId, required: false},
+  postId: {type: Types.ObjectId, required: false},
+  commentId: {type: Types.ObjectId, required: false},
+  lastCommentId: {type: Types.ObjectId, required: false},
+  messageId: {type: Types.ObjectId, required: false},
+  message: {type: String, required: false}
 }, {
   timestamps: true
 });

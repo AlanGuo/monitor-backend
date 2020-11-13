@@ -97,7 +97,7 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
   if (toSid) {
     io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(message))
   } else {
-    await chatNotification(message);
+    // await chatNotification(message);
   }
 }
 

@@ -275,7 +275,7 @@ export default class UserController {
     });
     session.startTransaction();
     const user = await userModel.findOne({uuid}, {balance: 1}, {session});
-    const msg = await messageModel.findOne({_id: msgId}, {price: 1, to: 1}, {session});
+    const msg = await messageModel.findOne({_id: msgId}, {price: 1, to: 1, from: 1}, {session});
     if (msg && uuid === msg.to && (msg.price ?? 0) > 0) {
       if (user!.balance >= msg.price) {
         const tmp = await messagePaymentModel.findOneAndUpdate(
@@ -297,7 +297,7 @@ export default class UserController {
           await session.commitTransaction();
           session.endSession();
 
-          const message = {type: NotificationType.messagePay, msgId, uuid};
+          const message = {type: NotificationType.messagePay, msgId, from: uuid, uuid: msg.from};
           await notificationProducer.publish(JSON.stringify(message))
 
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})

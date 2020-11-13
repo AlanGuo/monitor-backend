@@ -32,7 +32,7 @@ export default class CommentLike {
     await session.commitTransaction();
     session.endSession();
 
-    const msg = {type: NotificationType.commentLike, commentId, uuid};
+    const msg = {type: NotificationType.commentLike, commentId, from: uuid};
     await notificationProducer.publish(JSON.stringify(msg))
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
   }
