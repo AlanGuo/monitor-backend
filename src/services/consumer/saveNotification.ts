@@ -2,7 +2,7 @@ import config from "@src/infrastructure/utils/config";
 import {Consumer} from "@src/infrastructure/rabbitMq";
 import {
   JUSTFANS_EXCHANGE,
-  NOTIFICATION_ROUTING_KEY, NotificationType,
+  NOTIFICATION_ROUTING_KEY, NotificationStatus, NotificationType,
   RABBITMQ_EXCHANGE_TYPE,
   SAVE_NOTIFICATION_QUEUE,
 
@@ -92,12 +92,12 @@ async function handleNewPost(msg: any) {
 
 async function handleKYCPass(msg: any) {
   msg = msg as { type: NotificationType, uuid: number }
-  await NotificationModel.create({type: NotificationType.kycPass, uuid: msg.uuid})
+  await NotificationModel.create({type: NotificationType.kycPass, uuid: msg.uuid, status: NotificationStatus.unread})
 }
 
 async function handleKYCVeto(msg: any) {
   msg = msg as { type: NotificationType, uuid: number, reply: string }
-  await NotificationModel.create({type: NotificationType.kycVeto, uuid: msg.uuid, message: msg.reply})
+  await NotificationModel.create({type: NotificationType.kycVeto, uuid: msg.uuid, message: msg.repl, status: NotificationStatus.unread})
 }
 
 async function handlePostComment(msg: any) {
@@ -109,7 +109,8 @@ async function handlePostComment(msg: any) {
       type: NotificationType.postComment,
       from: msg.from,
       postId: msg.postId,
-      commentId: msg.commentId
+      commentId: msg.commentId,
+      status: NotificationStatus.unread
     })
   }
 }
@@ -121,7 +122,8 @@ async function handlePostLike(msg: any) {
     await NotificationModel.create({
       type: NotificationType.postLike,
       uuid: post.from,
-      postId: msg.postId
+      postId: msg.postId,
+      status: NotificationStatus.unread
     })
   }
 }
@@ -138,7 +140,8 @@ async function handleCommentLike(msg: any) {
       type: NotificationType.commentLike,
       uuid: comment.uuid,
       commentId: msg.commentId,
-      from: msg.from
+      from: msg.from,
+      status: NotificationStatus.unread
     })
   }
 }
@@ -153,7 +156,8 @@ async function handleCommentReply(msg: any) {
       uuid: post.from,
       from: msg.from,
       postId: msg.postId,
-      commentId: msg.commentId
+      commentId: msg.commentId,
+      status: NotificationStatus.unread
     })
   }
   if (comment) {
@@ -163,7 +167,8 @@ async function handleCommentReply(msg: any) {
       postId: msg.postId,
       commentId: msg.commentId,
       lastCommentId: msg.lastCommentId,
-      from: msg.from
+      from: msg.from,
+      status: NotificationStatus.unread
     })
   }
 }
@@ -174,7 +179,8 @@ async function handlePostPay(msg: any) {
     type: NotificationType.postPay,
     uuid: msg.uuid,
     postId: msg.postId,
-    from: msg.from
+    from: msg.from,
+    status: NotificationStatus.unread
   })
 }
 
@@ -184,7 +190,8 @@ async function handleMessagePay(msg: any) {
     type: NotificationType.messagePay,
     uuid: msg.uuid,
     messageId: msg.msgId,
-    from: msg.from
+    from: msg.from,
+    status: NotificationStatus.unread
   })
 }
 
@@ -201,7 +208,8 @@ async function handleSubCancel(msg: any) {
   await NotificationModel.create({
     type: NotificationType.subCancel,
     uuid: msg.uuid,
-    from: msg.from
+    from: msg.from,
+    status: NotificationStatus.unread
   })
 }
 
@@ -210,7 +218,8 @@ async function handleSub(msg: any) {
   await NotificationModel.create({
     type: NotificationType.sub,
     uuid: msg.uuid,
-    from: msg.from
+    from: msg.from,
+    status: NotificationStatus.unread
   })
 }
 
