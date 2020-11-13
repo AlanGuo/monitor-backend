@@ -81,10 +81,10 @@ export enum NotificationType {
 }
 
 export enum NotificationClassify {
-  interactions,
-  purchases,
-  subscription,
-  other
+  interactions = "interactions",
+  purchases = "purchases",
+  subscription = "subscription",
+  other = "other",
 }
 
 export const NotificationInteractions = [
