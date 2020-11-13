@@ -1,5 +1,5 @@
-import { Currency, OrderStatus, OrderType } from "@src/interface";
 import {Schema, model, Document} from "mongoose";
+import {Currency, OrderStatus, OrderType} from "@src/infrastructure/utils/constants";
 
 const required = true;
 

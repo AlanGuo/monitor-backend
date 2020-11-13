@@ -3,9 +3,10 @@ import {IRouterContext} from "koa-router";
 import commentLikeModel from "../models/commentLike";
 import commentModel from "@src/models/comment";
 import { jsonResponse } from "@src/infrastructure/utils";
-import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
 import { Types } from "mongoose";
+import {notificationProducer} from "@src/services/producer/notificationProducer";
 
 @Controller({prefix: "/commentlike"})
 export default class CommentLike {
@@ -30,6 +31,9 @@ export default class CommentLike {
     }, { session });
     await session.commitTransaction();
     session.endSession();
+
+    const msg = {type: NotificationType.commentLike, commentId, uuid};
+    await notificationProducer.publish(JSON.stringify(msg))
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
   }
 

@@ -3,10 +3,10 @@ import {IRouterContext} from "koa-router";
 import DialogueModel from "../models/dialogue";
 import MessageModel from "../models/message"
 import {jsonResponse} from "@src/infrastructure/utils";
-import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {BillType, ConsumeType, MEDIA_TYPE, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
-import {BillType, ConsumeType, Pagination} from "@src/interface";
+import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import messageModel from "@src/models/message";
 import messagePaymentModel from "@src/models/messagePayment";
@@ -15,6 +15,7 @@ import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {Types} from "mongoose";
 import userModel from "@src/models/user";
 import BillModel from "@src/models/bill";
+import {notificationProducer} from "@src/services/producer/notificationProducer";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -295,6 +296,10 @@ export default class UserController {
           }], {session})
           await session.commitTransaction();
           session.endSession();
+
+          const message = {type: NotificationType.messagePay, msgId, uuid};
+          await notificationProducer.publish(JSON.stringify(message))
+
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
         } else {
           ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "has been payment"})

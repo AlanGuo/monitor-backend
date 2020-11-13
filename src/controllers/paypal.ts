@@ -5,9 +5,10 @@ import {IRouterContext} from "koa-router";
 import orderModel, {IOrder} from "@src/models/order";
 import userModel, {IUser} from "@src/models/user";
 import BillModel, {IBill} from "@src/models/bill";
-import {OrderType, OrderStatus, BillType} from "@src/interface";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
+import {BillType, OrderStatus, OrderType} from "@src/infrastructure/utils/constants";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const paypal = require("@paypal/checkout-server-sdk");
 
 // paypal.configure({

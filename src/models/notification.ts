@@ -1,5 +1,5 @@
 import {Schema, model, Types, Document} from "mongoose";
-import {NotificationType} from "@src/interface";
+import {NotificationType} from "@src/infrastructure/utils/constants";
 
 const required = true;
 

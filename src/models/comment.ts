@@ -9,7 +9,7 @@ export interface IComment extends Document {
   content: string;
   like?: number;
   deleted: boolean;
-  joinId?: Types.ObjectId
+  commentId?: Types.ObjectId
 }
 
 const commentModel: Schema = new Schema({
@@ -19,6 +19,7 @@ const commentModel: Schema = new Schema({
   mention: {type: String },
   like: {type: Number, default: 0, min: 0},
   deleted: {type: Boolean, required},
+  commentId: {type: Types.ObjectId, required: false}
 }, {
   timestamps: true
 });

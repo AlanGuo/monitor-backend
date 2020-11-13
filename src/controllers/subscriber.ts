@@ -4,12 +4,19 @@ import SubscriberModel from "../models/subscriber"
 import SubscriberPaymentModel from "../models/subscriberPayment"
 import UserModel from "../models/user"
 import {jsonResponse} from "@src/infrastructure/utils";
-import {RESPONSE_CODE, SUBSCRIBER_STATUS} from "@src/infrastructure/utils/constants";
+import {
+  BillType,
+  ConsumeType,
+  NotificationType,
+  RESPONSE_CODE,
+  SUBSCRIBER_STATUS
+} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
-import {BillType, ConsumeType, Pagination} from "@src/interface";
+import {Pagination} from "@src/interface";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import BillModel from "@src/models/bill";
+import {notificationProducer} from "@src/services/producer/notificationProducer";
 
 @Controller({prefix: "/subscriber"})
 export default class Subscriber {
@@ -110,6 +117,10 @@ export default class Subscriber {
           }
           await session.commitTransaction();
           session.endSession();
+
+          const msg = {type: NotificationType.sub, uuid, target};
+          await notificationProducer.publish(JSON.stringify(msg))
+
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         } else {
           ctx.body = jsonResponse({code: RESPONSE_CODE.BALANCE_NOT_ENOUGH});
@@ -132,6 +143,8 @@ export default class Subscriber {
         uuid,
         target
       }, {$set: {expireAt: Date.now()}});
+      const msg = {type: NotificationType.subCancel, uuid, target};
+      await notificationProducer.publish(JSON.stringify(msg))
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
     }
   }

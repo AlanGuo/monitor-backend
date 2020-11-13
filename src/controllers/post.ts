@@ -7,12 +7,13 @@ import userModel from "@src/models/user";
 import postPaymentModel from "@src/models/postPayment";
 import subscriberModel from "@src/models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
-import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
-import {BillType, ConsumeType, Pagination} from "@src/interface";
+import {BillType, ConsumeType, MEDIA_TYPE, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {Types} from "mongoose";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import BillModel from "@src/models/bill";
+import {notificationProducer} from "@src/services/producer/notificationProducer";
 
 @Controller({prefix: "/post"})
 export default class PostsController {
@@ -322,13 +323,17 @@ export default class PostsController {
     });
     const user = await userModel.findOne({uuid});
     const userSubPrice = user?.subPrice ? -1 : data.price ?? 0;
-    await postModel.create({
+    const post = await postModel.create({
       from: uuid,
       media,
       price: userSubPrice,
       content: data.content,
       deleted: false
     });
+
+    const msg = {type: NotificationType.newPost, post: {_id: post._id, from: uuid}};
+    await notificationProducer.publish(JSON.stringify(msg))
+
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
 
@@ -509,6 +514,10 @@ export default class PostsController {
           }], {session})
           await session.commitTransaction();
           session.endSession();
+
+          const msg = {type: NotificationType.postPay, postId, uuid};
+          await notificationProducer.publish(JSON.stringify(msg))
+
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
         } else {
           // await session.abortTransaction()

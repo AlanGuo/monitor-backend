@@ -9,8 +9,8 @@ import MessagePaymentModel from "../models/messagePayment";
 import PostPaymentModel from "../models/postPayment";
 import {jsonResponse} from "@src/infrastructure/utils";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
-import {BillType, ConsumeType, Pagination} from "@src/interface";
-import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {Pagination} from "@src/interface";
+import {BillType, ConsumeType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {Types} from "mongoose";
 
 

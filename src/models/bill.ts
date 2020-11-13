@@ -1,5 +1,5 @@
 import {Schema, model, Types, Document} from "mongoose";
-import {BillType, ConsumeType} from "@src/interface";
+import {BillType, ConsumeType} from "@src/infrastructure/utils/constants";
 
 const required = true;
 

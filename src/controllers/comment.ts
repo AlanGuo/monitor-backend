@@ -3,11 +3,12 @@ import {IRouterContext} from "koa-router";
 import commentModel from "../models/comment";
 import postModel from "@src/models/post";
 import { jsonResponse } from "@src/infrastructure/utils";
-import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
 import { PaginationDec } from "@src/infrastructure/decorators/pagination";
 import { Types } from "mongoose";
 import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
+import {notificationProducer} from "@src/services/producer/notificationProducer";
 
 @Controller({prefix: "/comment"})
 export default class Comment {
@@ -70,14 +71,16 @@ export default class Comment {
     const content = ctx.request.body.content;
     const mention = ctx.request.body.mention;
     const uuid = ctx.state.user.uuid;
+    const commentId = ctx.request.body.commentId;
     const session = await commentModel.db.startSession();
     session.startTransaction();
-    await commentModel.create([{
+    const [comment] = await commentModel.create([{
       postId,
       uuid,
       content,
       mention,
-      deleted: false
+      deleted: false,
+      commentId
     }], {
       session
     });
@@ -92,6 +95,14 @@ export default class Comment {
     });
     await session.commitTransaction();
     session.endSession();
+    let msg;
+    if (commentId) {
+      msg = {type: NotificationType.commentReply, postId, uuid, commentId: comment._id, replyId: commentId};
+    } else {
+      msg = {type: NotificationType.postComment, postId, uuid, commentId: comment._id};
+    }
+    await notificationProducer.publish(JSON.stringify(msg))
+
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
   }
 

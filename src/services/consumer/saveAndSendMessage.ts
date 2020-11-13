@@ -2,7 +2,7 @@ import config from "@src/infrastructure/utils/config";
 import {Consumer} from "@src/infrastructure/rabbitMq";
 import {
   JUSTFANS_EXCHANGE, MEDIA_TYPE,
-  MESSAGE_ROUTING_KEY,
+  MESSAGE_ROUTING_KEY, NotificationType,
   RABBITMQ_EXCHANGE_TYPE, SAVE_MESSAGE_QUEUE, SOCKET_CHANNEL,
 } from "@src/infrastructure/utils/constants";
 import MessageModel from "@src/models/message"
@@ -15,6 +15,7 @@ import {getSocketIO} from "@src/infrastructure/socket";
 import SocketIO from "socket.io";
 import DialogueModel, {Dialogue} from "@src/models/dialogue";
 import MediaModel from "@src/models/media";
+import {notificationProducer} from "@src/services/producer/notificationProducer";
 
 
 export async function loadSaveAndSendMessageConsumer() {
@@ -95,6 +96,8 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
   }
   if (toSid) {
     io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(message))
+  } else {
+    await chatNotification(message);
   }
 }
 
@@ -140,7 +143,6 @@ async function updateCanTalk(dialogue: Dialogue) {
   }
 }
 
-
 async function getMessageUsers(message: Message) {
   const users = await UserModel.find({uuid: {$in: [message.from, message.to]}})
   const from = users.find(item => item.uuid === message.from)
@@ -149,4 +151,9 @@ async function getMessageUsers(message: Message) {
     return {from, to}
   }
   throw "message sender or message receiver not exists"
+}
+
+async function chatNotification(message: Message) {
+  const msg = {type: NotificationType.chat, message};
+  await notificationProducer.publish(JSON.stringify(msg))
 }

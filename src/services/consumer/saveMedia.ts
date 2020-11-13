@@ -21,6 +21,5 @@ export async function loadSaveMediaConsumer() {
       owner: tmp.owner || 0,
       fileName: tmp.fileName
     })
-
   })
 }
