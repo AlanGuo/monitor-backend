@@ -12,6 +12,7 @@ import {
 import {Pagination} from "@src/interface";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {getOnlineUser} from "@src/infrastructure/redis";
+import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 
 @Controller({prefix: "/notification"})
 export default class Notification {
@@ -43,6 +44,7 @@ export default class Notification {
 
   @GET("/list")
   @AuthRequired()
+  @PaginationDec()
   async list(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const pagination = ctx.state.pagination as Pagination;
