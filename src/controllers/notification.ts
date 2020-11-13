@@ -95,7 +95,7 @@ export default class Notification {
         case NotificationType.postTip:
         case NotificationType.followExpired:
         case NotificationType.subExpired:
-          return {...item}
+          return {...item.toJSON()}
       }
     }))
 
