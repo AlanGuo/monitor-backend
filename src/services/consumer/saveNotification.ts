@@ -79,7 +79,6 @@ export async function loadSaveNotificationConsume() {
     const sid = await getOnlineUser(tmp.uuid);
     if(sid) {
       const io = getSocketIO();
-      console.log(sid)
       io.sockets.connected[sid]?.emit(SOCKET_CHANNEL.NEW_NOTIFICATION, JSON.stringify(tmp))
     }
   })
