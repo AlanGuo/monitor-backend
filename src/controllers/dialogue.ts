@@ -327,6 +327,10 @@ export default class UserController {
     } else {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "msg not exists or msg belong you or msg is free"})
     }
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+      session.endSession();
+    }
   }
 
   @POST("/pay/:uuid")
@@ -369,6 +373,11 @@ export default class UserController {
       }
     } else {
       ctx.body = jsonResponse()
+    }
+
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+      session.endSession();
     }
   }
 

@@ -34,9 +34,9 @@ async function bootstrap() {
     }
     await next();
   });
-  app.use(function(ctx, next) {
+  app.use(function (ctx, next) {
     ctx.flash = (type: string, msg: string) => {
-      ctx.session.flash = { type: type, message: msg };
+      ctx.session.flash = {type: type, message: msg};
     };
     return next();
   });
@@ -47,7 +47,11 @@ async function bootstrap() {
   app.use(serve("./static"));
 
   app.keys = ["secret", "justfans", "alan", "lonzo"];
-  app.use(session({store: await loadRedisStore(), key: SESSION_KEY, cookie: { maxAge: SESSION_OVERDUE_SECOND }}));
+  app.use(session({
+    store: await loadRedisStore(),
+    key: SESSION_KEY,
+    cookie: {maxAge: process.env.NODE_ENV === "dev" ? SESSION_OVERDUE_SECOND * 10 : SESSION_OVERDUE_SECOND}
+  }));
   // OAuth
   loaderPassport([OAUTH.TWITTER, OAUTH.GOOGLE, OAUTH.FACEBOOK]);
   app.use(passport.initialize());

@@ -128,6 +128,10 @@ export default class Subscriber {
       } else {
         ctx.body = jsonResponse({code: RESPONSE_CODE.USER_NOT_EXISTS});
       }
+      if (session.inTransaction()) {
+        await session.abortTransaction();
+        session.endSession();
+      }
     }
   }
 

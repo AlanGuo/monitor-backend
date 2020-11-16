@@ -531,5 +531,9 @@ export default class PostsController {
     } else {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "post not exists or post belong you or post is free"})
     }
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+      session.endSession();
+    }
   }
 }

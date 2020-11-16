@@ -58,7 +58,8 @@ export enum ConsumeType {
   message = "messagePayment",
   post = "postPayment",
   subscriber = "subscriberPayment",
-  talk = "talkPayment"
+  talk = "talkPayment",
+  tip = "tipPayment"
 }
 
 export enum NotificationType {
