@@ -5,8 +5,13 @@ import NotificationModel from "@src/models/notification";
 import UserModel from "@src/models/user";
 import {jsonResponse} from "@src/infrastructure/utils";
 import {
-  NotificationClassify, NotificationInteractions, NotificationOther, NotificationPurchases,
-  NotificationStatus, NotificationSubscription, NotificationType,
+  NotificationClassify,
+  NotificationInteractions,
+  NotificationOther,
+  NotificationPurchases,
+  NotificationStatus,
+  NotificationSubscription,
+  NotificationType,
   RESPONSE_CODE
 } from "@src/infrastructure/utils/constants";
 import {Pagination} from "@src/interface";
@@ -29,8 +34,8 @@ export default class Notification {
   async read(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const notificationId = ctx.params.id;
-    const notification = await NotificationModel.findOne({_id: notificationId});
-    if (notification && notification.uuid === uuid) {
+    const notification = await NotificationModel.findOne({uuid, _id: notificationId});
+    if (notification) {
       notification.status = NotificationStatus.read;
       await notification.save();
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
@@ -40,6 +45,17 @@ export default class Notification {
         msg: "the notification not exists or not belong with you"
       })
     }
+  }
+
+  @PUT("/readall")
+  @AuthRequired()
+  async readAll(ctx: IRouterContext) {
+    const uuid = ctx.state.user.uuid;
+    await NotificationModel.updateMany({
+      uuid,
+      status: NotificationStatus.unread
+    }, {$set: {status: NotificationStatus.read}});
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
 
   @GET("/list")
@@ -89,7 +105,8 @@ export default class Notification {
         case NotificationType.followReBill:
           const user = await UserModel.findOne({uuid: item.from}, userFields);
           const sid = await getOnlineUser(item.from!);
-          return {...item.toJSON(),
+          return {
+            ...item.toJSON(),
             from: {
               ...user!.toJSON(),
               avatar: (!/https?/i.test(user!.avatar!)) ? getSignedUrl(user!.avatar!) : user!.avatar!,
