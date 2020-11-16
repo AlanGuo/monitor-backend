@@ -23,63 +23,64 @@ export async function loadSaveNotificationConsume() {
   await consumer.consume(async msg => {
     const tmp: { type: NotificationType, uuid: number, [propName: string]: any } = JSON.parse(msg);
     console.log('save notification:', msg);
+    let message: any;
     switch (tmp.type) {
       case NotificationType.chat:
-        await handleChat();
+        message = await handleChat();
         break;
       case NotificationType.newPost:
-        await handleNewPost(tmp);
+        message = await handleNewPost(tmp);
         break;
       case NotificationType.kycPass:
-        await handleKYCPass(tmp);
+        message = await handleKYCPass(tmp);
         break;
       case NotificationType.kycVeto:
-        await handleKYCVeto(tmp);
+        message = await handleKYCVeto(tmp);
         break;
       case NotificationType.postComment:
-        await handlePostComment(tmp);
+        message = await handlePostComment(tmp);
         break;
       case NotificationType.postLike:
-        await handlePostLike(tmp);
+        message = await handlePostLike(tmp);
         break;
       case NotificationType.postTip:
-        await handlePostTip(tmp);
+        message = await handlePostTip(tmp);
         break;
       case NotificationType.commentLike:
-        await handleCommentLike(tmp);
+        message = await handleCommentLike(tmp);
         break;
       case NotificationType.commentReply:
-        await handleCommentReply(tmp);
+        message = await handleCommentReply(tmp);
         break;
       case NotificationType.postPay:
-        await handlePostPay(tmp);
+        message = await handlePostPay(tmp);
         break;
       case NotificationType.messagePay:
-        await handleMessagePay(tmp);
+        message = await handleMessagePay(tmp);
         break;
       case NotificationType.followExpired:
-        await handleFollowExpired(tmp);
+        message = await handleFollowExpired(tmp);
         break;
       case NotificationType.subExpired:
-        await handleSubExpired(tmp);
+        message = await handleSubExpired(tmp);
         break;
       case NotificationType.subCancel:
-        await handleSubCancel(tmp);
+        message = await handleSubCancel(tmp);
         break;
       case NotificationType.sub:
-        await handleSub(tmp);
+        message = await handleSub(tmp);
         break;
       case NotificationType.tip:
-        await handleTip(tmp);
+        message = await handleTip(tmp);
         break;
       case NotificationType.followReBill:
-        await handleFollowReBill(tmp);
+        message = await handleFollowReBill(tmp);
         break
     }
-    const sid = await getOnlineUser(tmp.uuid);
-    if(sid) {
+    const sid = await getOnlineUser(message.uuid || 0);
+    if (sid) {
       const io = getSocketIO();
-      io.sockets.connected[sid]?.emit(SOCKET_CHANNEL.NEW_NOTIFICATION, JSON.stringify(tmp))
+      io.sockets.connected[sid]?.emit(SOCKET_CHANNEL.NEW_NOTIFICATION, JSON.stringify(message))
     }
   })
 }
@@ -104,7 +105,12 @@ async function handleKYCPass(msg: any) {
 
 async function handleKYCVeto(msg: any) {
   msg = msg as { type: NotificationType, uuid: number, reply: string }
-  await NotificationModel.create({type: NotificationType.kycVeto, uuid: msg.uuid, message: msg.repl, status: NotificationStatus.unread})
+  await NotificationModel.create({
+    type: NotificationType.kycVeto,
+    uuid: msg.uuid,
+    message: msg.repl,
+    status: NotificationStatus.unread
+  })
 }
 
 async function handlePostComment(msg: any) {
@@ -193,7 +199,7 @@ async function handlePostPay(msg: any) {
 }
 
 async function handleMessagePay(msg: any) {
-  msg = msg as {type: NotificationType.messagePay, msgId: Types.ObjectId, from: number, uuid: number};
+  msg = msg as { type: NotificationType.messagePay, msgId: Types.ObjectId, from: number, uuid: number };
   await NotificationModel.create({
     type: NotificationType.messagePay,
     uuid: msg.uuid,
@@ -212,7 +218,7 @@ async function handleSubExpired(msg: any) {
 }
 
 async function handleSubCancel(msg: any) {
-  msg = msg as {type: NotificationType.subCancel, uuid: number, from: number};
+  msg = msg as { type: NotificationType.subCancel, uuid: number, from: number };
   await NotificationModel.create({
     type: NotificationType.subCancel,
     uuid: msg.uuid,
@@ -222,7 +228,7 @@ async function handleSubCancel(msg: any) {
 }
 
 async function handleSub(msg: any) {
-  msg = msg as {type: NotificationType.sub, uuid: number, from: number};
+  msg = msg as { type: NotificationType.sub, uuid: number, from: number };
   await NotificationModel.create({
     type: NotificationType.sub,
     uuid: msg.uuid,

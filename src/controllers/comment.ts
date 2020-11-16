@@ -97,9 +97,9 @@ export default class Comment {
     session.endSession();
     let msg;
     if (commentId) {
-      msg = {type: NotificationType.commentReply, postId, uuid, from: uuid, commentId: comment._id, lastCommentId: commentId};
+      msg = {type: NotificationType.commentReply, postId, from: uuid, commentId: comment._id, lastCommentId: commentId};
     } else {
-      msg = {type: NotificationType.postComment, postId, uuid, from: uuid, commentId: comment._id};
+      msg = {type: NotificationType.postComment, postId, from: uuid, commentId: comment._id};
     }
     await notificationProducer.publish(JSON.stringify(msg));
 
