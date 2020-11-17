@@ -27,6 +27,8 @@ export interface IUser extends Document {
 
   kyc: boolean;
   broardcaster: boolean;
+  earnBalance: number;
+  freezeEarnBalance: number;
   status: USER_STATUS;
 }
 
@@ -39,6 +41,8 @@ const UserModel: Schema = new Schema({
   email: {type: String, required: false, unique, sparse},
   avatar: {type: String, required: false, unique, sparse},
   balance: {type: Number, required, default: 0},
+  earnBalance: {type: Number, required, default: 0},
+  freezeEarnBalance: {type: Number, required, default: 0},
   subPrice: {type: Number, required, default: 0},
   chatPrice: {type: Number, required, default: 0},
   about: {type: String, required: false},
