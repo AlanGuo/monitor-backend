@@ -29,6 +29,7 @@ export interface IUser extends Document {
   broardcaster: boolean;
   earnBalance: number;
   freezeEarnBalance: number;
+  totalWithdrawal: number;
   status: USER_STATUS;
 }
 
@@ -43,6 +44,7 @@ const UserModel: Schema = new Schema({
   balance: {type: Number, required, default: 0},
   earnBalance: {type: Number, required, default: 0},
   freezeEarnBalance: {type: Number, required, default: 0},
+  totalWithdrawal: {type: Number, required, default: 0},
   subPrice: {type: Number, required, default: 0},
   chatPrice: {type: Number, required, default: 0},
   about: {type: String, required: false},

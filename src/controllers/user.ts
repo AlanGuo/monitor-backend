@@ -32,7 +32,8 @@ export default class UserController {
       balance: 1,
       broardcaster: 1,
       earnBalance: 1,
-      freezeEarnBalance: 1
+      freezeEarnBalance: 1,
+      totalWithdrawal: 1
     };
     const user = await UserModel.findOne({uuid}, fields);
     let rep: any;
