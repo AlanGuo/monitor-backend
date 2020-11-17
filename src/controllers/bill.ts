@@ -24,7 +24,7 @@ export default class BillController {
     const uuid = ctx.state.user.uuid;
     const pagination = ctx.state.pagination as Pagination;
     const fields = {_id: 1, type: 1, amount: 1, consumeType: 1, createdAt: 1, target: 1}
-    let match: any = {}
+    let match: any = {amount: {$ne: 0}}
     switch (ctx.query.type) {
       case BillType.consume:
         match.type = BillType.consume;
@@ -39,7 +39,7 @@ export default class BillController {
         match.target = uuid;
         break;
       default:
-        match = {$or: [{target: uuid}, {uuid}]};
+        match = {$or: [{target: uuid}, {uuid}], amount: {$ne: 0}};
     }
     const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
     bill.forEach(item => {
