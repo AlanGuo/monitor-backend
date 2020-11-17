@@ -50,6 +50,7 @@ export default class TipController {
         const [payment] = await TipPaymentModel.create([{uuid, target, amount, postId}], {session});
         await BillModel.create([{
           uuid,
+          target,
           type: BillType.consume,
           amount,
           consumeType: ConsumeType.tip,
@@ -58,7 +59,7 @@ export default class TipController {
         await session.commitTransaction();
         session.endSession();
 
-        const msg = {type: postId ? NotificationType.postTip : NotificationType.tip, uuid: target, from: uuid, postId};
+        const msg = {type: postId ? NotificationType.postTip : NotificationType.tip, uuid: target, from: uuid, postId, amount};
         await notificationProducer.publish(JSON.stringify(msg))
 
         ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});

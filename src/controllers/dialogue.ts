@@ -126,7 +126,6 @@ export default class UserController {
     const uuid = ctx.state.user.uuid;
     const unread = await DialogueModel.find({from: uuid, status: DialogueStatus.newMessage})
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: unread.length})
-
   }
 
   @GET("/messages/:uuid")
@@ -300,12 +299,12 @@ export default class UserController {
           {$setOnInsert: {uuid, messageId: msg._id, price: msg.price, amount: msg.price}},
           {upsert: true, new: true, rawResult: true, session}
         )
-        console.log(tmp)
         if (!tmp.lastErrorObject.updatedExisting) {
           user!.balance -= msg.price;
           await user!.save();
           await BillModel.create([{
             uuid: uuid,
+            target: msg.from,
             type: BillType.consume,
             amount: msg.price,
             consumeType: ConsumeType.message,
@@ -360,6 +359,7 @@ export default class UserController {
         }], {session});
         await BillModel.create([{
           uuid: from,
+          target: to,
           type: BillType.consume,
           amount: userTo!.chatPrice,
           consumeType: ConsumeType.talk,

@@ -8,11 +8,12 @@ export interface INotification extends Document {
   uuid: number,
   type: NotificationType,
   postId?: Types.ObjectId,
-  commentId?: Types.ObjectId
+  commentId?: Types.ObjectId,
   from?: number,
   message?: string,
   lastCommentId?: Types.ObjectId,
-  messageId?: Types.ObjectId
+  messageId?: Types.ObjectId,
+  amount?: number,
   status: NotificationStatus
 }
 
@@ -25,7 +26,9 @@ const NotificationModel: Schema = new Schema({
   commentId: {type: Types.ObjectId, required: false},
   lastCommentId: {type: Types.ObjectId, required: false},
   messageId: {type: Types.ObjectId, required: false},
-  message: {type: String, required: false}
+  message: {type: String, required: false},
+  amount: {type: Number, required: false},
+
 }, {
   timestamps: true
 });

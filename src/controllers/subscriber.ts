@@ -94,6 +94,7 @@ export default class Subscriber {
           }], {session})
           await BillModel.create([{
             uuid: uuid,
+            target,
             type: BillType.consume,
             amount: targetUser.subPrice,
             consumeType: ConsumeType.subscriber,

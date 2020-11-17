@@ -23,18 +23,32 @@ export default class BillController {
   async list(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const pagination = ctx.state.pagination as Pagination;
-    const fields = {_id: 1, type: 1, amount: 1, consumeType: 1, createdAt: 1}
-    const match: any = {uuid}
+    const fields = {_id: 1, type: 1, amount: 1, consumeType: 1, createdAt: 1, target: 1}
+    let match: any = {}
     switch (ctx.query.type) {
       case BillType.consume:
         match.type = BillType.consume;
+        match.uuid = uuid
         break;
       case BillType.deposit:
         match.type = BillType.deposit;
+        match.uuid = uuid
         break;
+      case BillType.earn:
+        match.type = BillType.consume;
+        match.target = uuid;
+        break;
+      default:
+        match = {$or: [{target: uuid}, {uuid}]};
     }
-    const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit)
-    const total = await BillModel.countDocuments(match)
+    const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
+    bill.forEach(item => {
+      console.log(item)
+      if (item.target === uuid) {
+        item.type = BillType.earn
+      }
+    });
+    const total = await BillModel.countDocuments(match);
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL,
       data: {bill, total, page: pagination.page, size: pagination.size}

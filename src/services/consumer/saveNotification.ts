@@ -158,13 +158,14 @@ async function handlePostLike(msg: any) {
 }
 
 async function handlePostTip(msg: any) {
-  msg = msg as { type: NotificationType.tip, uuid: number, from: number, postId: Types.ObjectId };
+  msg = msg as { type: NotificationType.tip, uuid: number, from: number, postId: Types.ObjectId, amount: number};
   const notification = {
     type: NotificationType.tip,
     uuid: msg.uuid,
     from: msg.from,
     postId: msg.postId,
-    status: NotificationStatus.unread
+    status: NotificationStatus.unread,
+    amount: msg.amount
   };
   await NotificationModel.create(notification);
   await socketPublish(notification);
@@ -276,12 +277,13 @@ async function handleSub(msg: any) {
 }
 
 async function handleTip(msg: any) {
-  msg = msg as { type: NotificationType.tip, uuid: number, from: number };
+  msg = msg as { type: NotificationType.tip, uuid: number, from: number, amount: number};
   const notification = {
     type: NotificationType.tip,
     uuid: msg.uuid,
     from: msg.from,
-    status: NotificationStatus.unread
+    status: NotificationStatus.unread,
+    amount: msg.amount
   };
   await NotificationModel.create(notification);
   await socketPublish(notification);

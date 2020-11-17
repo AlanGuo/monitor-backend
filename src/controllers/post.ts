@@ -507,6 +507,7 @@ export default class PostsController {
           await user!.save()
           await BillModel.create([{
             uuid: uuid,
+            target: post.from,
             type: BillType.consume,
             amount: post.price,
             consumeType: ConsumeType.post,

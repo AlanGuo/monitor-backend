@@ -51,7 +51,8 @@ export enum OrderType {
 
 export enum BillType {
   deposit = "deposit",
-  consume = "consume"
+  consume = "consume",
+  earn = "earn"
 }
 
 export enum ConsumeType {
