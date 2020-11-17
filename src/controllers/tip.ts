@@ -2,11 +2,12 @@ import {Controller, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {jsonResponse} from "@src/infrastructure/utils";
-import {BillType, ConsumeType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {BillType, ConsumeType, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import PostModel, {Post} from "@src/models/post";
 import UserModel from "@src/models/user";
 import TipPaymentModel from "@src/models/tipPayment";
 import BillModel from "@src/models/bill";
+import {notificationProducer} from "@src/services/producer/notificationProducer";
 
 @Controller({prefix: "/tip"})
 export default class TipController {
@@ -35,7 +36,7 @@ export default class TipController {
 
     if (postId) {
       const post = await PostModel.findOne({_id: postId}, {from: 1}, {session});
-      if (post && !target) {
+      if (post) {
         target = post.from
       }
     }
@@ -43,7 +44,7 @@ export default class TipController {
       ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "You can't tip yourself"});
     } else {
       const user = await UserModel.findOne({uuid}, {balance: 1, uuid: 1}, {session});
-      if (user && user.balance > amount) {
+      if (user && user.balance > amount && await UserModel.exists({uuid: target})) {
         user.balance -= amount
         await user.save();
         const [payment] = await TipPaymentModel.create([{uuid, target, amount, postId}], {session});
@@ -56,6 +57,10 @@ export default class TipController {
         }], {session});
         await session.commitTransaction();
         session.endSession();
+
+        const msg = {type: postId ? NotificationType.postTip : NotificationType.tip, uuid: target, from: uuid, postId};
+        await notificationProducer.publish(JSON.stringify(msg))
+
         ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         return
       }
