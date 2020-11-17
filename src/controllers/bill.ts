@@ -43,7 +43,6 @@ export default class BillController {
     }
     const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
     bill.forEach(item => {
-      console.log(item)
       if (item.target === uuid) {
         item.type = BillType.earn
       }

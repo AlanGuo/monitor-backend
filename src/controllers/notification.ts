@@ -3,6 +3,8 @@ import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {IRouterContext} from "koa-router";
 import NotificationModel from "@src/models/notification";
 import UserModel from "@src/models/user";
+import PostModel from "@src/models/post";
+import MessageModel from "@src/models/message";
 import {jsonResponse} from "@src/infrastructure/utils";
 import {
   NotificationClassify,
@@ -18,6 +20,7 @@ import {Pagination} from "@src/interface";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {getOnlineUser} from "@src/infrastructure/redis";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
+import {Types} from "mongoose";
 
 @Controller({prefix: "/notification"})
 export default class Notification {
@@ -84,42 +87,29 @@ export default class Notification {
       .sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
     const total = await NotificationModel.countDocuments(match)
 
-    const userFields = {
-      uuid: 1,
-      name: 1,
-      displayName: 1,
-      avatar: 1,
-    };
+    const userFields = {uuid: 1, name: 1, displayName: 1, avatar: 1};
+    const postFields = {content: 1}
+    const messageFields = {content: 1}
     const notifications = await Promise.all(tmpNotifications.map(async item => {
-      switch (item.type) {
-        case NotificationType.newPost:
-        case NotificationType.postComment:
-        case NotificationType.postLike:
-        case NotificationType.commentLike:
-        case NotificationType.commentReply:
-        case NotificationType.postPay:
-        case NotificationType.messagePay:
-        case NotificationType.subCancel:
-        case NotificationType.sub:
-        case NotificationType.tip:
-        case NotificationType.followReBill:
-          const user = await UserModel.findOne({uuid: item.from}, userFields);
-          const sid = await getOnlineUser(item.from!);
-          return {
-            ...item.toJSON(),
-            from: {
-              ...user!.toJSON(),
-              avatar: (!/https?/i.test(user!.avatar!)) ? getSignedUrl(user!.avatar!) : user!.avatar!,
-              online: !!sid
-            }
-          }
-        case NotificationType.kycPass:
-        case NotificationType.kycVeto:
-        case NotificationType.postTip:
-        case NotificationType.followExpired:
-        case NotificationType.subExpired:
-          return {...item.toJSON()}
+      const user = item.from ? await UserModel.findOne({uuid: item.from}, userFields) : null;
+      const post = item.postId ? await PostModel.findOne({_id: item.postId}, postFields) : null;
+      const message = item.messageId ? await MessageModel.findOne({_id: item.messageId}, messageFields) : null;
+      const data = {...item.toJSON()};
+      if (user) {
+        const sid = await getOnlineUser(item.from!);
+        data.from = {
+          ...user.toJSON(),
+          avatar: (!/https?/i.test(user!.avatar!)) ? getSignedUrl(user!.avatar!) : user!.avatar!,
+          online: !!sid
+        }
       }
+      if (message) {
+        data.message = {...message.toJSON()}
+      }
+      if (post) {
+        data.post = {...post.toJSON()}
+      }
+      return data
     }))
 
     ctx.body = jsonResponse({

@@ -24,9 +24,6 @@ export async function loadSaveNotificationConsume() {
     const tmp: { type: NotificationType, uuid: number, [propName: string]: any } = JSON.parse(msg);
     console.log('save notification:', msg);
     switch (tmp.type) {
-      case NotificationType.chat:
-        await handleChat();
-        break;
       case NotificationType.newPost:
         await handleNewPost(tmp);
         break;
@@ -85,11 +82,6 @@ async function socketPublish(message: { uuid: number, [propName: string]: any })
     const io = getSocketIO();
     io.sockets.connected[sid]?.emit(SOCKET_CHANNEL.NEW_NOTIFICATION, JSON.stringify(message))
   }
-}
-
-async function handleChat() {
-  // 可以用message 未读 按from 进行分类 进行chat通知
-  // TODO
 }
 
 async function handleNewPost(msg: any) {
