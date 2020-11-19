@@ -70,7 +70,7 @@ export default class BillController {
     if (bill) {
       switch (bill.type) {
         case BillType.deposit:
-          info = {...bill, detail: await OrderModel.findOne({orderId: bill.rechargeId})};
+          info = {...bill.toJSON(), detail: await OrderModel.findOne({orderId: bill.rechargeId})};
           break;
         case BillType.consume:
           if (bill.target) {
