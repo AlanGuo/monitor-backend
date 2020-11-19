@@ -7,6 +7,7 @@ import TalkPaymentModel from "../models/talkPayment";
 import SubscriberPaymentModel from "../models/subscriberPayment";
 import MessagePaymentModel from "../models/messagePayment";
 import PostPaymentModel from "../models/postPayment";
+import TipPaymentModel from "../models/tipPayment";
 import {jsonResponse} from "@src/infrastructure/utils";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {Pagination} from "@src/interface";
@@ -59,12 +60,12 @@ export default class BillController {
   async detail(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const id: string = ctx.params.id
-    const fields = {type: 1, amount: 1, consumeType: 1, createdAt: 1, rechargeId: 1, consumeId: 1}
+    const fields = {type: 1, amount: 1, consumeType: 1, createdAt: 1, rechargeId: 1, consumeId: 1, target: 1}
     if (!Types.ObjectId.isValid(id)) {
       ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "id error"});
       return
     }
-    const bill = await BillModel.findOne({_id: id, uuid}, fields);
+    const bill = await BillModel.findOne({_id: Types.ObjectId(id), $or: [{uuid}, {target: uuid}]}, fields);
     let info: any;
     if (bill) {
       switch (bill.type) {
@@ -72,6 +73,9 @@ export default class BillController {
           info = {...bill, detail: await OrderModel.findOne({orderId: bill.rechargeId})};
           break;
         case BillType.consume:
+          if (bill.target) {
+            bill.type = BillType.earn;
+          }
           switch (bill.consumeType) {
             case ConsumeType.message:
               info = {...bill.toJSON(), detail: await MessagePaymentModel.findOne({_id: bill.consumeId})};
@@ -84,6 +88,9 @@ export default class BillController {
               break;
             case ConsumeType.talk:
               info = {...bill.toJSON(), detail: await TalkPaymentModel.findOne({_id: bill.consumeId})};
+              break;
+            case ConsumeType.tip:
+              info = {...bill.toJSON(), detail: await TipPaymentModel.findOne({_id: bill.consumeId})}
               break;
           }
       }
