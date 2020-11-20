@@ -19,7 +19,7 @@ export interface INotification extends Document {
 
 const NotificationModel: Schema = new Schema({
   uuid: {type: Number, required},
-  from: {type: Number, required},
+  from: {type: Number, required: false},
   type: {type: NotificationType, required},
   status: {type: NotificationStatus, required, default: NotificationStatus.unread},
   postId: {type: Types.ObjectId, required: false},
