@@ -171,6 +171,7 @@ async function handleCommentLike(msg: any) {
       type: NotificationType.commentLike,
       uuid: comment.uuid,
       commentId: msg.commentId,
+      postId: msg.postId,
       from: msg.from,
       status: NotificationStatus.unread
     };
@@ -181,7 +182,7 @@ async function handleCommentLike(msg: any) {
 
 async function handleCommentReply(msg: any) {
   msg = msg as { type: NotificationType.commentReply, postId: Types.ObjectId, from: number, commentId: Types.ObjectId, lastCommentId: Types.ObjectId };
-  const post = await PostModel.findOne({_id: msg.postId}, {from: 1})
+  const post = await PostModel.findOne({_id: msg.postId}, {from: 1});
   const comment = await CommentModel.findOne({_id: msg.lastCommentId}, {uuid: 1});
   if (post) {
     const notification = {

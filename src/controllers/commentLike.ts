@@ -16,6 +16,7 @@ export default class CommentLike {
   async newLike(ctx: IRouterContext, next: any) {
     const commentId = ctx.params.id
     const uuid = ctx.state.user.uuid;
+    const postId = ctx.request.body.postId;
     const session = await commentLikeModel.db.startSession();
     session.startTransaction();
     await commentLikeModel.create([{
@@ -32,7 +33,7 @@ export default class CommentLike {
     await session.commitTransaction();
     session.endSession();
 
-    const msg = {type: NotificationType.commentLike, commentId, from: uuid};
+    const msg = {type: NotificationType.commentLike, commentId, from: uuid, postId};
     await notificationProducer.publish(JSON.stringify(msg))
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
   }
