@@ -131,6 +131,16 @@ export default class UserController {
   async updateMyInfo(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
     const body = ctx.request.body;
+    // user name cannot be the same
+    if (body.name) {
+      const user = await UserModel.findOne({
+        name: body.name
+      });
+      if (user) {
+        ctx.body = jsonResponse({code: RESPONSE_CODE.USER_NAME_CANNOT_BE_THE_SAME});
+        return;
+      }
+    }
     await UserModel.updateOne({uuid}, body);
     if (body.subPrice) {
       await userSubPriceProducer.publish(JSON.stringify({uuid, subPrice: body.subPrice}))
