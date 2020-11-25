@@ -11,6 +11,7 @@ module.exports = {
     "endpoint": "https://xdwfvckxc.mediaconvert.ap-southeast-1.amazonaws.com",
     "sourcePath": "s3://newonlyfans/",
     "videoDestination": "s3://newonlyfans-public/media/video/",
+    "kycFolder": "kyc/",
     "imageFolder": "media/image/",
     "videoFolder": "media/video/",
     "videoSourceFolder": "video/",
