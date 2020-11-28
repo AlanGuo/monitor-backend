@@ -6,7 +6,7 @@ import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {getOnlineUser} from "@src/infrastructure/redis";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
-import {userSubPriceProducer} from "@src/services/producer/userSubPriceProducer";
+import {userChatPriceProducer} from "@src/services/producer/userChatPriceProducer";
 
 @Controller({prefix: "/user"})
 export default class UserController {
@@ -142,8 +142,8 @@ export default class UserController {
       }
     }
     await UserModel.updateOne({uuid}, body);
-    if (body.subPrice) {
-      await userSubPriceProducer.publish(JSON.stringify({uuid, subPrice: body.subPrice}))
+    if (body.chatPrice) {
+      await userChatPriceProducer.publish(JSON.stringify({uuid, subPrice: body.subPrice}))
     }
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }

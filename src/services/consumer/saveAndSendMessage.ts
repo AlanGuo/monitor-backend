@@ -32,6 +32,7 @@ export async function loadSaveAndSendMessageConsumer() {
     if (users) {
       const dialogue = await createDialogue(tmp, users);
       if (dialogue!.canTalk > 0 || dialogue!.canTalk === -1) {
+        console.log("in")
         const message = await saveMessage(tmp);
         if (message) {
           await sendMessage({...tmp, _id: message._id, payment: message.price! <= 0}, io)
@@ -97,6 +98,7 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
   }
   if (toSid) {
     io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.CHAT_MESSAGE, JSON.stringify(message))
+    io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.NEW_MSG, JSON.stringify(message))
   } else {
     // await chatNotification(message);
   }
@@ -152,9 +154,4 @@ async function getMessageUsers(message: Message) {
     return {from, to}
   }
   throw "message sender or message receiver not exists"
-}
-
-async function chatNotification(message: Message) {
-  const msg = {type: NotificationType.chat, message};
-  await notificationProducer.publish(JSON.stringify(msg))
 }

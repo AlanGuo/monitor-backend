@@ -17,6 +17,7 @@ import {Pagination} from "@src/interface";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
+import {messageProducer} from "@src/services/producer/messageProducer";
 
 @Controller({prefix: "/subscriber"})
 export default class Subscriber {
@@ -103,7 +104,7 @@ export default class Subscriber {
           const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session});
           if (sub) {
             // TODO 自然月
-            sub.expireAt = sub.expireAt ?? 0;
+            sub.expireAt = sub.expireAt > Date.now() ? sub.expireAt : Date.now();
             sub.expireAt += 1000 * 60 * 60 * 24 * 30;
             await sub.save();
           } else {
@@ -120,7 +121,16 @@ export default class Subscriber {
           session.endSession();
 
           const msg = {type: NotificationType.sub, uuid: target, from: uuid};
-          await notificationProducer.publish(JSON.stringify(msg))
+          await notificationProducer.publish(JSON.stringify(msg));
+
+          // 感谢订阅
+          await messageProducer.publish(JSON.stringify({
+            from: target,
+            to: uuid,
+            price: 0,
+            content: "Thank you for your subscription!",
+            media: []
+          }));
 
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         } else {
