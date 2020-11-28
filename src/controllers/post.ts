@@ -224,6 +224,11 @@ export default class PostsController {
       "payment.postId": 1
     };
     const content = ctx.query.content;
+
+    // 收费主播
+    const user = await userModel.findOne({uuid}, {_id: 0, subPrice: 1});
+    const needSub = user && user.subPrice > 0;
+
     const match: any = {from: Number(uuid), deleted: false};
     if (content) {
       match.content = {$regex: new RegExp(content, "i")}
@@ -292,7 +297,7 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
-      item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
+      item.payment = needSub ? false : item.price <= 0 || item.payment.length > 0 || item.from === uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
