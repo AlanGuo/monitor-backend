@@ -152,7 +152,7 @@ async function handlePostLike(msg: any) {
 async function handlePostTip(msg: any) {
   msg = msg as { type: NotificationType.tip, uuid: number, from: number, postId: Types.ObjectId, amount: number};
   const notification = {
-    type: NotificationType.tip,
+    type: NotificationType.postTip,
     uuid: msg.uuid,
     from: msg.from,
     postId: msg.postId,

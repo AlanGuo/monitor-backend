@@ -26,7 +26,7 @@ export default class BillController {
     const pagination = ctx.state.pagination as Pagination;
     const fields = {_id: 1, type: 1, amount: 1, consumeType: 1, createdAt: 1, target: 1}
     let match: any = {amount: {$ne: 0}}
-    switch (ctx.query.type) {
+    switch (ctx.query.type.toLowerCase()) {
       case BillType.consume:
         match.type = BillType.consume;
         match.uuid = uuid

@@ -192,6 +192,7 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
+      item.payment = true;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, true, media.size);
         media.ready = true;

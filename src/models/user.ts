@@ -31,6 +31,8 @@ export interface IUser extends Document {
   freezeEarnBalance: number;
   totalWithdrawal: number;
   status: USER_STATUS;
+
+  withdrawTime: number;
 }
 
 const UserModel: Schema = new Schema({
@@ -59,7 +61,8 @@ const UserModel: Schema = new Schema({
 
   kyc: {type: Boolean, required, default: false},
   broardcaster: {type: Boolean, required, default: false},
-  status: {type: USER_STATUS, required, default: USER_STATUS.NORMAL}
+  status: {type: USER_STATUS, required, default: USER_STATUS.NORMAL},
+  withdrawTime: {type: Number, required, default: 0},
 }, {
   timestamps: true
 });

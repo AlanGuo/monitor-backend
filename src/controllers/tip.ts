@@ -58,7 +58,7 @@ export default class TipController {
         }], {session});
         await session.commitTransaction();
         session.endSession();
-
+        console.log(postId ? NotificationType.postTip : NotificationType.tip)
         const msg = {type: postId ? NotificationType.postTip : NotificationType.tip, uuid: target, from: uuid, postId, amount};
         await notificationProducer.publish(JSON.stringify(msg))
 
