@@ -94,9 +94,12 @@ export default class UserController {
   @GET("/:user?")
   @AuthRequired()
   async getUsers(ctx: IRouterContext, next: any) {
-    const nameFilter: { displayName?: RegExp } = {};
+    const nameFilter: { $or: any[] } = {$or: []};
     if (ctx.params.user) {
-      nameFilter.displayName = new RegExp(ctx.params.user, "i");
+      nameFilter.$or = [
+        {displayName: new RegExp(ctx.params.user, "i")},
+        {name: new RegExp(ctx.params.user, "i")}
+      ]
     }
     const filterArr: any[] = [nameFilter];
 
