@@ -85,7 +85,7 @@ export default class UserController {
       if (!/https?/i.test(rep.avatar)) {
         rep.avatar = getSignedUrl(rep.avatar);
       }
-      const sid = await getOnlineUser(ctx.params.id);
+      const sid = await getOnlineUser(user.uuid);
       rep.online = !!sid;
     }
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: rep ? rep : user})
