@@ -1,3 +1,8 @@
+export enum POST_STATUS {
+  NORMAL = "normal",
+  DISABLED = "disabled"
+}
+
 export enum REQUEST_METHOD {
   GET = "get",
   POST = "post",
