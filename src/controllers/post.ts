@@ -7,7 +7,7 @@ import userModel from "@src/models/user";
 import postPaymentModel from "@src/models/postPayment";
 import subscriberModel from "@src/models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
-import {BillType, ConsumeType, MEDIA_TYPE, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {BillType, ConsumeType, MEDIA_TYPE, NotificationType, POST_STATUS, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {Types} from "mongoose";
@@ -331,6 +331,7 @@ export default class PostsController {
     const userSubPrice = user?.subPrice ? -1 : data.price ?? 0;
     const post = await postModel.create({
       from: uuid,
+      status: POST_STATUS.NORMAL,
       media,
       price: userSubPrice,
       content: data.content,
@@ -390,6 +391,7 @@ export default class PostsController {
       content: 1,
       createdAt: 1,
       like: 1,
+      price: 1,
       comment: 1,
       "media.type": 1,
       "media.fileName": 1,

@@ -167,13 +167,13 @@ export enum USER_STATUS {
 export const USER_SEQUENCE_INIT = 10000000;
 export const AUTH_TOKEN_OVERDUE_SECOND = 60 * 60 * 12;
 export const SESSION_OVERDUE_SECOND = 60 * 60 * 24 * 7 * 1000;
-export const SESSION_KEY = "justfans";
+export const SESSION_KEY = "mfans";
 export const ONLINE_USER_KEY = "online_user";
 
 export const MESSAGE_ROUTING_KEY = "message";
 export const MEDIA_ROUTING_KEY = "media";
 export const USER_SUB_PRICE_ROUTING_KEY = "user_sub_price";
-export const JUSTFANS_EXCHANGE = "justfans";
+export const JUSTFANS_EXCHANGE = "mfans";
 export const SAVE_MESSAGE_QUEUE = "save_message";
 export const SAVE_MEDIA_QUEUE = "save_media";
 export const UPDATE_USER_SUB_PRICE_QUEUE = "update_user_sub_price"
