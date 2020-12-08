@@ -167,7 +167,7 @@ export enum USER_STATUS {
 export const USER_SEQUENCE_INIT = 10000000;
 export const AUTH_TOKEN_OVERDUE_SECOND = 60 * 60 * 12;
 export const SESSION_OVERDUE_SECOND = 60 * 60 * 24 * 7 * 1000;
-export const SESSION_KEY = "justfans";
+export const SESSION_KEY = "mfans";
 export const ONLINE_USER_KEY = "online_user";
 
 export const MESSAGE_ROUTING_KEY = "message";
