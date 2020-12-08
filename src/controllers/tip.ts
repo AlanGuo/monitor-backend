@@ -38,6 +38,8 @@ export default class TipController {
       const post = await PostModel.findOne({_id: postId}, {from: 1}, {session});
       if (post) {
         target = post.from
+        post.tips = (post.tips ?? 0) + 1;
+        await post.save();
       }
     }
     if (target === uuid) {
@@ -58,7 +60,6 @@ export default class TipController {
         }], {session});
         await session.commitTransaction();
         session.endSession();
-        console.log(postId ? NotificationType.postTip : NotificationType.tip)
         const msg = {type: postId ? NotificationType.postTip : NotificationType.tip, uuid: target, from: uuid, postId, amount};
         await notificationProducer.publish(JSON.stringify(msg))
 
