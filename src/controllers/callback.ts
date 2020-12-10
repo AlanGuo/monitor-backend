@@ -89,9 +89,11 @@ export default class CallbackController {
             size
           });
           await mediaProducer.publish(msg);
+          console.log(decodedData.subscribers)
           if (decodedData.subscribers.length) {
             for (const uuid of decodedData.subscribers) {
               const sid = await getOnlineUser(uuid);
+              console.log(sid)
               if (sid) {
                 io.sockets.connected[sid].emit(SOCKET_CHANNEL.MEDIA_CONVERTED, uuid === decodedData.owner || decodedData.free? msg : unPaymentMsg);
               }
