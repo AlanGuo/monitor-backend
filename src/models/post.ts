@@ -11,7 +11,8 @@ export interface Post extends Document {
   like?: number;
   comment?: number;
   price: number;
-  status: POST_STATUS;
+  status?: POST_STATUS;
+  tips?: number;
 }
 
 const postModel: Schema = new Schema({
@@ -22,6 +23,7 @@ const postModel: Schema = new Schema({
   comment: {type: Number, default:0, min: 0},
   deleted: {type: Boolean, required, default: false},
   price: {type: Number, required, default: 0},
+  tips: {type: Number, required, default: 0},
   status: { type: String, required, default: POST_STATUS.NORMAL},
 }, {
   timestamps: true
