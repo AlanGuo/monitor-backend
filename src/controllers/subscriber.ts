@@ -1,4 +1,4 @@
-import {Controller, GET, POST} from "@src/infrastructure/decorators/koa";
+import {Controller, GET, POST, PUT} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import SubscriberModel from "../models/subscriber"
 import SubscriberPaymentModel from "../models/subscriberPayment"
@@ -7,6 +7,7 @@ import {jsonResponse} from "@src/infrastructure/utils";
 import {
   BillType,
   ConsumeType,
+  NotificationStatus,
   NotificationType,
   RESPONSE_CODE,
   SUBSCRIBER_STATUS
@@ -18,6 +19,7 @@ import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import {messageProducer} from "@src/services/producer/messageProducer";
+import NotificationModel from "@src/models/notification";
 
 @Controller({prefix: "/subscriber"})
 export default class Subscriber {
@@ -317,5 +319,19 @@ export default class Subscriber {
     })
     const total = await SubscriberModel.countDocuments(match)
     ctx.body = jsonResponse({data: {fans, total, page: pagination.page, size: pagination.size}})
+  }
+
+  @PUT("/rebill/:target")
+  @AuthRequired()
+  @PaginationDec()
+  async openReBill(ctx: IRouterContext) {
+    const uuid = ctx.state.user.uuid;
+    const target = Number(ctx.params.target);
+    await SubscriberModel.updateOne({uuid, target}, {$set: {reBill: true}});
+    const notifyId = ctx.request.body.notifyId;
+    if (notifyId) {
+      await NotificationModel.updateOne({_id:notifyId, uuid}, {$set: {status: NotificationStatus.read}});
+    }
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
 }

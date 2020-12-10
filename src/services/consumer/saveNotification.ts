@@ -71,7 +71,10 @@ export async function loadSaveNotificationConsume() {
         break;
       case NotificationType.followReBill:
         await handleFollowReBill(tmp);
-        break
+        break;
+      case NotificationType.subPriceIncrease:
+        await handleSubPriceIncrease(tmp);
+        break;
     }
   })
 }
@@ -84,9 +87,24 @@ async function socketPublish(message: { uuid: number, [propName: string]: any })
   }
 }
 
+async function handleSubPriceIncrease(msg: any) {
+  msg = msg as { type: NotificationType, from: number, beforePrice: number, afterPrice: number };
+  const fans = await SubscriberModel.find({target: msg.from, expireAt: {$gt: Date.now()}}, {uuid: 1})
+  const notifications = fans.map(fan => {
+    return {
+      type: NotificationType.subPriceIncrease,
+      uuid: fan.uuid,
+      from: msg.from,
+      beforePrice: msg.beforePrice,
+      afterPrice: msg.afterPrice
+    }
+  });
+  await NotificationModel.insertMany(notifications);
+}
+
 async function handleNewPost(msg: any) {
   msg = msg as { type: NotificationType, post: { _id: Types.ObjectId, from: number } };
-  const fans = await SubscriberModel.find({target: msg.post.from}, {uuid: 1})
+  const fans = await SubscriberModel.find({target: msg.post.from, expireAt: {$gt: Date.now()}}, {uuid: 1})
   const notifications = fans.map(fan => {
     return {type: NotificationType.newPost, uuid: fan.uuid, postId: msg.post._id, from: msg.post.from}
   })
@@ -150,7 +168,7 @@ async function handlePostLike(msg: any) {
 }
 
 async function handlePostTip(msg: any) {
-  msg = msg as { type: NotificationType.tip, uuid: number, from: number, postId: Types.ObjectId, amount: number};
+  msg = msg as { type: NotificationType.tip, uuid: number, from: number, postId: Types.ObjectId, amount: number };
   const notification = {
     type: NotificationType.postTip,
     uuid: msg.uuid,
@@ -270,7 +288,7 @@ async function handleSub(msg: any) {
 }
 
 async function handleTip(msg: any) {
-  msg = msg as { type: NotificationType.tip, uuid: number, from: number, amount: number};
+  msg = msg as { type: NotificationType.tip, uuid: number, from: number, amount: number };
   const notification = {
     type: NotificationType.tip,
     uuid: msg.uuid,

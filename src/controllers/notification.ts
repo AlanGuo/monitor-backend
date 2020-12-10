@@ -9,6 +9,7 @@ import {jsonResponse} from "@src/infrastructure/utils";
 import {
   NotificationClassify,
   NotificationInteractions,
+  NotificationSpecial,
   NotificationOther,
   NotificationPurchases,
   NotificationStatus,
@@ -28,7 +29,10 @@ export default class Notification {
   @AuthRequired()
   async unReadNum(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
-    const unread = await NotificationModel.find({uuid, status: NotificationStatus.unread})
+    const unread = await NotificationModel.find({
+      uuid, type: {$nin: NotificationSpecial},
+      status: NotificationStatus.unread
+    })
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: unread.length})
   }
 
@@ -56,6 +60,7 @@ export default class Notification {
     const uuid = ctx.state.user.uuid;
     await NotificationModel.updateMany({
       uuid,
+      type: {$nin: NotificationSpecial},
       status: NotificationStatus.unread
     }, {$set: {status: NotificationStatus.read}});
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
@@ -115,6 +120,27 @@ export default class Notification {
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL,
       data: {notifications, total, page: pagination.page, size: pagination.size}
+    })
+  }
+
+  @GET("/special")
+  @AuthRequired()
+  // @PaginationDec()
+  async specialList(ctx: IRouterContext) {
+    const uuid = ctx.state.user.uuid;
+    const match = {uuid, type: {$in: NotificationSpecial}, status: NotificationStatus.unread};
+    const tmpNotifications = await NotificationModel
+      .find(match)
+      .sort({_id: -1}).limit(10);
+
+    const userFields = {uuid: 1, name: 1, displayName: 1};
+    const notifications = await Promise.all(tmpNotifications.map(async item=>{
+      const user = item.from ? await UserModel.findOne({uuid: item.from}, userFields) : null;
+      return {...item.toJSON(), from: {...user!.toJSON()}}
+    }))
+    ctx.body = jsonResponse({
+      code: RESPONSE_CODE.NORMAL,
+      data: {notifications}
     })
   }
 }

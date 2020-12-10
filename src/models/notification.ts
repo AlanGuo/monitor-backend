@@ -14,6 +14,8 @@ export interface INotification extends Document {
   lastCommentId?: Types.ObjectId,
   messageId?: Types.ObjectId,
   amount?: number,
+  beforePrice?: number,
+  afterPrice?: number,
   status: NotificationStatus
 }
 
@@ -28,7 +30,8 @@ const NotificationModel: Schema = new Schema({
   messageId: {type: Types.ObjectId, required: false},
   message: {type: String, required: false},
   amount: {type: Number, required: false},
-
+  beforePrice: {type: Number, required: false},
+  afterPrice: {type: Number, required: false}
 }, {
   timestamps: true
 });

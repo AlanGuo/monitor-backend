@@ -67,5 +67,6 @@ const UserModel: Schema = new Schema({
   timestamps: true
 });
 
-UserModel.index({uuid: 1})
+UserModel.index({uuid: 1});
+UserModel.index({name: 1});
 export default model<IUser>("user", UserModel);

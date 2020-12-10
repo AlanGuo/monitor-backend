@@ -1,12 +1,14 @@
 import {Controller, GET, PUT} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
-import UserModel, {IUser} from "../models/user"
+import UserModel, {IUser} from "../models/user";
+import SubscriberModel, {Subscriber} from "../models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
-import {RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {getOnlineUser} from "@src/infrastructure/redis";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {userChatPriceProducer} from "@src/services/producer/userChatPriceProducer";
+import {notificationProducer} from "@src/services/producer/notificationProducer";
 
 @Controller({prefix: "/user"})
 export default class UserController {
@@ -136,18 +138,28 @@ export default class UserController {
     const body = ctx.request.body;
     // user name cannot be the same
     if (body.name) {
-      const user = await UserModel.findOne({
-        name: body.name
-      });
-      if (user) {
+      if (await UserModel.exists({name: body.name})) {
         ctx.body = jsonResponse({code: RESPONSE_CODE.USER_NAME_CANNOT_BE_THE_SAME});
         return;
       }
     }
-    await UserModel.updateOne({uuid}, body);
     if (body.chatPrice) {
-      await userChatPriceProducer.publish(JSON.stringify({uuid, subPrice: body.subPrice}))
+      await userChatPriceProducer.publish(JSON.stringify({uuid, subPrice: body.subPrice}));
     }
+    if (body.subPrice) {
+      const user = await UserModel.findOne({uuid}, {subPrice: 1});
+      if (body.subPrice > user!.subPrice) {
+        await SubscriberModel.updateMany({target: uuid}, {$set: {reBill: false}});
+        const msg = {
+          type: NotificationType.subPriceIncrease,
+          from: uuid,
+          beforePrice: user!.subPrice,
+          afterPrice: body.subPrice
+        };
+        await notificationProducer.publish(JSON.stringify(msg))
+      }
+    }
+    await UserModel.updateOne({uuid}, body);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
 }
