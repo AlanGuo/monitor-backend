@@ -31,6 +31,7 @@ export async function loadSocketService(io: socket.Server) {
       if (await UserModel.findOne({uuid: session.passport.user.uuid})) {
         (socket as SocketAddUser).user = session.passport.user;
         await setOnlineUser(session.passport.user.uuid, socket.id);
+        console.log("loadSocketService: setOnlineUser", session.passport.user.uuid, socket.id);
         return next()
       } else {
         next(new Error(`user not exists`));
