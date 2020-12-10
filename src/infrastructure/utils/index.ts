@@ -48,6 +48,6 @@ export function mediaType(ext: string): {
       sourceFolder: "imageSourceFolder"
     }
   } else {
-    throw Error("can't recognize media type")
+    throw Error("can't recognize media type: " + ext)
   }
 }
