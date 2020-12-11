@@ -30,12 +30,13 @@ export default class CallbackController {
       const fileName: string = decodeURIComponent(recordItem.s3.object.key);
       const ext = fileName.split(".").pop() ?? "";
       let redisKey = fileName.split(".")[0];
-      console.log("/mediaconvertcomplete/notification", fileName, ext, redisKey);
       // 视频文件有下划线分割"_"，这里把下划线也滤除
       // 图片文件分 glass, thumbnail 有下划线
       redisKey = redisKey.split("_")[0];
       const data = await redis.get(redisKey);
       const mediaInfo = mediaType(ext);
+
+      console.log("/mediaconvertcomplete/notification", fileName, ext, redisKey, mediaInfo, data);
       if (data) {
         const decodedData: MediaConvertCache = JSON.parse(data);
         switch (mediaInfo.type) {
