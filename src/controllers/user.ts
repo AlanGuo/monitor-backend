@@ -164,9 +164,7 @@ export default class UserController {
         return;
       }
     }
-    if (body.chatPrice) {
-      await userChatPriceProducer.publish(JSON.stringify({uuid, subPrice: body.subPrice}));
-    }
+
     if (body.subPrice) {
       const user = await UserModel.findOne({uuid}, {subPrice: 1});
       if (body.subPrice > user!.subPrice) {

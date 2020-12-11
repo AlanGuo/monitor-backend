@@ -93,7 +93,7 @@ async function createDialogue(from: number, to: number) {
           from: from,
           to: to,
           timeline: 0,
-          canTalk: toUser.chatPrice! > 0 ? 0 : -1,
+          talkExpireTime: 0,
           show: false,
         }
       },

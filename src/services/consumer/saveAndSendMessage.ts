@@ -31,13 +31,11 @@ export async function loadSaveAndSendMessageConsumer() {
     const users = await getMessageUsers(tmp)
     if (users) {
       const dialogue = await createDialogue(tmp, users);
-      if (dialogue!.canTalk > 0 || dialogue!.canTalk === -1) {
-        console.log("in")
+      if (users.to.chatPrice === 0 || dialogue!.talkExpireTime > Date.now()) {
         const message = await saveMessage(tmp);
         if (message) {
           await sendMessage({...tmp, _id: message._id, payment: message.price! <= 0}, io)
           await updateDialogue(tmp);
-          await updateCanTalk(dialogue);
         }
       }
     }
@@ -112,7 +110,7 @@ async function createDialogue(message: Message, users: { from: User, to: User })
         from: message.from,
         to: message.to,
         timeline: 0,
-        canTalk: users.to.chatPrice! > 0 ? 0 : -1,
+        talkExpireTime: 0,
         show: true,
       }
     },
@@ -126,7 +124,7 @@ async function createDialogue(message: Message, users: { from: User, to: User })
         from: message.to,
         to: message.from,
         timeline: 0,
-        canTalk: users.from.chatPrice! > 0 ? 0 : -1,
+        talkExpireTime: 0,
         show: true
       }
     },
@@ -138,12 +136,6 @@ async function createDialogue(message: Message, users: { from: User, to: User })
 async function updateDialogue(message: Message) {
   await DialogueModel.updateOne({from: message.from, to: message.to}, {$set: {show: true}})
   await DialogueModel.updateOne({from: message.to, to: message.from}, {$set: {show: true, status: DialogueStatus.newMessage}})
-}
-
-async function updateCanTalk(dialogue: Dialogue) {
-  if (dialogue!.canTalk > 0) {
-    await DialogueModel.updateOne({_id: dialogue}, {$inc: {canTalk: -1}})
-  }
 }
 
 async function getMessageUsers(message: Message) {

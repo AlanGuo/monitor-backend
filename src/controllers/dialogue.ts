@@ -23,6 +23,7 @@ import {Types} from "mongoose";
 import userModel from "@src/models/user";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
+import user from "@src/models/user";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -203,7 +204,10 @@ export default class UserController {
         media.ready = true;
       })
     });
-    await DialogueModel.updateOne({from: ctx.state.user.uuid, to: ctx.params.uuid}, {$set: {status: DialogueStatus.read}})
+    await DialogueModel.updateOne({
+      from: ctx.state.user.uuid,
+      to: ctx.params.uuid
+    }, {$set: {status: DialogueStatus.read}})
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: messages})
   }
 
@@ -346,11 +350,15 @@ export default class UserController {
     session.startTransaction();
     const userFrom = await userModel.findOne({uuid: from}, {balance: 1}, {session});
     const userTo = await userModel.findOne({uuid: to}, {chatPrice: 1}, {session});
+    const dialogue = await DialogueModel.findOne({from, to}, {session});
     if (userTo!.chatPrice !== 0) {
-      if (userFrom!.balance >= userTo!.chatPrice) {
+      if (dialogue!.talkExpireTime > Date.now()) {
+        ctx.body = jsonResponse()
+      } else if (userFrom!.balance >= userTo!.chatPrice) {
         userFrom!.balance -= userTo!.chatPrice
-        await userFrom!.save()
-        await DialogueModel.updateOne({from, to}, {$inc: {canTalk: 1}}, {session});
+        await userFrom!.save();
+        dialogue!.talkExpireTime = Date.now() + 3600 * 12 * 1000;
+        await dialogue!.save();
         const payments = await talkPaymentModel.create([{
           uuid: from,
           target: to,
@@ -374,7 +382,6 @@ export default class UserController {
     } else {
       ctx.body = jsonResponse()
     }
-
     if (session.inTransaction()) {
       await session.abortTransaction();
       session.endSession();
@@ -386,7 +393,9 @@ export default class UserController {
   async canTalk(ctx: IRouterContext, next: any) {
     const from: number = ctx.state.user.uuid;
     const to = Number(ctx.params.uuid);
-    const dialogue = await DialogueModel.findOne({from, to}, {_id: 0, canTalk: 1});
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: dialogue ? dialogue.canTalk : -1})
+    const dialogue = await DialogueModel.findOne({from, to}, {_id: 0, talkExpireTime: 1});
+    const userTo = await userModel.findOne({uuid: to, chatPrice: 1});
+    const canTalk = userTo!.chatPrice > 0 ? dialogue!.talkExpireTime > Date.now() : true;
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: canTalk})
   }
 }

@@ -14,6 +14,8 @@ export async function loadUpdateUserChatPriceConsumer() {
 
   await consumer.consume(async msg => {
     const tmp = JSON.parse(msg)
-    await DialogueModel.updateMany({to: tmp.uuid}, {$set: {canTalk: tmp.subPrice > 0 ? 0: -1}})
+    if (tmp.chatPrice > 0) {
+      await DialogueModel.updateMany({to: tmp.uuid, talkExpireTime: 0}, {$set: {talkExpireTime: tmp.chatPrice > 0 ? 0: -1}})
+    }
   })
 }

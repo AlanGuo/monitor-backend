@@ -8,7 +8,7 @@ export interface Dialogue extends Document {
   to: number,
   show: boolean,
   timeline: number,
-  canTalk: number,
+  talkExpireTime: number,
   status: DialogueStatus
 }
 
@@ -17,7 +17,7 @@ const DialogueModel: Schema = new Schema({
   to: {type: Number, required},
   show: {type: Schema.Types.Boolean, required, default: true},
   timeline: {type: Schema.Types.Number, required, default: 1},
-  canTalk: {type: Schema.Types.Number, required, default: -1},
+  talkExpireTime: {type: Schema.Types.Number, required, default: 0},
   status: {type: DialogueStatus, required, default: DialogueStatus.read}
 }, {
   timestamps: true,
