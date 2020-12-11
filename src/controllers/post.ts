@@ -304,7 +304,7 @@ export default class PostsController {
     ]);
     posts.forEach(item => {
       item.user = [userInfo];
-      item.payment = needSub ? false : item.price <= 0 || item.payment.length > 0 || item.from === uuid;
+      item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid || !needSub;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
