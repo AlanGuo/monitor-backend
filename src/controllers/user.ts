@@ -1,6 +1,7 @@
 import {Controller, GET, PUT} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import UserModel, {IUser} from "../models/user";
+import BillModel from "../models/bill";
 import SubscriberModel, {Subscriber} from "../models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
 import {NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
@@ -33,9 +34,8 @@ export default class UserController {
       subPrice: 1,
       balance: 1,
       broardcaster: 1,
-      earnBalance: 1,
-      freezeEarnBalance: 1,
-      totalWithdrawal: 1
+      freezeWithdrawTime: 1,
+      withdrawTime: 1
     };
     const user = await UserModel.findOne({uuid}, fields);
     let rep: any;
@@ -49,6 +49,27 @@ export default class UserController {
       }
       const sid = await getOnlineUser(uuid);
       rep.online = !!sid;
+
+      if (user.broardcaster) {
+        const now = Date.now();
+        const freezeTime = now - 3600 * 24 * 30 * 1000;
+        const bill = await BillModel.find({target: uuid}, {_id: 0, amount: 1, createdAt: 1});
+        rep.income = {total: 0, balance: 0, freezeBalance: 0, withdraw: 0, freezeWithdraw: 0};
+        bill.forEach(item => {
+          const time = new Date(item.createdAt!).getTime();
+          rep.income.total += item.amount;
+          if (time > freezeTime) {
+            rep.income.freezeBalance += item.amount;
+          }
+          if (time > user.withdrawTime && time <= user.freezeWithdrawTime) {
+            rep.income.freezeWithdraw += item.amount;
+          }
+          if (time <= user.withdrawTime) {
+            rep.income.withdraw += item.amount;
+          }
+        })
+        rep.income.balance = rep.income.total - rep.income.withdraw - rep.income.freezeWithdraw - rep.income.freezeBalance;
+      }
     }
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: rep ? rep : user})
   }

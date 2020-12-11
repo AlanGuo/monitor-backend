@@ -27,12 +27,11 @@ export interface IUser extends Document {
 
   kyc: boolean;
   broardcaster: boolean;
-  earnBalance: number;
-  freezeEarnBalance: number;
-  totalWithdrawal: number;
   status: USER_STATUS;
 
   withdrawTime: number;
+  freezeWithdrawTime: number;
+
 }
 
 const UserModel: Schema = new Schema({
@@ -44,9 +43,6 @@ const UserModel: Schema = new Schema({
   email: {type: String, required: false, unique, sparse},
   avatar: {type: String, required: false, unique, sparse},
   balance: {type: Number, required, default: 0},
-  earnBalance: {type: Number, required, default: 0},
-  freezeEarnBalance: {type: Number, required, default: 0},
-  totalWithdrawal: {type: Number, required, default: 0},
   subPrice: {type: Number, required, default: 0},
   chatPrice: {type: Number, required, default: 0},
   about: {type: String, required: false},
@@ -63,6 +59,7 @@ const UserModel: Schema = new Schema({
   broardcaster: {type: Boolean, required, default: false},
   status: {type: USER_STATUS, required, default: USER_STATUS.NORMAL},
   withdrawTime: {type: Number, required, default: 0},
+  freezeWithdrawTime:  {type: Number, required, default: 0},
 }, {
   timestamps: true
 });
