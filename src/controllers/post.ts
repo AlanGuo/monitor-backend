@@ -7,13 +7,21 @@ import userModel, {IUser} from "@src/models/user";
 import postPaymentModel from "@src/models/postPayment";
 import subscriberModel from "@src/models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
-import {BillType, ConsumeType, MEDIA_TYPE, NotificationType, POST_STATUS, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {
+  BillType,
+  ConsumeType,
+  MEDIA_TYPE,
+  NotificationType,
+  POST_STATUS,
+  RESPONSE_CODE
+} from "@src/infrastructure/utils/constants";
 import {Pagination} from "@src/interface";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {Types} from "mongoose";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
+import Subscriber from "@src/controllers/subscriber";
 
 @Controller({prefix: "/post"})
 export default class PostsController {
@@ -27,9 +35,23 @@ export default class PostsController {
     const content = ctx.query.content;
 
     const fields = {
-      _id: 1, from: 1, content: 1, createdAt: 1, like: 1, comment: 1, price: 1, tips: 1, "media.type": 1, "media.fileName": 1,
-      "media.size": 1, "user.uuid": 1, "user.name": 1, "user.displayName": 1, "user.avatar": 1,
-      "isLiked.uuid": 1, "payment.postId": 1
+      _id: 1,
+      from: 1,
+      content: 1,
+      createdAt: 1,
+      like: 1,
+      comment: 1,
+      price: 1,
+      tips: 1,
+      "media.type": 1,
+      "media.fileName": 1,
+      "media.size": 1,
+      "user.uuid": 1,
+      "user.name": 1,
+      "user.displayName": 1,
+      "user.avatar": 1,
+      "isLiked.uuid": 1,
+      "payment.postId": 1
     };
     const followers = await subscriberModel.find({uuid, expireAt: {$gt: Date.now()}}, {_id: 0, target: 1});
     const matchFollowers = followers.map(item => item.target).concat([uuid])
@@ -206,6 +228,7 @@ export default class PostsController {
   }
 
   @GET("/:id/list")
+  @AuthRequired(false)
   @PaginationDec()
   async getUserPosts(ctx: IRouterContext, next: any) {
     const pagination: Pagination = ctx.state.pagination;
@@ -230,6 +253,13 @@ export default class PostsController {
     // 收费主播
     const user = await userModel.findOne({uuid}, {_id: 0, subPrice: 1, displayName: 1, avatar: 1, name: 1});
     const needSub = user && user.subPrice > 0;
+
+    const isFan = ctx.state.user ? needSub ? await subscriberModel.exists({
+      uuid: ctx.state.user.uuid,
+      target: uuid,
+      expireAt: {$gt: Date.now()}
+    }): true : false
+
     const userInfo: any = {...user?.toJSON(), uuid}
     if (user && !/https?/i.test(user.avatar!)) {
       userInfo.avatar = getSignedUrl(user.avatar!);
@@ -304,7 +334,7 @@ export default class PostsController {
     ]);
     posts.forEach(item => {
       item.user = [userInfo];
-      item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid || !needSub;
+      item.payment = item.payment.length > 0 || item.from === uuid || isFan;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
