@@ -16,7 +16,7 @@ const SubscriberModel: Schema = new Schema({
   target: {type: Number, required},
   createAt: {type: Number, required},
   expireAt: {type: Number, required},
-  reBill: {type: Boolean, required, default: false}
+  reBill: {type: Boolean, required, default: true}
 }, {
   timestamps: false
 });

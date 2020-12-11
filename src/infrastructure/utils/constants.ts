@@ -69,7 +69,7 @@ export enum ConsumeType {
 }
 
 export enum NotificationType {
-  chat = "chat",                // 聊天消息
+  // chat = "chat",                // 聊天消息
   newPost = "newPost",          // 关注的人新发了post
   postComment = "postComment",  // post 被评论
   postLike = "postLike",        // post 被点赞
@@ -86,7 +86,7 @@ export enum NotificationType {
   tip = "tip",                  // 被打赏
   kycPass = "kycPass",          // KYC通过
   kycVeto = "kycVeto",          // KYC拒绝
-  other = "other",              //
+  subPriceIncrease = "subPriceIncrease", // 订阅价格提高
 }
 
 export enum NotificationClassify {
@@ -95,6 +95,10 @@ export enum NotificationClassify {
   subscription = "subscription",
   other = "other",
 }
+
+export const NotificationSpecial = [
+  NotificationType.subPriceIncrease
+]
 
 export const NotificationInteractions = [
   NotificationType.newPost,
@@ -122,7 +126,6 @@ export const NotificationSubscription = [
 export const NotificationOther = [
   NotificationType.kycVeto,
   NotificationType.kycPass,
-  NotificationType.other
 ]
 
 export enum NotificationStatus {
