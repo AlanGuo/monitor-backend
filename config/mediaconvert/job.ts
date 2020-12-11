@@ -225,7 +225,7 @@ export const job = {
         },
         "VideoSelector": {
           "ColorSpace": "FOLLOW",
-          "Rotate": "DEGREE_0",
+          "Rotate": "AUTO",
           "AlphaBehavior": "DISCARD"
         },
         "FilterEnable": "AUTO",
