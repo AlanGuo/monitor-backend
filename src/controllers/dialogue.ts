@@ -350,7 +350,7 @@ export default class UserController {
     session.startTransaction();
     const userFrom = await userModel.findOne({uuid: from}, {balance: 1}, {session});
     const userTo = await userModel.findOne({uuid: to}, {chatPrice: 1}, {session});
-    const dialogue = await DialogueModel.findOne({from, to}, {session});
+    const dialogue = await DialogueModel.findOne({from, to}, {talkExpireTime: 1},{session});
     if (userTo!.chatPrice !== 0) {
       if (dialogue!.talkExpireTime > Date.now()) {
         ctx.body = jsonResponse()
