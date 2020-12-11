@@ -3,7 +3,7 @@ import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {IRouterContext} from "koa-router";
 import postModel from "@src/models/post";
-import userModel from "@src/models/user";
+import userModel, {IUser} from "@src/models/user";
 import postPaymentModel from "@src/models/postPayment";
 import subscriberModel from "@src/models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
@@ -218,6 +218,7 @@ export default class PostsController {
       like: 1,
       comment: 1,
       price: 1,
+      tips: 1,
       "media.size": 1,
       "media.type": 1,
       "media.fileName": 1,
@@ -227,8 +228,12 @@ export default class PostsController {
     const content = ctx.query.content;
 
     // 收费主播
-    const user = await userModel.findOne({uuid}, {_id: 0, subPrice: 1});
+    const user = await userModel.findOne({uuid}, {_id: 0, subPrice: 1, displayName: 1, avatar: 1, name: 1});
     const needSub = user && user.subPrice > 0;
+    const userInfo: any = {...user?.toJSON(), uuid}
+    if (user && !/https?/i.test(user.avatar!)) {
+      userInfo.avatar = getSignedUrl(user.avatar!);
+    }
 
     const match: any = {from: Number(uuid), deleted: false};
     if (content) {
@@ -298,6 +303,7 @@ export default class PostsController {
       {$project: fields},
     ]);
     posts.forEach(item => {
+      item.user = [userInfo];
       item.payment = needSub ? false : item.price <= 0 || item.payment.length > 0 || item.from === uuid;
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
