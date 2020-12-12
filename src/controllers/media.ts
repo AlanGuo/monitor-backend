@@ -55,7 +55,7 @@ export default class MediaController {
         if (toSid) {
           io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
         } else {
-          console.log("/convert video: user offline")
+          console.log("/convert video: user offline", decodedData.owner)
         }
       } else {
         console.log("/convert video: not data")
@@ -87,7 +87,7 @@ export default class MediaController {
         if (toSid) {
           io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
         } else {
-          console.log("/convert image: user offline")
+          console.log("/convert image: user offline", decodedData.owner)
         }
       } else {
         console.log("/convert video: not data")
