@@ -78,14 +78,18 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
           case MEDIA_TYPE.IMAGE:
             const tmpImageMedia = await MediaModel.findOne({fileName: media.key!.split("/")[1]});
             console.log("sendMessage", media, tmpImageMedia);
-            media.urls = getMediaUrl(MEDIA_TYPE.IMAGE, tmpImageMedia!.fileName, message.payment, tmpImageMedia!.size);
-            media.size = tmpImageMedia!.size;
+            if (tmpImageMedia) {
+              media.urls = getMediaUrl(MEDIA_TYPE.IMAGE, tmpImageMedia!.fileName, message.payment, tmpImageMedia!.size);
+              media.size = tmpImageMedia!.size;
+            }
             break;
           case MEDIA_TYPE.VIDEO:
             const tmpVideoMedia = await MediaModel.findOne({fileName: media.key!.split("/")[1].split(".")[0]});
             console.log("sendMessage", media, tmpVideoMedia);
-            media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, tmpVideoMedia!.fileName, message.payment, tmpVideoMedia!.size);
-            media.size = tmpVideoMedia!.size;
+            if (tmpVideoMedia) {
+              media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, tmpVideoMedia!.fileName, message.payment, tmpVideoMedia!.size);
+              media.size = tmpVideoMedia!.size;
+            }
         }
         // })
       }
