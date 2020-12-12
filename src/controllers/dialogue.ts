@@ -396,6 +396,6 @@ export default class UserController {
     const dialogue = await DialogueModel.findOne({from, to}, {_id: 0, talkExpireTime: 1});
     const userTo = await userModel.findOne({uuid: to}, {chatPrice: 1});
     const canTalk = userTo!.chatPrice > 0 ? dialogue!.talkExpireTime > Date.now() : true;
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: canTalk})
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: canTalk});
   }
 }
