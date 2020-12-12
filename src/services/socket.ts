@@ -77,6 +77,7 @@ export async function loadSocketService(io: socket.Server) {
     })
 
     socket.on("disconnect", async () => {
+      console.log("socket disconnect", socket.user.uuid);
       await delOnlineUser(socket.user.uuid.toString());
     })
   });
