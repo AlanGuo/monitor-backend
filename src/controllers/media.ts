@@ -46,7 +46,7 @@ export default class MediaController {
       const data = await redis.get(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
-        decodedData.fileCount = 3;
+        decodedData.fileCount = 2;
         decodedData.key = key;
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify(decodedData));
         // SOCKET_CHANNEL.MEDIA_CONVERT before the s3 call convert
@@ -55,13 +55,14 @@ export default class MediaController {
         if (toSid) {
           io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
         } else {
-          console.log("user offline")
+          console.log("/convert video: user offline")
         }
       } else {
-        console.log("not data")
+        console.log("/convert video: not data")
         // media convertion job, three jobs
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify({
-          fileCount: 3,
+          // only two jobs
+          fileCount: 2,
           key,
           subscribers: []
         }));
@@ -77,7 +78,7 @@ export default class MediaController {
       const data = await redis.get(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
-        decodedData.fileCount = 3;
+        decodedData.fileCount = 2;
         decodedData.key = key;
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify(decodedData));
         // SOCKET_CHANNEL.MEDIA_CONVERT before the s3 call convert
@@ -86,12 +87,13 @@ export default class MediaController {
         if (toSid) {
           io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
         } else {
-          console.log("user offline")
+          console.log("/convert image: user offline")
         }
       } else {
-        console.log("not data")
+        console.log("/convert video: not data")
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
-          fileCount: 3,
+          // only two jobs
+          fileCount: 2,
           key,
           subscribers: []
         }));
