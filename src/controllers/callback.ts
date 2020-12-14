@@ -24,6 +24,7 @@ export default class CallbackController {
   @POST("/mediaconvertcomplete/notification")
   async notify(ctx: IRouterContext) {
     const body = ctx.request.body;
+    console.log(body);
     const message = JSON.parse(body.Message);
     const records = message.Records;
     for (const recordItem of records) {
