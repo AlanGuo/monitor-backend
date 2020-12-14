@@ -13,7 +13,7 @@
       "out_file"  :"logs/mfans-backend.stdout.log",
       "log_date_format": "MM-DD HH:mm:ss",
       "env": {
-        "NODE_ENV": "prod"
+        "NODE_ENV": "production"
       }
     }
   ]
