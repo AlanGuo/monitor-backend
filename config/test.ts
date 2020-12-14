@@ -40,10 +40,10 @@ module.exports = {
       currency: "usd",
       sign: "$"
     },
-    clientId:"AWJ18jbDJ0f11jkoMbKfonnW-YfcyweVc73COBOxeYIONSkyuiIOhgr_v0Q4elyAptjbEEbr1M5H3ZWv",
-    clientSecret:"EEBTsHvdFdxvhGY3Jwq2OIoeI_7GkGdSCe-Bwbcu-pJI0v0Eba3d_R1EIZhH5tkYQTmizl99_qBAfUbz",
+    clientId:"AWJ18jbDJ0f11jkoMbKfonnW-ASxYRUUiBhtZpOWIDp0TvBTBIJrEZ3cLkaTdDVMnGHh7dvVdK9Lfdcoq5JE_PuYSfcy0zZIAJx4Dz1Qb",
+    clientSecret:"EOngEI3YUqc3Hmd4z9m1s5f7-bB-ebwVYbFtGkxcHHnohr9Pv_s5z5GIpgetwTxJv_fesufxeMZn3On5",
     mode: "sandbox",
-    paymentWebhookId: "9FF26720B8007994B"
+    paymentWebhookId: "5SP14148UK6362244"
   },
   CORS: {
     origin: "*"
