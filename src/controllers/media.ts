@@ -92,7 +92,6 @@ export default class MediaController {
       } else {
         console.log("/convert image: not data")
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
-          // only two jobs
           fileCount: 3,
           key,
           subscribers: []

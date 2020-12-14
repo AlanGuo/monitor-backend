@@ -5,7 +5,7 @@
       "instance_var":"newonlyfans-backend",
       "script": "ts-node",
       "args": " -r tsconfig-paths/register ./src/app.ts",
-      "instances" : 0,
+      "instances" : 1,
       "exec_mode" : "cluster",
       "watch"     : false,
       "ignore_watch" : ["logs"],
