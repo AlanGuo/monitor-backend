@@ -54,7 +54,7 @@ module.exports = {
 
   REDIS: {
     Host: "127.0.0.1",
-    Port: 63799,
+    Port: 6379,
     DB: 4,
     Store_DB: 3,
     Password: ""

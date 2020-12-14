@@ -10,7 +10,7 @@ services:
     volumes:
     - ./test_data/redis:/data
     ports:
-    - 63799:6379
+    - 6379:6379
 
   # Mongo
   mongo1:
