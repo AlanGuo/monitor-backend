@@ -78,7 +78,7 @@ export default class MediaController {
       const data = await redis.get(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
-        decodedData.fileCount = 2;
+        decodedData.fileCount = 3;
         decodedData.key = key;
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify(decodedData));
         // SOCKET_CHANNEL.MEDIA_CONVERT before the s3 call convert
@@ -90,10 +90,10 @@ export default class MediaController {
           console.log("/convert image: user offline", decodedData.owner)
         }
       } else {
-        console.log("/convert video: not data")
+        console.log("/convert image: not data")
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
           // only two jobs
-          fileCount: 2,
+          fileCount: 3,
           key,
           subscribers: []
         }));
