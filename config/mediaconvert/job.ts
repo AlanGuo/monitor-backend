@@ -240,7 +240,7 @@ export const job = {
               "ImageX": 40,
               "ImageY": 40,
               "Layer": 10,
-              "ImageInserterInput": "s3://newonlyfans/asset/BitApp-white.png",
+              "ImageInserterInput": "s3://newonlyfans/asset/logo.png",
               "Opacity": 50
             }
           ]

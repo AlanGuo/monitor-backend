@@ -33,7 +33,7 @@ export default class UserController {
       chatPrice: 1,
       subPrice: 1,
       balance: 1,
-      broardcaster: 1,
+      broadcaster: 1,
       freezeWithdrawTime: 1,
       withdrawTime: 1
     };
@@ -50,7 +50,7 @@ export default class UserController {
       const sid = await getOnlineUser(uuid);
       rep.online = !!sid;
 
-      if (user.broardcaster) {
+      if (user.broadcaster) {
         const now = Date.now();
         const freezeTime = now - 3600 * 24 * 30 * 1000;
         const bill = await BillModel.find({target: uuid}, {_id: 0, amount: 1, createdAt: 1});
@@ -90,7 +90,7 @@ export default class UserController {
       website: 1,
       bgImage: 1,
       location: 1,
-      broardcaster: 1
+      broadcaster: 1
     };
     const filter: any = {};
     if (!isNaN(Number(ctx.params.id))) {
@@ -141,7 +141,7 @@ export default class UserController {
       location: 1,
       chatPrice: 1,
       subPrice: 1,
-      broardcaster: 1,
+      broadcaster: 1,
     };
     const users = await UserModel.find({$and: filterArr}, fields);
     users.forEach((item) => {

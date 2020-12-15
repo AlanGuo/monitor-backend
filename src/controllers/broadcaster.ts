@@ -10,9 +10,9 @@ export default class Broadcaster {
   @AuthRequired()
   async balance(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
-    const userFields = {_id: 0, broardcaster: 1};
+    const userFields = {_id: 0, broadcaster: 1};
     const user = await UserModel.findOne({uuid}, userFields);
-    if (user && user.broardcaster) {
+    if (user && user.broadcaster) {
 
     } else {
 

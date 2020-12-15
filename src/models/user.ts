@@ -26,7 +26,7 @@ export interface IUser extends Document {
   oauthProfile?: Profile;
 
   kyc: boolean;
-  broardcaster: boolean;
+  broadcaster: boolean;
   status: USER_STATUS;
 
   withdrawTime: number;
@@ -56,7 +56,7 @@ const UserModel: Schema = new Schema({
   oauthProfile: {type: Object, required: false},
 
   kyc: {type: Boolean, required, default: false},
-  broardcaster: {type: Boolean, required, default: false},
+  broadcaster: {type: Boolean, required, default: false},
   status: {type: USER_STATUS, required, default: USER_STATUS.NORMAL},
   withdrawTime: {type: Number, required, default: 0},
   freezeWithdrawTime:  {type: Number, required, default: 0},
