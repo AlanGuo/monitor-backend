@@ -129,7 +129,7 @@ export default class MediaController {
         data: {
           type: media.type,
           ...urls,
-          fileName,
+          // fileName,
           size: media.size
         }
       });
