@@ -2,15 +2,16 @@ import config from "@src/infrastructure/utils/config";
 import {Controller, GET} from "@src/infrastructure/decorators/koa";
 import KoaRouter, {IRouterContext} from "koa-router";
 import {prepareUploadAsset, prepareUploadKyc, prepareUploadMedia} from "@src/infrastructure/amazon/s3";
-import {createMediaConvertJob, getJob} from "@src/infrastructure/amazon/mediaConvert";
+import {createMediaConvertJob, getJob, getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {jsonResponse} from "@src/infrastructure/utils/helper";
 import {getOnlineUser, redis} from "../infrastructure/redis";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
 import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
-import {AuthRequired} from "@src/infrastructure/decorators/auth";
+import MediaModel from "@src/models/media";
 import {getSocketIO} from "@src/infrastructure/socket";
-import {SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
+import {MEDIA_TYPE, RESPONSE_CODE, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
+import { ImageAmazonUrl, VideoAmazonUrl } from "@src/interface";
 
 @Controller({prefix: "/media"})
 export default class MediaController {
@@ -118,14 +119,25 @@ export default class MediaController {
   @GET("/getconverted/:filename")
   async getConvertedFiles(ctx: IRouterContext) {
     const fileName = ctx.params.filename;
-    const fileNameWithoutExt = fileName.split(".")[0];
-    ctx.body = jsonResponse({
-      data: {
-        screenshot: config.AWS_S3.videoPrefix + fileNameWithoutExt + config.AWS_S3.screenshotSuffix,
-        low: config.AWS_S3.videoPrefix + fileNameWithoutExt + config.AWS_S3.lowSuffix,
-        hd: config.AWS_S3.videoPrefix + fileNameWithoutExt + config.AWS_S3.hdSuffix,
-      }
+    // const fileNameWithoutExt = fileName.split(".")[0];
+    const media = await MediaModel.findOne({
+      fileName
     });
+    if (media) {
+      const urls = getMediaUrl(media.type, fileName, true, media.size) as ImageAmazonUrl | VideoAmazonUrl;
+      ctx.body = jsonResponse({
+        data: {
+          type: media.type,
+          ...urls,
+          fileName,
+          size: media.size
+        }
+      });
+    } else {
+      ctx.body = jsonResponse({
+        code: RESPONSE_CODE.MEDIA_NOT_FOUND
+      });
+    }
   }
 
   @GET("/signed")

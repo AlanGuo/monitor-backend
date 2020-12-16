@@ -147,7 +147,8 @@ export enum RESPONSE_CODE {
   CAN_NOT_UNSUBSCRIBE_YOURSELF = "can not unsubscribe yourself",
   USER_NOT_EXISTS = "user not exists",
   BALANCE_NOT_ENOUGH = "balance not enough",
-  USER_NAME_CANNOT_BE_THE_SAME = "user name can not be the same"
+  USER_NAME_CANNOT_BE_THE_SAME = "user name can not be the same",
+  MEDIA_NOT_FOUND = "media not found"
 }
 
 export enum SUBSCRIBER_STATUS {

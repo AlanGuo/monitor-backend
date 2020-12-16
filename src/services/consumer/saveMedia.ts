@@ -4,7 +4,7 @@ import {
   JUSTFANS_EXCHANGE, MEDIA_ROUTING_KEY, MEDIA_TYPE,
   RABBITMQ_EXCHANGE_TYPE, SAVE_MEDIA_QUEUE
 } from "@src/infrastructure/utils/constants";
-import MediaModel from "@src/models/media"
+import MediaModel from "@src/models/media";
 
 export async function loadSaveMediaConsumer() {
 
