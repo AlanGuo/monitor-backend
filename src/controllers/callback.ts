@@ -35,7 +35,7 @@ export default class CallbackController {
       redisKey = redisKey.split("_")[0];
       const data = await redis.get(redisKey);
       let mediaInfo = mediaType(ext);
-      if (fileName.indexOf("_screenshot")) {
+      if (fileName.indexOf("_screenshot") > -1) {
         // 视频截图
         mediaInfo = mediaType("mp4");
       }
