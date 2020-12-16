@@ -19,29 +19,29 @@ export default class MediaController {
   static router: KoaRouter;
 
   // requested with http[s]://host:port/api/media/prepare-upload
-  @AuthRequired()
   @GET("/prepare-upload/:filename")
+  @AuthRequired()
   async prepareUpload(ctx: IRouterContext) {
     const filename = ctx.params.filename;
     ctx.body = await prepareUploadMedia(filename);
   }
 
-  @AuthRequired()
   @GET("/prepare-upload-asset/:filename")
+  @AuthRequired()
   async prepareUploadAsset(ctx: IRouterContext) {
     const filename = ctx.params.filename;
     ctx.body = await prepareUploadAsset(filename);
   }
 
-  @AuthRequired()
   @GET("/prepare-upload-kyc/:filename")
+  @AuthRequired()
   async prepareUploadKyc(ctx: IRouterContext) {
     const filename = ctx.params.filename;
     ctx.body = await prepareUploadKyc(filename);
   }
 
-  @AuthRequired()
   @GET("/getconverted/:filename")
+  @AuthRequired()
   async getConvertedFiles(ctx: IRouterContext) {
     const fileName = ctx.params.filename;
     // const fileNameWithoutExt = fileName.split(".")[0];
