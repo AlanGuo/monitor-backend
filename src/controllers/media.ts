@@ -44,7 +44,6 @@ export default class MediaController {
   @AuthRequired()
   async getConvertedFiles(ctx: IRouterContext) {
     const fileName = ctx.params.filename;
-    // const fileNameWithoutExt = fileName.split(".")[0];
     const media = await MediaModel.findOne({
       fileName
     });
