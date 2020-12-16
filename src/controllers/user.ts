@@ -120,6 +120,7 @@ export default class UserController {
     const nameFilter: { $or: any[] } = {$or: []};
     if (ctx.params.user) {
       nameFilter.$or = [
+        {uuid: Number(ctx.params.user)},
         {displayName: new RegExp(ctx.params.user, "i")},
         {name: new RegExp(ctx.params.user, "i")}
       ]
