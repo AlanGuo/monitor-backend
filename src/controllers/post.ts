@@ -16,7 +16,7 @@ import {
   RESPONSE_CODE
 } from "@src/infrastructure/utils/constants";
 import {Pagination} from "@src/interface";
-import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
+import {getMediaFileName, getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {Types} from "mongoose";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import BillModel from "@src/models/bill";
@@ -356,12 +356,7 @@ export default class PostsController {
       if (item.fileName) {
         return item.fileName
       }
-      switch (item.type) {
-        case MEDIA_TYPE.VIDEO:
-          // return item.key.split("/")[1].split(".")[0];
-        case MEDIA_TYPE.IMAGE:
-          return item.key.split("/")[1]
-      }
+      return getMediaFileName(item.type, item.key)
     });
     const user = await userModel.findOne({uuid});
     const userSubPrice = user?.subPrice ? -1 : data.price ?? 0;
@@ -399,12 +394,7 @@ export default class PostsController {
       if (item.fileName) {
         return item.fileName
       }
-      switch (item.type) {
-        case MEDIA_TYPE.VIDEO:
-          // return item.key.split("/")[1].split(".")[0];
-        case MEDIA_TYPE.IMAGE:
-          return item.key.split("/")[1]
-      }
+      return getMediaFileName(item.type, item.key)
     });
     const change: any = {};
     if (data.content) {
