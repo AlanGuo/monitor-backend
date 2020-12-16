@@ -40,7 +40,6 @@ export default class UserController {
     const user = await UserModel.findOne({uuid}, fields);
     let rep: any;
     if (user) {
-      console.log(user!.toJSON())
       rep = user.toJSON();
       if (rep.bgImage) {
         rep.bgImage = getSignedUrl(rep.bgImage);
