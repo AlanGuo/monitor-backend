@@ -42,7 +42,15 @@ export default class MediaController {
     if (isVideo(ext)) {
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
       const s3FilePath = config.AWS_MEDIA_CONVERT.sourcePath + key;
-      const jobData: any = await createMediaConvertJob(s3FilePath);
+      // 测试环境和正式环境公用aws。这里判断从正式环境才发起Job
+      let jobData: any = {
+        Job: {
+          Id: "trigger in production"
+        }
+      };
+      if (process.env.NODE_ENV === "production") {
+        jobData = await createMediaConvertJob(s3FilePath);
+      }
       const data = await redis.get(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt);
       if (data) {
         const decodedData = JSON.parse(data);
