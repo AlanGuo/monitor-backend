@@ -65,11 +65,11 @@ export default class MediaController {
     }
   }
 
-  @GET("/signed")
-  async getSignedUrl (ctx: IRouterContext) {
-    const key = decodeURIComponent(ctx.query.key);
-    ctx.body = await getSignedUrl(key);
-  }
+  // @GET("/signed")
+  // async getSignedUrl (ctx: IRouterContext) {
+  //   const key = decodeURIComponent(ctx.query.key);
+  //   ctx.body = await getSignedUrl(key);
+  // }
 
   @GET("/convert")
   async convert(ctx: IRouterContext) {
