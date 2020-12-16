@@ -53,12 +53,13 @@ export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, 
         }
         : {glass: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `_glass(${size?.glass![0]}*${size?.glass![1]}).`)}`)};
     case MEDIA_TYPE.VIDEO:
+      const file = fileName.split(".")[0]
       return payment ? {
-        screenshot: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.screenshotSuffix),
-        low: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.lowSuffix),
-        hd: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.hdSuffix),
+        screenshot: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.screenshotSuffix),
+        low: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.lowSuffix),
+        hd: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.hdSuffix),
       } : {
-        screenshot: getSignedUrl(config.AWS_S3.videoPrefix + fileName + config.AWS_S3.screenshotSuffix)
+        screenshot: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.screenshotSuffix)
       };
     default:
       throw Error("media type not exists")

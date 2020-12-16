@@ -84,7 +84,7 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
             }
             break;
           case MEDIA_TYPE.VIDEO:
-            const tmpVideoMedia = await MediaModel.findOne({fileName: media.key!.split("/")[1].split(".")[0]});
+            const tmpVideoMedia = await MediaModel.findOne({fileName: media.key!.split("/")[1]});
             console.log("sendMessage", media, tmpVideoMedia);
             if (tmpVideoMedia) {
               media.urls = getMediaUrl(MEDIA_TYPE.VIDEO, tmpVideoMedia!.fileName, message.payment, tmpVideoMedia!.size);
@@ -95,7 +95,7 @@ async function sendMessage(message: Message, io: SocketIO.Server) {
       }
     } else {
       media.ready = true;
-      const tmpMedia = await MediaModel.findOne({fileName: media.fileName});
+      const tmpMedia = await MediaModel.findOne({fileName: media.key!.split("/")[1]});
       media.urls = getMediaUrl(media.type, tmpMedia!.fileName, message.payment, tmpMedia!.size);
       media.size = tmpMedia!.size
     }

@@ -358,7 +358,7 @@ export default class PostsController {
       }
       switch (item.type) {
         case MEDIA_TYPE.VIDEO:
-          return item.key.split("/")[1].split(".")[0];
+          // return item.key.split("/")[1].split(".")[0];
         case MEDIA_TYPE.IMAGE:
           return item.key.split("/")[1]
       }
@@ -401,7 +401,7 @@ export default class PostsController {
       }
       switch (item.type) {
         case MEDIA_TYPE.VIDEO:
-          return item.key.split("/")[1].split(".")[0];
+          // return item.key.split("/")[1].split(".")[0];
         case MEDIA_TYPE.IMAGE:
           return item.key.split("/")[1]
       }
