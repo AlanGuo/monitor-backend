@@ -65,6 +65,7 @@ export interface MediaConvertCache {
   free?: boolean,
   glassSize?: string[],
   thumbnailSize?: string[],
+  screenshotSize?: string[],
   imageSize?: string[]
 }
 

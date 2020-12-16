@@ -59,7 +59,7 @@ export default class MediaController {
         }
       } else {
         console.log("/convert video: not data")
-        // media convertion job, three jobs
+        // media convertion job, two jobs
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify({
           // only two jobs
           fileCount: 2,

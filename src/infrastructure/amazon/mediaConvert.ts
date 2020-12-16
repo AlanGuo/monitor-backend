@@ -43,7 +43,7 @@ export async function getJob(jobId: string) {
   });
 }
 
-export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, size?: { thumbnail?: string[], glass?: string[], image?: string[] }): ImageAmazonUrl | VideoAmazonUrl {
+export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, size?: { thumbnail?: string[], glass?: string[], image?: string[], screenshot?: string[] }): ImageAmazonUrl | VideoAmazonUrl {
   switch (type) {
     case MEDIA_TYPE.IMAGE:
       return payment ?

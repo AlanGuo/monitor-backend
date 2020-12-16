@@ -34,15 +34,19 @@ export default class CallbackController {
       // 图片文件分 glass, thumbnail 有下划线
       redisKey = redisKey.split("_")[0];
       const data = await redis.get(redisKey);
-      const mediaInfo = mediaType(ext);
+      let mediaInfo = mediaType(ext);
+      if (fileName.indexOf("_screenshot")) {
+        // 视频截图
+        mediaInfo = mediaType("mp4");
+      }
 
       console.log("/mediaconvertcomplete/notification", fileName, ext, redisKey, mediaInfo, data);
       if (data) {
         const decodedData: MediaConvertCache = JSON.parse(data);
+        const sizeInfo = fileName.replace(/.*\((.+)\).*/g, "$1");
+        const size = sizeInfo.indexOf(".") === -1 ? sizeInfo.split("*") : [];
         switch (mediaInfo.type) {
           case MEDIA_TYPE.IMAGE:
-            const sizeInfo = fileName.replace(/.*\((.+)\).*/g, "$1");
-            const size = sizeInfo.indexOf(".") === -1 ? sizeInfo.split("*") : [];
             if (fileName.indexOf("_glass") !== -1) {
               decodedData.glassSize = size
             } else if (fileName.indexOf("_thumbnail") !== -1) {
@@ -52,6 +56,9 @@ export default class CallbackController {
             }
             break
           case MEDIA_TYPE.VIDEO:
+            if (fileName.indexOf("_screenshot") !== -1) {
+              decodedData.screenshotSize = size
+            }
             break
         }
         if (decodedData.fileCount > 1) {
@@ -67,7 +74,7 @@ export default class CallbackController {
               file = decodedData.key.replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "");
               break
             case MEDIA_TYPE.VIDEO:
-              size = {screenshot: [540, 960], low: [540, 960], hd: [1080, 1920]}
+              size = {screenshot: decodedData.screenshotSize, low: [540, 960], hd: [1080, 1920]}
               file = decodedData.key.split(".")[0].replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "")
               const tmp = getMediaUrl(mediaInfo.type, file, true, size) as VideoAmazonUrl;
               size.duration = await getVideoDurationInSeconds(tmp.low!);
