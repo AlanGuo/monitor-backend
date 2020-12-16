@@ -31,7 +31,6 @@ export interface IUser extends Document {
 
   withdrawTime: number;
   freezeWithdrawTime: number;
-
 }
 
 const UserModel: Schema = new Schema({
