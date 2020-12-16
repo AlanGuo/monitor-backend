@@ -12,28 +12,63 @@ import MediaModel from "@src/models/media";
 import {getSocketIO} from "@src/infrastructure/socket";
 import {MEDIA_TYPE, RESPONSE_CODE, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
 import { ImageAmazonUrl, VideoAmazonUrl } from "@src/interface";
+import { AuthRequired } from "@src/infrastructure/decorators/auth";
 
 @Controller({prefix: "/media"})
 export default class MediaController {
   static router: KoaRouter;
 
   // requested with http[s]://host:port/api/media/prepare-upload
+  @AuthRequired()
   @GET("/prepare-upload/:filename")
   async prepareUpload(ctx: IRouterContext) {
     const filename = ctx.params.filename;
     ctx.body = await prepareUploadMedia(filename);
   }
 
+  @AuthRequired()
   @GET("/prepare-upload-asset/:filename")
   async prepareUploadAsset(ctx: IRouterContext) {
     const filename = ctx.params.filename;
     ctx.body = await prepareUploadAsset(filename);
   }
 
+  @AuthRequired()
   @GET("/prepare-upload-kyc/:filename")
   async prepareUploadKyc(ctx: IRouterContext) {
     const filename = ctx.params.filename;
     ctx.body = await prepareUploadKyc(filename);
+  }
+
+  @AuthRequired()
+  @GET("/getconverted/:filename")
+  async getConvertedFiles(ctx: IRouterContext) {
+    const fileName = ctx.params.filename;
+    // const fileNameWithoutExt = fileName.split(".")[0];
+    const media = await MediaModel.findOne({
+      fileName
+    });
+    if (media) {
+      const urls = getMediaUrl(media.type, fileName, true, media.size) as ImageAmazonUrl | VideoAmazonUrl;
+      ctx.body = jsonResponse({
+        data: {
+          type: media.type,
+          ...urls,
+          // fileName,
+          size: media.size
+        }
+      });
+    } else {
+      ctx.body = jsonResponse({
+        code: RESPONSE_CODE.MEDIA_NOT_FOUND
+      });
+    }
+  }
+
+  @GET("/signed")
+  async getSignedUrl (ctx: IRouterContext) {
+    const key = decodeURIComponent(ctx.query.key);
+    ctx.body = await getSignedUrl(key);
   }
 
   @GET("/convert")
@@ -114,35 +149,5 @@ export default class MediaController {
   async getJob(ctx: IRouterContext) {
     const id = ctx.params.id;
     ctx.body = await getJob(id);
-  }
-
-  @GET("/getconverted/:filename")
-  async getConvertedFiles(ctx: IRouterContext) {
-    const fileName = ctx.params.filename;
-    // const fileNameWithoutExt = fileName.split(".")[0];
-    const media = await MediaModel.findOne({
-      fileName
-    });
-    if (media) {
-      const urls = getMediaUrl(media.type, fileName, true, media.size) as ImageAmazonUrl | VideoAmazonUrl;
-      ctx.body = jsonResponse({
-        data: {
-          type: media.type,
-          ...urls,
-          // fileName,
-          size: media.size
-        }
-      });
-    } else {
-      ctx.body = jsonResponse({
-        code: RESPONSE_CODE.MEDIA_NOT_FOUND
-      });
-    }
-  }
-
-  @GET("/signed")
-  async getSignedUrl (ctx: IRouterContext) {
-    const key = decodeURIComponent(ctx.query.key);
-    ctx.body = await getSignedUrl(key);
   }
 }
