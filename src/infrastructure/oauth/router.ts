@@ -15,8 +15,8 @@ export function OAuthRouter(app: any) {
   // Google
   router.get("/oauth/google", passport.authorize("google", {scope: ["openid", "profile", "email"]}));
   router.get("/oauth/google/callback",
-    passport.authenticate("google", {failureRedirect}),
-    (req, res) => {
+    passport.authenticate("google", {failureRedirect, failureMessage: true, failWithError: true}),
+    (req, next) => {
       req.redirect(`/auth/success?id=${req.state.user.uuid}`)
     }
   );
@@ -25,7 +25,7 @@ export function OAuthRouter(app: any) {
   router.get("/oauth/facebook", passport.authorize("facebook", {scope: ["public_profile", "email"]}));
   router.get(
     "/oauth/facebook/callback",
-    passport.authenticate("facebook", {failureRedirect: failureRedirect}),
+    passport.authenticate("facebook", {failureRedirect, failureFlash: true}),
     (ctx, next) => {
       ctx.redirect(`/auth/success?id=${ctx.state.user.uuid}`)
     }

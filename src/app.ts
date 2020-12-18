@@ -46,11 +46,16 @@ async function bootstrap() {
   }));
   app.use(serve("./static"));
 
-  app.keys = ["secret", "justfans", "alan", "lonzo"];
+  app.keys = ["secret", "mfans", "alan", "lonzo"];
   app.use(session({
     store: await loadRedisStore(),
     key: SESSION_KEY,
-    cookie: {maxAge: process.env.NODE_ENV === "dev" ? SESSION_OVERDUE_SECOND * 10 : SESSION_OVERDUE_SECOND}
+    cookie: {
+      httpOnly: true,
+      maxAge: process.env.NODE_ENV === "dev" ? 
+      SESSION_OVERDUE_SECOND * 10 : 
+      SESSION_OVERDUE_SECOND
+    }
   }));
   // OAuth
   loaderPassport([OAUTH.TWITTER, OAUTH.GOOGLE, OAUTH.FACEBOOK]);
