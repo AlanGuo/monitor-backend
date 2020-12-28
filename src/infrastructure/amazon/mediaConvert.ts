@@ -53,12 +53,13 @@ export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, 
         }
         : {glass: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `_glass(${size?.glass![0]}*${size?.glass![1]}).`)}`)};
     case MEDIA_TYPE.VIDEO:
+      const file = fileName.split(".")[0]
       return payment ? {
-        screenshot: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_(${size?.screenshot![0]}*${size?.screenshot![1]}).`)}`),
-        low: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_(${size?.low![0]}*${size?.low![1]}).`)}`)
+        screenshot: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_screenshot(${size?.screenshot![0]}*${size?.screenshot![1]}).0000000.`)}`),
+        low: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_low_800kbps(${size?.low![0]}*${size?.low![1]}).`)}`)
         // hd: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.hdSuffix),
       } : {
-        screenshot: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_(${size?.screenshot![0]}*${size?.screenshot![1]}).`)}`)
+        screenshot: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_screenshot(${size?.screenshot![0]}*${size?.screenshot![1]}).0000000.`)}`)
       };
     default:
       throw Error("media type not exists")
