@@ -13,6 +13,7 @@ import {getSocketIO} from "@src/infrastructure/socket";
 import {MEDIA_TYPE, RESPONSE_CODE, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
 import { ImageAmazonUrl, VideoAmazonUrl } from "@src/interface";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
+import { IUser } from "@src/models/user";
 
 @Controller({prefix: "/media"})
 export default class MediaController {
@@ -22,8 +23,9 @@ export default class MediaController {
   @GET("/prepare-upload/:filename")
   @AuthRequired()
   async prepareUpload(ctx: IRouterContext) {
+    const user: IUser = ctx.state.user;
     const filename = ctx.params.filename;
-    ctx.body = await prepareUploadMedia(filename);
+    ctx.body = await prepareUploadMedia(filename, user.name ?? user.uuid.toString());
   }
 
   @GET("/prepare-upload-asset/:filename")

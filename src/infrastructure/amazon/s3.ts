@@ -1,7 +1,7 @@
 import config from "@src/infrastructure/utils/config";
 import { S3 } from "aws-sdk";
 import path from "path";
-import {newUniqId, newUuid} from "../utils/uuid";
+import {newUniqId } from "../utils/uuid";
 import { isImage } from "../utils/image";
 import { isVideo } from "../utils/video"
 
@@ -12,9 +12,9 @@ const s3: S3 = new S3({
   signatureVersion: config.AWS_SIGNATURE_VERSION,
 });
 
-export async function prepareUploadMedia(filename: string) {
+export async function prepareUploadMedia(filename: string, name: string) {
   const ext = path.extname(filename);
-  const id = newUniqId() + ext;
+  const id = name + "-" + newUniqId() + ext;
   let sourcePath = config.AWS_MEDIA_CONVERT.otherSourceFolder;
   if (isImage(ext)) {
     sourcePath = config.AWS_MEDIA_CONVERT.imageSourceFolder;
@@ -73,6 +73,23 @@ export async function prepareUploadKyc(filename: string) {
         key: sourcePath + `${id}`,
         success_action_status: config.AWS_S3.successActionStatus,
       }
+    }, (err, data) => {
+      if (err) {
+        rej(err)
+      } else {
+        res(data);
+      }
+    })
+  });
+}
+
+export async function uploadUserWaterMarker (key: string, blob: Buffer) {
+  return new Promise((res, rej) => {
+    s3.putObject({
+      Bucket: config.AWS_MEDIA_CONVERT.sourceBucket,
+      Key: config.AWS_MEDIA_CONVERT.imageAssetFolder + key + ".png",
+      Body: blob,
+      ContentType: "image/png"
     }, (err, data) => {
       if (err) {
         rej(err)

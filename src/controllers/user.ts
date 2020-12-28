@@ -10,6 +10,7 @@ import {getOnlineUser} from "@src/infrastructure/redis";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {userChatPriceProducer} from "@src/services/producer/userChatPriceProducer";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
+import { createUserWatermarker } from "@src/infrastructure/utils/watermarker";
 
 @Controller({prefix: "/user"})
 export default class UserController {
@@ -165,9 +166,8 @@ export default class UserController {
         return;
       }
     }
-
+    const user = await UserModel.findOne({uuid}, {uuid: 1, name: 1, subPrice: 1});
     if (body.subPrice) {
-      const user = await UserModel.findOne({uuid}, {subPrice: 1});
       if (body.subPrice > user!.subPrice) {
         await SubscriberModel.updateMany({target: uuid}, {$set: {reBill: false}});
         const msg = {
@@ -180,6 +180,7 @@ export default class UserController {
       }
     }
     await UserModel.updateOne({uuid}, body);
+    await createUserWatermarker(user!);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
 }

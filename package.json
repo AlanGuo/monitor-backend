@@ -20,6 +20,7 @@
     "aws-cloudfront-sign": "^2.2.0",
     "aws-sdk": "^2.717.0",
     "bignumber.js": "^9.0.0",
+    "canvas": "^2.6.1",
     "co": "^4.6.0",
     "colors": "^1.4.0",
     "config": "^3.3.1",

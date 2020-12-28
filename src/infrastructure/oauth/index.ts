@@ -8,6 +8,7 @@ import {OAUTH} from "../utils/constants"
 import {FaceBookProfile, GoogleProfile, User} from "@src/interface";
 import {getUserSequence} from "../utils/sequence";
 import {generateToken} from "@src/infrastructure/utils/auth";
+import { createUserWatermarker } from "../utils/watermarker";
 
 export function loaderPassport(oauthList: OAUTH[]) {
 
@@ -150,6 +151,7 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
     );
     if (tmp.value && !tmp.lastErrorObject.updatedExisting) {
       tmp.value.uuid = await getUserSequence();
+      await createUserWatermarker(tmp.value);
       await tmp.value.save()
     }
     return tmp.value as User
@@ -182,6 +184,7 @@ export async function bindUser(provider: OAUTH, profile: GoogleProfile | FaceBoo
   }
   const user = await UserModel.findOneAndUpdate(filter, update);
   if (user) {
+    await createUserWatermarker(user);
     return user as User
   } else {
     throw Error("user not exists")
