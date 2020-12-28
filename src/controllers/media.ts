@@ -75,7 +75,7 @@ export default class MediaController {
   @GET("/convert")
   async convert(ctx: IRouterContext) {
     const key = decodeURIComponent(ctx.query.key);
-    const uuid = key.split("-")[0];
+    const uuidOrName = key.split("/")[1].split("-")[0];
     const ext = key.split(".")[1];
     if (isVideo(ext)) {
       const fileNameWithoutExt = key.split(".")[0].replace(config.AWS_MEDIA_CONVERT.videoSourceFolder, "");
@@ -87,7 +87,7 @@ export default class MediaController {
         }
       };
       if (process.env.NODE_ENV === "production") {
-        jobData = await createMediaConvertJob(s3FilePath, uuid);
+        jobData = await createMediaConvertJob(s3FilePath, uuidOrName);
       }
       const data = await redis.get(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt);
       if (data) {
