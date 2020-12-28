@@ -129,9 +129,6 @@ export interface Config {
   AWS_S3: {
     videoPrefix: string,
     imagePrefix: string,
-    screenshotSuffix: string,
-    lowSuffix: string,
-    hdSuffix: string,
     successActionStatus: string,
   },
   AWS_CLOUDFRONT: {

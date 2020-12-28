@@ -13,8 +13,9 @@ const mediaConvert = new MediaConvert({
   endpoint: config.AWS_MEDIA_CONVERT.endpoint
 });
 
-export async function createMediaConvertJob(s3FilePath: string) {
+export async function createMediaConvertJob(s3FilePath: string, uuid: string) {
   job.Settings.Inputs[0].FileInput = s3FilePath;
+  job.Settings.Inputs[0].ImageInserter.InsertableImages[0].ImageInserterInput = `s3://newonlyfans/asset/${uuid}.png`;
   job.Settings.OutputGroups[0].OutputGroupSettings.FileGroupSettings.Destination =
     config.AWS_MEDIA_CONVERT.videoDestination;
   
@@ -53,13 +54,12 @@ export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, 
         }
         : {glass: getSignedUrl(`${config.AWS_S3.imagePrefix}${fileName.replace(".", `_glass(${size?.glass![0]}*${size?.glass![1]}).`)}`)};
     case MEDIA_TYPE.VIDEO:
-      const file = fileName.split(".")[0]
       return payment ? {
         screenshot: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_(${size?.screenshot![0]}*${size?.screenshot![1]}).`)}`),
         low: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_(${size?.low![0]}*${size?.low![1]}).`)}`)
         // hd: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.hdSuffix),
       } : {
-        screenshot: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.screenshotSuffix)
+        screenshot: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_(${size?.screenshot![0]}*${size?.screenshot![1]}).`)}`)
       };
     default:
       throw Error("media type not exists")
