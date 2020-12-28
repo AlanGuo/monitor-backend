@@ -15,9 +15,8 @@ const mediaConvert = new MediaConvert({
 
 export async function createMediaConvertJob(s3FilePath: string, uuid: string) {
   job.Settings.Inputs[0].FileInput = s3FilePath;
-  job.Settings.Inputs[0].ImageInserter.InsertableImages[0].ImageInserterInput = `s3://newonlyfans/asset/${uuid}.png`;
-  job.Settings.OutputGroups[0].OutputGroupSettings.FileGroupSettings.Destination =
-    config.AWS_MEDIA_CONVERT.videoDestination;
+  job.Settings.Inputs[0].ImageInserter.InsertableImages[0].ImageInserterInput = `s3://newonlyfans/asset/image/${process.env.NODE_ENV}-${uuid}.png`;
+  job.Settings.OutputGroups[0].OutputGroupSettings.FileGroupSettings.Destination = config.AWS_MEDIA_CONVERT.videoDestination;
   
   return new Promise((res, rej) => {
     mediaConvert.createJob(job, (err, data) => {
