@@ -56,7 +56,7 @@ export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, 
       const file = fileName.split(".")[0]
       return payment ? {
         screenshot: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_screenshot(${size?.screenshot![0]}*${size?.screenshot![1]}).0000000.`)}`),
-        low: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_low_800kbps(${size?.low![0]}*${size?.low![1]}).`)}`)
+        low: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_low_mp4_800kbps(${size?.low![0]}*${size?.low![1]}).`)}`)
         // hd: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.hdSuffix),
       } : {
         screenshot: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_screenshot(${size?.screenshot![0]}*${size?.screenshot![1]}).0000000.`)}`)
