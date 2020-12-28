@@ -3,7 +3,7 @@ import {Controller, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import {getOnlineUser, redis} from "@src/infrastructure/redis";
 import {getSocketIO} from "@src/infrastructure/socket";
-import {MEDIA_TYPE, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
+import {ISize, MEDIA_TYPE, SOCKET_CHANNEL} from "@src/infrastructure/utils/constants";
 import {jsonResponse} from "@src/infrastructure/utils/helper";
 import {mediaProducer} from "@src/services/producer/mediaProducer";
 import {getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
@@ -67,14 +67,14 @@ export default class CallbackController {
         } else {
           const io = getSocketIO();
           let file = "";
-          let size: any = {}
+          let size: ISize = {}
           switch (mediaInfo.type) {
             case MEDIA_TYPE.IMAGE:
               size = {thumbnail: decodedData.thumbnailSize, glass: decodedData.glassSize, image: decodedData.imageSize}
               file = decodedData.key.replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "");
               break
             case MEDIA_TYPE.VIDEO:
-              size = {screenshot: decodedData.screenshotSize, low: [540, 960], hd: [1080, 1920]}
+              size = {screenshot: decodedData.screenshotSize, low: decodedData.screenshotSize};
               file = decodedData.key.replace(config.AWS_MEDIA_CONVERT[mediaInfo.sourceFolder], "")
               const tmp = getMediaUrl(mediaInfo.type, file, true, size) as VideoAmazonUrl;
               size.duration = await getVideoDurationInSeconds(tmp.low!);

@@ -15,8 +15,8 @@ export const job = {
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 50,
-              "Width": 540,
-              "Height": 960,
+              // "Width": 540,
+              // "Height": 960,
               "CodecSettings": {
                 "Codec": "FRAME_CAPTURE",
                 "FrameCaptureSettings": {
@@ -47,8 +47,8 @@ export const job = {
               "TimecodeInsertion": "DISABLED",
               "AntiAlias": "ENABLED",
               "Sharpness": 100,
-              "Width": 540,
-              "Height": 960,
+              // "Width": 540,
+              // "Height": 960,
               "CodecSettings": {
                 "Codec": "H_264",
                 "H264Settings": {

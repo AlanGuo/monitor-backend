@@ -1,7 +1,7 @@
 import config from "@src/infrastructure/utils/config";
 import {MediaConvert} from "aws-sdk";
 import {job} from "@config/mediaconvert/job";
-import {MEDIA_TYPE} from "@src/infrastructure/utils/constants";
+import {ISize, MEDIA_TYPE} from "@src/infrastructure/utils/constants";
 import {ImageAmazonUrl, VideoAmazonUrl} from "@src/interface";
 import {getSignedUrl} from "./cloudfront";
 
@@ -43,7 +43,7 @@ export async function getJob(jobId: string) {
   });
 }
 
-export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, size?: { thumbnail?: string[], glass?: string[], image?: string[], screenshot?: string[] }): ImageAmazonUrl | VideoAmazonUrl {
+export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, size?: ISize): ImageAmazonUrl | VideoAmazonUrl {
   switch (type) {
     case MEDIA_TYPE.IMAGE:
       return payment ?
@@ -55,9 +55,9 @@ export function getMediaUrl(type: MEDIA_TYPE, fileName: string, payment = true, 
     case MEDIA_TYPE.VIDEO:
       const file = fileName.split(".")[0]
       return payment ? {
-        screenshot: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.screenshotSuffix),
-        low: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.lowSuffix),
-        hd: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.hdSuffix),
+        screenshot: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_(${size?.screenshot![0]}*${size?.screenshot![1]}).`)}`),
+        low: getSignedUrl(`${config.AWS_S3.videoPrefix}${fileName.replace(".", `_(${size?.low![0]}*${size?.low![1]}).`)}`)
+        // hd: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.hdSuffix),
       } : {
         screenshot: getSignedUrl(config.AWS_S3.videoPrefix + file + config.AWS_S3.screenshotSuffix)
       };
