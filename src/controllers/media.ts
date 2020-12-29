@@ -14,6 +14,7 @@ import {MEDIA_TYPE, RESPONSE_CODE, SOCKET_CHANNEL} from "@src/infrastructure/uti
 import { ImageAmazonUrl, VideoAmazonUrl } from "@src/interface";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
 import { IUser } from "@src/models/user";
+import { job } from "@config/mediaconvert/job";
 
 @Controller({prefix: "/media"})
 export default class MediaController {
@@ -46,6 +47,7 @@ export default class MediaController {
   @AuthRequired()
   async getConvertedFiles(ctx: IRouterContext) {
     const fileName = ctx.params.filename;
+    const jobId = ctx.query.jobid;
     const media = await MediaModel.findOne({
       fileName
     });
@@ -60,9 +62,19 @@ export default class MediaController {
         }
       });
     } else {
-      ctx.body = jsonResponse({
-        code: RESPONSE_CODE.MEDIA_NOT_FOUND
-      });
+      const jobInfo = await getJob(jobId);
+      // 转码出错
+      if (jobInfo.Job?.Status === "ERROR") {
+        console.error(ctx.state.user.uuid, jobId, jobInfo.Job?.ErrorMessage);
+        ctx.body = jsonResponse({
+          code: RESPONSE_CODE.MEDIA_CONVERT_JOB_FAILED
+        });
+      } else {
+        // 未找到media
+        ctx.body = jsonResponse({
+          code: RESPONSE_CODE.MEDIA_NOT_FOUND
+        });
+      }
     }
   }
 
@@ -94,6 +106,7 @@ export default class MediaController {
         const decodedData = JSON.parse(data);
         decodedData.fileCount = 2;
         decodedData.key = key;
+        decodedData.jobId = jobData.Job.Id;
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify(decodedData));
         // SOCKET_CHANNEL.MEDIA_CONVERT before the s3 call convert
         const io = getSocketIO();
@@ -104,11 +117,12 @@ export default class MediaController {
           console.log("/convert video: user offline", decodedData.owner)
         }
       } else {
-        console.log("/convert video: not data")
+        console.log("/convert video: not data");
         // media convertion job, two jobs
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify({
           // only two jobs
           fileCount: 2,
+          jobId: jobData.Job.Id,
           key,
           subscribers: []
         }));
@@ -147,9 +161,9 @@ export default class MediaController {
     }
   }
 
-  @GET("/getjob/:id")
-  async getJob(ctx: IRouterContext) {
-    const id = ctx.params.id;
-    ctx.body = await getJob(id);
-  }
+  // @GET("/getjob/:id")
+  // async getJob(ctx: IRouterContext) {
+  //   const id = ctx.params.id;
+  //   ctx.body = await getJob(id);
+  // }
 }

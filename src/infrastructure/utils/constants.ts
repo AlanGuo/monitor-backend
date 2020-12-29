@@ -148,7 +148,8 @@ export enum RESPONSE_CODE {
   USER_NOT_EXISTS = "user not exists",
   BALANCE_NOT_ENOUGH = "balance not enough",
   USER_NAME_CANNOT_BE_THE_SAME = "user name can not be the same",
-  MEDIA_NOT_FOUND = "media not found"
+  MEDIA_NOT_FOUND = "media not found",
+  MEDIA_CONVERT_JOB_FAILED = "media convert job failed"
 }
 
 export enum SUBSCRIBER_STATUS {

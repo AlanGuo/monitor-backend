@@ -4,6 +4,7 @@ import {job} from "@config/mediaconvert/job";
 import {ISize, MEDIA_TYPE} from "@src/infrastructure/utils/constants";
 import {ImageAmazonUrl, VideoAmazonUrl} from "@src/interface";
 import {getSignedUrl} from "./cloudfront";
+import { GetJobResponse } from "aws-sdk/clients/mediaconvert";
 
 const mediaConvert = new MediaConvert({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -29,7 +30,7 @@ export async function createMediaConvertJob(s3FilePath: string, uuid: string) {
   })
 }
 
-export async function getJob(jobId: string) {
+export async function getJob(jobId: string): Promise<GetJobResponse> {
   return new Promise((res, rej) => {
     mediaConvert.getJob({
       Id: jobId
