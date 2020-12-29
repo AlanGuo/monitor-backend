@@ -62,13 +62,23 @@ export default class MediaController {
         }
       });
     } else {
-      const jobInfo = await getJob(jobId);
-      // 转码出错
-      if (jobInfo.Job?.Status === "ERROR") {
-        console.error(ctx.state.user.uuid, jobId, jobInfo.Job?.ErrorMessage);
-        ctx.body = jsonResponse({
-          code: RESPONSE_CODE.MEDIA_CONVERT_JOB_FAILED
-        });
+      if (jobId) {
+        const jobInfo = await getJob(jobId);
+        // 转码出错
+        if (jobInfo.Job?.Status === "ERROR") {
+          console.error(ctx.state.user.uuid, jobId, jobInfo.Job?.ErrorMessage);
+          ctx.body = jsonResponse({
+            code: RESPONSE_CODE.MEDIA_CONVERT_JOB_FAILED
+          });
+        } else {
+          // 可能还在转码中
+          ctx.body = jsonResponse({
+            code: RESPONSE_CODE.MEDIA_UNDER_PROCESSING,
+            data: {
+              percent: jobInfo.Job?.JobPercentComplete
+            }
+          });
+        }
       } else {
         // 未找到media
         ctx.body = jsonResponse({
@@ -112,7 +122,7 @@ export default class MediaController {
         const io = getSocketIO();
         const toSid = await getOnlineUser(decodedData.owner);
         if (toSid) {
-          io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
+          io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt, jobId: decodedData.jobId}))
         } else {
           console.log("/convert video: user offline", decodedData.owner)
         }
