@@ -7,8 +7,8 @@ const ctx = canvas.getContext("2d")
 
 const createWaterMarker = (user: IUser) => {
   const name = user.name ?? user.uuid;
-  const host = config.HOST;
-  const fullText= host + "/user/" + name;
+  const host = config.HOST.replace(/https:\/\//i, "");
+  const fullText = host + "/u/" + name;
   ctx.font = "14px Arial";
   ctx.fillText(fullText, 0, 10);
   return canvas.toBuffer();
