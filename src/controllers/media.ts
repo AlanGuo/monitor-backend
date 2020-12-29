@@ -136,7 +136,7 @@ export default class MediaController {
           console.log("/convert image: user offline", decodedData.owner)
         }
       } else {
-        console.log("/convert image: not data")
+        console.log("/convert image: no data")
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify({
           fileCount: 3,
           key,
