@@ -179,8 +179,8 @@ export default class UserController {
         await notificationProducer.publish(JSON.stringify(msg))
       }
     }
-    await UserModel.updateOne({uuid}, body);
-    await createUserWatermarker(user!);
+    const updatedUser = await UserModel.updateOne({uuid}, body);
+    await createUserWatermarker(updatedUser!);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
 }
