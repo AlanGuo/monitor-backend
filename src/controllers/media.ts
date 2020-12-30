@@ -120,6 +120,8 @@ export default class MediaController {
       };
       if (process.env.NODE_ENV === "production") {
         jobData = await createMediaConvertJob(s3FilePath, uuidOrName);
+      } else {
+        console.log("/convert video: createMediaConvertJob only in production", process.env.NODE_ENV);
       }
       const data = await redis.get(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt);
       if (data) {
@@ -135,7 +137,7 @@ export default class MediaController {
           if (toSid) {
             io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt, jobId: decodedData.jobId}))
           } else {
-            console.log("/convert video: owner offline", decodedData.owner)
+            console.log("/convert video: owner offline", decodedData.owner);
           }
         } else {
           console.log("/convert video: no owner");
