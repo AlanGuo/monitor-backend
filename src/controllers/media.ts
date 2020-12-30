@@ -2,7 +2,7 @@ import config from "@src/infrastructure/utils/config";
 import {Controller, GET} from "@src/infrastructure/decorators/koa";
 import KoaRouter, {IRouterContext} from "koa-router";
 import {prepareUploadAsset, prepareUploadKyc, prepareUploadMedia} from "@src/infrastructure/amazon/s3";
-import {createMediaConvertJob, getJob, getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
+import {cancelJob, createMediaConvertJob, getJob, getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {jsonResponse} from "@src/infrastructure/utils/helper";
 import {getOnlineUser, redis} from "../infrastructure/redis";
 import {isVideo} from "@src/infrastructure/utils/video";
@@ -175,9 +175,13 @@ export default class MediaController {
     }
   }
 
-  // @GET("/getjob/:id")
-  // async getJob(ctx: IRouterContext) {
-  //   const id = ctx.params.id;
-  //   ctx.body = await getJob(id);
-  // }
+  @GET("/canceljob/:id")
+  @AuthRequired()
+  async cancelJob(ctx: IRouterContext) {
+    const id = ctx.params.id;
+    const res = await cancelJob(id);
+    ctx.body = jsonResponse({
+      data: res
+    });
+  }
 }
