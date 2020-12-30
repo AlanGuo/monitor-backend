@@ -70,7 +70,13 @@ export default class MediaController {
           ctx.body = jsonResponse({
             code: RESPONSE_CODE.MEDIA_CONVERT_JOB_FAILED
           });
+        } else if (jobInfo.Job?.Status === "CANCELED") {
+          console.error("convert job CANCELED but still been queried", fileName, jobInfo.Job);
+          ctx.body = jsonResponse({
+            code: RESPONSE_CODE.NORMAL
+          });
         } else if (jobInfo.Job?.Status === "COMPLETE") {
+          console.error("convert job COMPLETE but media not been saved", fileName, jobInfo.Job);
           ctx.body = jsonResponse({
             code: RESPONSE_CODE.NORMAL
           });
