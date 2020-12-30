@@ -85,7 +85,7 @@ export default class MediaController {
           ctx.body = jsonResponse({
             code: RESPONSE_CODE.MEDIA_UNDER_PROCESSING,
             data: {
-              percent: jobInfo.Job?.JobPercentComplete
+              percent: jobInfo.Job?.JobPercentComplete ?? Math.round(Math.random() * 10)
             }
           });
         }
@@ -179,6 +179,16 @@ export default class MediaController {
       }
       ctx.body = jsonResponse();
     }
+  }
+
+  @GET("/getjob/:id")
+  @AuthRequired()
+  async getJob(ctx: IRouterContext) {
+    const id = ctx.params.id;
+    const res = await getJob(id);
+    ctx.body = jsonResponse({
+      data: res
+    });
   }
 
   @GET("/canceljob/:id")
