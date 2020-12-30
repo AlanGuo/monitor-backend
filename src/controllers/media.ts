@@ -135,7 +135,7 @@ export default class MediaController {
           const io = getSocketIO();
           const toSid = await getOnlineUser(decodedData.owner);
           if (toSid) {
-            io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt, jobId: decodedData.jobId}))
+            io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt, jobId: decodedData.jobId, key: decodedData.key}))
           } else {
             console.log("/convert video: owner offline", decodedData.owner);
           }
@@ -168,12 +168,16 @@ export default class MediaController {
         decodedData.key = key;
         await redis.set(config.AWS_MEDIA_CONVERT.imageFolder + fileNameWithoutExt, JSON.stringify(decodedData));
         // SOCKET_CHANNEL.MEDIA_CONVERT before the s3 call convert
-        const io = getSocketIO();
-        const toSid = await getOnlineUser(decodedData.owner);
-        if (toSid) {
-          io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt}))
+        if (decodedData.owner) {
+          const io = getSocketIO();
+          const toSid = await getOnlineUser(decodedData.owner);
+          if (toSid) {
+            io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt, key: decodedData.key}))
+          } else {
+            console.log("/convert image: owner offline", decodedData.owner)
+          }
         } else {
-          console.log("/convert image: user offline", decodedData.owner)
+          console.log("/convert image: no owner");
         }
       } else {
         console.log("/convert image: no data")
