@@ -120,8 +120,9 @@ export default class UserController {
   async getUsers(ctx: IRouterContext, next: any) {
     const nameFilter: { $or: any[] } = {$or: []};
     if (ctx.params.user) {
+      const uuid = Number(ctx.params.user);
       nameFilter.$or = [
-        {uuid: Number(ctx.params.user)},
+        {uuid: isNaN(uuid) ? 0 : uuid},
         {displayName: new RegExp(ctx.params.user, "i")},
         {name: new RegExp(ctx.params.user, "i")}
       ]
