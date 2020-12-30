@@ -70,6 +70,10 @@ export default class MediaController {
           ctx.body = jsonResponse({
             code: RESPONSE_CODE.MEDIA_CONVERT_JOB_FAILED
           });
+        } else if (jobInfo.Job?.Status === "COMPLETE") {
+          ctx.body = jsonResponse({
+            code: RESPONSE_CODE.NORMAL
+          });
         } else {
           // 可能还在转码中
           ctx.body = jsonResponse({
@@ -80,7 +84,7 @@ export default class MediaController {
           });
         }
       } else {
-        // 未找到media
+        // 未找到 media
         ctx.body = jsonResponse({
           code: RESPONSE_CODE.MEDIA_NOT_FOUND
         });
