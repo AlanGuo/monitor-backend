@@ -85,7 +85,7 @@ export default class MediaController {
           ctx.body = jsonResponse({
             code: RESPONSE_CODE.MEDIA_UNDER_PROCESSING,
             data: {
-              progress: jobInfo.Job?.JobPercentComplete ?? Math.round(Math.random() * 10)
+              progress: jobInfo.Job?.JobPercentComplete ?? Math.round(Math.random() * 15)
             }
           });
         }
