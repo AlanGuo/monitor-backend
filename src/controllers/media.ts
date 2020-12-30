@@ -129,15 +129,19 @@ export default class MediaController {
         decodedData.jobId = jobData.Job.Id;
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify(decodedData));
         // SOCKET_CHANNEL.MEDIA_CONVERT before the s3 call convert
-        const io = getSocketIO();
-        const toSid = await getOnlineUser(decodedData.owner);
-        if (toSid) {
-          io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt, jobId: decodedData.jobId}))
+        if (decodedData.owner) {
+          const io = getSocketIO();
+          const toSid = await getOnlineUser(decodedData.owner);
+          if (toSid) {
+            io.sockets.connected[toSid]?.emit(SOCKET_CHANNEL.MEDIA_CONVERT_START, JSON.stringify({fileName: fileNameWithoutExt, jobId: decodedData.jobId}))
+          } else {
+            console.log("/convert video: owner offline", decodedData.owner)
+          }
         } else {
-          console.log("/convert video: user offline", decodedData.owner)
+          console.log("/convert video: no owner");
         }
       } else {
-        console.log("/convert video: not data");
+        console.log("/convert video: no redis data");
         // media convertion job, two jobs
         await redis.set(config.AWS_MEDIA_CONVERT.videoFolder + fileNameWithoutExt, JSON.stringify({
           // only two jobs
