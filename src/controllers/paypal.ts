@@ -11,12 +11,6 @@ import {BillType, OrderStatus, OrderType} from "@src/infrastructure/utils/consta
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const paypal = require("@paypal/checkout-server-sdk");
 
-// paypal.configure({
-//   "mode": config.PAYPAL.mode, //sandbox or live
-//   "client_id": config.PAYPAL.clientId,
-//   "client_secret": config.PAYPAL.clientSecret,
-// });
-
 let environment;
 if (config.PAYPAL.mode === "sandbox") {
   environment = new paypal.core.SandboxEnvironment(config.PAYPAL.clientId, config.PAYPAL.clientSecret);

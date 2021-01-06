@@ -148,6 +148,11 @@ export interface Config {
     mode: string,
     paymentWebhookId: string
   },
+  PAYONEER: {
+    host: string,
+    clientId: string,
+    auth: string
+  },
   CORS: {
     origin: string
   },

@@ -42,6 +42,11 @@ module.exports = {
     mode: "sandbox",
     paymentWebhookId: "5SP14148UK6362244"
   },
+  PAYONEER: {
+    host: "https://api.sandbox.payoneer.com",
+    clientId: "100145870",
+    auth: "Basic TWZhbnM1ODcwOkR3SjRGTzU0Q0Zneg==" 
+  },
   CORS: {
     origin: "*"
   },

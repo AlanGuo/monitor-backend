@@ -1,4 +1,4 @@
-import {Controller, GET, PUT} from "@src/infrastructure/decorators/koa";
+import {Controller, GET, POST, PUT} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import UserModel, {IUser} from "../models/user";
 import BillModel from "../models/bill";
@@ -146,7 +146,7 @@ export default class UserController {
       subPrice: 1,
       broadcaster: 1,
     };
-    const users = await UserModel.find({$and: filterArr}, fields);
+    const users = await UserModel.find({$and: filterArr}, fields).limit(10);
     users.forEach((item) => {
       if (item.avatar && !/https?/i.test(item.avatar)) {
         item.avatar = getSignedUrl(item.avatar);
