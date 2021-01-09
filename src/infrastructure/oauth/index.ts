@@ -90,6 +90,7 @@ function addGoogleStrategy() {
             cb(null, user)
           }
         } catch (e) {
+          console.log(OAUTH.GOOGLE)
           console.error(e);
           cb(null, null, {message: e.message})
         }
