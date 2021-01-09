@@ -37,15 +37,15 @@ module.exports = {
       currency: "usd",
       sign: "$"
     },
-    clientId:"AWJ18jbDJ0f11jkoMbKfonnW-YfcyweVc73COBOxeYIONSkyuiIOhgr_v0Q4elyAptjbEEbr1M5H3ZWv",
-    clientSecret:"EEBTsHvdFdxvhGY3Jwq2OIoeI_7GkGdSCe-Bwbcu-pJI0v0Eba3d_R1EIZhH5tkYQTmizl99_qBAfUbz",
-    mode: "sandbox",
-    paymentWebhookId: "9FF26720B8007994B"
+    clientId:"AQA0EUqrCsRB0MPas5nj6jEUYmDfZzT_K-P7nw77pggqOsQThlqYlA9pxNwBIG1Cc8vMROnbJzn5O2Nr",
+    clientSecret:"EA3l_-P8cZO-sBtRfWpHB9jn_4_nZRQB_SohZTvzjDBf98SdtAr7iLXHsZMw0RMBsqnraxc_-4BNzZQy",
+    mode: "live",
+    paymentWebhookId: "6P538784XB049535H"
   },
   PAYONEER: {
-    host: "https://api.sandbox.payoneer.com",
+    host: "https://api.payoneer.com",
     clientId: "100145870",
-    auth: "Basic TWZhbnM1ODcwOkR3SjRGTzU0Q0Zneg==" 
+    auth: "Basic TWZhbnM1ODcwOlB2M3lSMUpmVEcxZQ==" 
   },
   CORS: {
     origin: "*"

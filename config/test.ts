@@ -37,7 +37,7 @@ module.exports = {
       currency: "usd",
       sign: "$"
     },
-    clientId:"AWJ18jbDJ0f11jkoMbKfonnW-ASxYRUUiBhtZpOWIDp0TvBTBIJrEZ3cLkaTdDVMnGHh7dvVdK9Lfdcoq5JE_PuYSfcy0zZIAJx4Dz1Qb",
+    clientId:"ASxYRUUiBhtZpOWIDp0TvBTBIJrEZ3cLkaTdDVMnGHh7dvVdK9Lfdcoq5JE_PuYSfcy0zZIAJx4Dz1Qb",
     clientSecret:"EOngEI3YUqc3Hmd4z9m1s5f7-bB-ebwVYbFtGkxcHHnohr9Pv_s5z5GIpgetwTxJv_fesufxeMZn3On5",
     mode: "sandbox",
     paymentWebhookId: "5SP14148UK6362244"
