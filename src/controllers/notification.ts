@@ -29,11 +29,11 @@ export default class Notification {
   @AuthRequired()
   async unReadNum(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
-    const unread = await NotificationModel.find({
+    const unread = await NotificationModel.countDocuments({
       uuid, type: {$nin: NotificationSpecial},
       status: NotificationStatus.unread
     })
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: unread.length})
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: unread})
   }
 
   @PUT("/read/:id")

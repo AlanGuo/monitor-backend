@@ -180,7 +180,7 @@ export default class UserController {
         await notificationProducer.publish(JSON.stringify(msg))
       }
     }
-    const updatedUser = await UserModel.updateOne({uuid}, body);
+    const updatedUser = await UserModel.findOneAndUpdate({uuid}, body);
     await createUserWatermarker(updatedUser!);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
