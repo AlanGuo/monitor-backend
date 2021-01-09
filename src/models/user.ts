@@ -39,7 +39,7 @@ const UserModel: Schema = new Schema({
   name: {type: String, required: false, unique, sparse},
   // 从第三方登录获取的昵称，可自定义，允许重复
   displayName: {type: String, required: false, sparse},
-  email: {type: String, required: false, unique, sparse},
+  email: {type: String, required: false},
   avatar: {type: String, required: false, unique, sparse},
   balance: {type: Number, required, default: 0},
   subPrice: {type: Number, required, default: 0},
