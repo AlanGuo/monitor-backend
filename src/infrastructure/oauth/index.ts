@@ -124,6 +124,7 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
   let update;
   switch (provider) {
     case OAUTH.GOOGLE:
+      console.log(profile.id, "======")
       filter = {google: profile.id};
       const emails = (profile as GoogleProfile).emails;
       const photos = (profile as GoogleProfile).photos;
