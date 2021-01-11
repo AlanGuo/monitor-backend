@@ -35,7 +35,7 @@ export default class TipController {
     session.startTransaction();
 
     if (postId) {
-      const post = await PostModel.findOne({_id: postId}, {from: 1}, {session});
+      const post = await PostModel.findOne({_id: postId}, {from: 1, tips: 1}, {session});
       if (post) {
         target = post.from
         post.tips = (post.tips ?? 0) + 1;
