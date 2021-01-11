@@ -51,8 +51,8 @@ async function bootstrap() {
     store: await loadRedisStore(),
     key: SESSION_KEY,
     cookie: {
-      httpOnly: true,
-      sameSite: "strict",
+      // httpOnly: true,
+      // sameSite: "strict",
       maxAge: process.env.NODE_ENV === "dev" ? 
       SESSION_OVERDUE_SECOND * 10 : 
       SESSION_OVERDUE_SECOND
