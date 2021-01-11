@@ -23,7 +23,7 @@ export default class TipController {
       return
     }
     if (!target && !postId) {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "must select the user or POST"});
+      ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "must select the user or post"});
       return
     }
     const session = await TipPaymentModel.db.startSession({

@@ -21,7 +21,6 @@ import {Pagination} from "@src/interface";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {getOnlineUser} from "@src/infrastructure/redis";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
-import {Types} from "mongoose";
 
 @Controller({prefix: "/notification"})
 export default class Notification {

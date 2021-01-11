@@ -417,6 +417,7 @@ export default class PostsController {
       content: 1,
       createdAt: 1,
       like: 1,
+      tips: 1,
       price: 1,
       comment: 1,
       "media.type": 1,
