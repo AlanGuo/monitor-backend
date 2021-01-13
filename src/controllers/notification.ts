@@ -40,7 +40,8 @@ export default class Notification {
   async read(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const notificationId = ctx.params.id;
-    const notification = await NotificationModel.findOne({uuid, _id: notificationId});
+    const notification = await NotificationModel.findOne({uuid, _id: notificationId, type: {$nin: NotificationSpecial},
+    });
     if (notification) {
       notification.status = NotificationStatus.read;
       await notification.save();
