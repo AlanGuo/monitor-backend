@@ -175,6 +175,7 @@ export default class Subscriber {
     const fields = {
       $project: {
         _id: 0,
+        reBill: 1,
         "user.uuid": 1,
         "user.avatar": 1,
         "user.name": 1,
@@ -225,7 +226,10 @@ export default class Subscriber {
       if (!/https?/i.test(user.avatar)) {
         user.avatar = getSignedUrl(user.avatar);
       }
-      return user
+      return {
+        ...user,
+        rebill: item.reBill
+      }
     })
     const total = await SubscriberModel.countDocuments(match)
     ctx.body = jsonResponse({data: {following, total, page: pagination.page, size: pagination.size}})
@@ -327,7 +331,8 @@ export default class Subscriber {
   async openReBill(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const target = Number(ctx.params.target);
-    await SubscriberModel.updateOne({uuid, target}, {$set: {reBill: true}});
+    const flag = ctx.query.flag;
+    await SubscriberModel.updateOne({uuid, target}, {$set: {reBill: flag ?? true}});
     const notifyId = ctx.request.body.notifyId;
     if (notifyId) {
       await NotificationModel.updateOne({_id:notifyId, uuid}, {$set: {status: NotificationStatus.read}});
