@@ -120,6 +120,7 @@ export const NotificationSubscription = [
   NotificationType.followReBill,
   NotificationType.subExpired,
   NotificationType.subCancel,
+  NotificationType.subPriceIncrease,
   NotificationType.sub
 ]
 

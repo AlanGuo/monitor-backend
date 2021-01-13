@@ -12,7 +12,7 @@ export interface IComment extends Document {
   commentId?: Types.ObjectId
 }
 
-const commentModel: Schema = new Schema({
+const CommentModel: Schema = new Schema({
   postId: {type: String, required},
   uuid: {type: Number, required},
   content: { type: String, required },
@@ -24,4 +24,6 @@ const commentModel: Schema = new Schema({
   timestamps: true
 });
 
-export default model<IComment>("comment", commentModel);
+CommentModel.index({uuid: 1});
+
+export default model<IComment>("comment", CommentModel);

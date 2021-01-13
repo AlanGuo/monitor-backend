@@ -28,7 +28,7 @@ export default class PayoneerController {
       const res = await axios.post(url, {
         "payee_id": user.uuid.toString(),
         "client_session_id": user.uuid.toString(),
-        "redirect_url": "https://mfans.com/u/{{payoneerid}}",
+        "redirect_url": "https://mfans.com/u/" + user.uuid,
         "redirect_time": 10,
         "payout_methods_list": [
           "BANK"

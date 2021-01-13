@@ -21,4 +21,6 @@ const SubscriberModel: Schema = new Schema({
   timestamps: false
 });
 
+SubscriberModel.index({uuid: 1});
+
 export default model<Subscriber>("subscriber", SubscriberModel);

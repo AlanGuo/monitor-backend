@@ -1,5 +1,5 @@
 import config from "@src/infrastructure/utils/config";
-import {Controller, POST} from "@src/infrastructure/decorators/koa";
+import {Controller, GET, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import {getOnlineUser, redis} from "@src/infrastructure/redis";
 import {getSocketIO} from "@src/infrastructure/socket";
@@ -132,5 +132,13 @@ export default class CallbackController {
       }
     });
     ctx.body = jsonResponse(ctx.request)
+  }
+  @GET("/payoneer/approved")
+  async payoneerApproved(ctx: IRouterContext) {
+
+  }
+  @GET("/payoneer/decline")
+  async payoneerDecline(ctx: IRouterContext) {
+
   }
 }
