@@ -171,6 +171,13 @@ export enum USER_STATUS {
   BLOCKED
 }
 
+export enum WITHDRAW_APPLY_STATUS {
+  Abandoned,
+  Processing,
+  Paid,
+  Arrive
+}
+
 export interface ISize {
   thumbnail?: string[], low?: string[], glass?: string[], image?: string[], screenshot?: string[], duration?: number
 }

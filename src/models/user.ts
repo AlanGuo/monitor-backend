@@ -57,8 +57,8 @@ const UserModel: Schema = new Schema({
   kyc: {type: Boolean, required, default: false},
   broadcaster: {type: Boolean, required, default: false},
   status: {type: USER_STATUS, required, default: USER_STATUS.NORMAL},
-  withdrawTime: {type: Number, required, default: 0},
-  freezeWithdrawTime:  {type: Number, required, default: 0},
+  withdrawTime: {type: Number, required, default: 0}, // 已完成提现的截止时间
+  freezeWithdrawTime:  {type: Number, required, default: 0}, // 提现冻结中的截止时间
 }, {
   timestamps: true
 });
