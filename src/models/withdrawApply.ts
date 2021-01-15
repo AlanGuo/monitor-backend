@@ -9,12 +9,12 @@ export interface WithdrawApply extends Document {
   amount: number,
   intervalStart: number, // 提现时间区间
   intervalEnd: number,
-  withdrawId: Types.ObjectId
+  withdrawId?: Types.ObjectId
 }
 
 const withdrawApplyModel: Schema = new Schema({
   uuid: {type: Number, required},
-  status: {type: WITHDRAW_APPLY_STATUS, required},
+  status: {type: WITHDRAW_APPLY_STATUS, required, default: WITHDRAW_APPLY_STATUS.Processing},
   amount: {type: Number, required},
   intervalStart: {type: Number, required},
   intervalEnd: {type: Number, required},

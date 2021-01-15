@@ -197,3 +197,5 @@ export const SAVE_MEDIA_QUEUE = "save_media";
 export const UPDATE_USER_SUB_PRICE_QUEUE = "update_user_sub_price"
 export const SAVE_NOTIFICATION_QUEUE = "send_notification"
 export const NOTIFICATION_ROUTING_KEY = "notification"
+
+export const WITHDRAW_MIN_AMOUNT = 50;
