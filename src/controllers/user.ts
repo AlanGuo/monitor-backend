@@ -4,7 +4,7 @@ import UserModel, {IUser} from "../models/user";
 import BillModel from "../models/bill";
 import SubscriberModel, {Subscriber} from "../models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
-import {NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {FROZEN_INCOME_TIME, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {getOnlineUser} from "@src/infrastructure/redis";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
@@ -53,7 +53,7 @@ export default class UserController {
 
       if (user.broadcaster) {
         const now = Date.now();
-        const freezeTime = now - 3600 * 24 * 30 * 1000;
+        const freezeTime = now - FROZEN_INCOME_TIME;
         const bill = await BillModel.find({target: uuid}, {_id: 0, amount: 1, createdAt: 1});
         rep.income = {total: 0, balance: 0, freezeBalance: 0, withdraw: 0, freezeWithdraw: 0};
         bill.forEach(item => {

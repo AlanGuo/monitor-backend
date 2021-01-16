@@ -198,4 +198,5 @@ export const UPDATE_USER_SUB_PRICE_QUEUE = "update_user_sub_price"
 export const SAVE_NOTIFICATION_QUEUE = "send_notification"
 export const NOTIFICATION_ROUTING_KEY = "notification"
 
-export const WITHDRAW_MIN_AMOUNT = 50;
+export const WITHDRAW_MIN_AMOUNT = 10;
+export const FROZEN_INCOME_TIME = 3600 * 24 * 30 * 1000;
