@@ -3,7 +3,7 @@ import {IRouterContext} from "koa-router";
 import UserModel, {IUser} from "../models/user";
 import BillModel from "../models/bill";
 import SubscriberModel, {Subscriber} from "../models/subscriber";
-import {jsonResponse} from "@src/infrastructure/utils";
+import {checkPayoneerUserStatus, jsonResponse} from "@src/infrastructure/utils";
 import {FROZEN_INCOME_TIME, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {getOnlineUser} from "@src/infrastructure/redis";
@@ -183,5 +183,13 @@ export default class UserController {
     const updatedUser = await UserModel.findOneAndUpdate({uuid}, body);
     await createUserWatermarker(updatedUser!);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
+  }
+
+  @GET("/payoneer/status")
+  @AuthRequired()
+  async payoneerStatus(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const status = await checkPayoneerUserStatus(uuid);
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {status}})
   }
 }

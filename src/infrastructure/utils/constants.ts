@@ -178,6 +178,12 @@ export enum WITHDRAW_APPLY_STATUS {
   Arrive
 }
 
+export enum PAYONEER_PAYEES_STATUS {
+  NOT_EXISTS,
+  INACTIVE,
+  ACTIVE
+}
+
 export interface ISize {
   thumbnail?: string[], low?: string[], glass?: string[], image?: string[], screenshot?: string[], duration?: number
 }
