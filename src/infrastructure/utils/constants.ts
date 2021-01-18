@@ -205,4 +205,4 @@ export const SAVE_NOTIFICATION_QUEUE = "send_notification"
 export const NOTIFICATION_ROUTING_KEY = "notification"
 
 export const WITHDRAW_MIN_AMOUNT = 10;
-export const FROZEN_INCOME_TIME = 3600 * 24 * 30 * 1000;
+export const FROZEN_INCOME_TIME = 3600 * 24 * 7 * 1000;
