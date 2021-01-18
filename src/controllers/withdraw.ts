@@ -40,7 +40,7 @@ export default class Withdraw {
     if (user?.broadcaster) {
       const bills = await BillModel.find({target: uuid, createdAt: {$gt: new Date(user.freezeWithdrawTime), $lte: new Date(freezeTime)}}, {_id: 0, amount: 1}, {session});
       const amount = bills.map(item=>item.amount).reduce((pre, cur)=>pre+cur, 0)
-      if (amount > WITHDRAW_MIN_AMOUNT) {
+      if (amount >= WITHDRAW_MIN_AMOUNT) {
         await WithdrawApplyModel.create([{uuid, amount, intervalStart: user.freezeWithdrawTime, intervalEnd: now, status: WITHDRAW_APPLY_STATUS.Processing}], {session});
         user.freezeWithdrawTime = now;
         await user.save();

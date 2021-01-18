@@ -184,12 +184,4 @@ export default class UserController {
     await createUserWatermarker(updatedUser!);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
-
-  @GET("/payoneer/status")
-  @AuthRequired()
-  async payoneerStatus(ctx: IRouterContext, next: any) {
-    const uuid = ctx.state.user.uuid;
-    const status = await checkPayoneerUserStatus(uuid);
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {status}})
-  }
 }
