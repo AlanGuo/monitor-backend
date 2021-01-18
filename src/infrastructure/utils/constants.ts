@@ -172,10 +172,10 @@ export enum USER_STATUS {
 }
 
 export enum WITHDRAW_APPLY_STATUS {
-  Abandoned,
-  Processing,
-  Paid,
-  Arrive
+  REJECTED,
+  PROCESSING,
+  PAID,
+  ARRIVED
 }
 
 export enum PAYONEER_PAYEES_STATUS {

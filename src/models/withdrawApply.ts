@@ -14,7 +14,7 @@ export interface WithdrawApply extends Document {
 
 const withdrawApplyModel: Schema = new Schema({
   uuid: {type: Number, required},
-  status: {type: WITHDRAW_APPLY_STATUS, required, default: WITHDRAW_APPLY_STATUS.Processing},
+  status: {type: WITHDRAW_APPLY_STATUS, required, default: WITHDRAW_APPLY_STATUS.PROCESSING},
   amount: {type: Number, required},
   intervalStart: {type: Number, required},
   intervalEnd: {type: Number, required},
