@@ -6,10 +6,19 @@ import {IRouterContext} from "koa-router";
 import {IUser} from "@src/models/user";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import cookie from "cookie";
+import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
+import { checkPayoneerUserStatus } from "@src/infrastructure/utils";
 
 @Controller({prefix: "/payoneer"})
 export default class PayoneerController {
 
+  @GET("/status")
+  @AuthRequired()
+  async payoneerStatus(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const status = await checkPayoneerUserStatus(uuid);
+    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {status}})
+  }
   @GET("/create/registration-link")
   @AuthRequired()
   async create(ctx: IRouterContext) {

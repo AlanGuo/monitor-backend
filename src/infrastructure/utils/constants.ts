@@ -179,9 +179,9 @@ export enum WITHDRAW_APPLY_STATUS {
 }
 
 export enum PAYONEER_PAYEES_STATUS {
-  NOT_EXISTS,
-  INACTIVE,
-  ACTIVE
+  NOT_EXISTS = "not exist",
+  INACTIVE = "inactive",
+  ACTIVE = "active"
 }
 
 export interface ISize {

@@ -54,7 +54,7 @@ export function mediaType(ext: string): {
 }
 
 export async function checkPayoneerUserStatus(uuid: number): Promise<PAYONEER_PAYEES_STATUS>  {
-  const url = `${config.PAYONEER.host}/v2/programs/100145870/payees/${uuid}/status`;
+  const url = `${config.PAYONEER.host}/v2/programs/${config.PAYONEER.clientId}/payees/${uuid}/status`;
   const res = await axios.get(url, {
     validateStatus: () => true,
     headers: {
