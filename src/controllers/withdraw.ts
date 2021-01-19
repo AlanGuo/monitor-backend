@@ -12,14 +12,14 @@ import {
   WITHDRAW_MIN_AMOUNT
 } from "@src/infrastructure/utils/constants";
 import {Types} from "mongoose";
-import { PaginationDec } from "@src/infrastructure/decorators/pagination";
-import { Pagination } from "@src/interface";
+import {PaginationDec} from "@src/infrastructure/decorators/pagination";
+import {Pagination} from "@src/interface";
 
 @Controller({prefix: "/withdraw"})
 export default class Withdraw {
   @POST("")
   @AuthRequired()
-  async withdraw (ctx: IRouterContext) {
+  async withdraw(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const now = Date.now();
     const freezeTime = now - FROZEN_INCOME_TIME;
@@ -30,6 +30,8 @@ export default class Withdraw {
         writeConcern: {w: "majority"}
       }
     });
+    session.startTransaction();
+
     // 查询可提现收入
     const userFields = {
       broadcaster: 1,
@@ -38,11 +40,34 @@ export default class Withdraw {
     }
     const user = await UserModel.findOne({uuid}, userFields, {session})
     if (user?.broadcaster) {
-      const bills = await BillModel.find({target: uuid, createdAt: {$gt: new Date(user.freezeWithdrawTime), $lte: new Date(freezeTime)}}, {_id: 0, amount: 1}, {session});
-      const amount = bills.map(item=>item.amount).reduce((pre, cur)=>pre+cur, 0)
+      const bills = await BillModel.find({
+        target: uuid,
+        createdAt: {$gt: new Date(user.freezeWithdrawTime), $lte: new Date(freezeTime)}
+      }, {_id: 0, amount: 1}, {session});
+      const amount = bills.map(item => item.amount).reduce((pre, cur) => pre + cur, 0)
       if (amount >= WITHDRAW_MIN_AMOUNT) {
-        await WithdrawApplyModel.create([{uuid, amount, intervalStart: user.freezeWithdrawTime, intervalEnd: now, status: WITHDRAW_APPLY_STATUS.PROCESSING}], {session});
-        user.freezeWithdrawTime = now;
+        const beforeProcessingApply = await WithdrawApplyModel.find({
+          uuid,
+          status: WITHDRAW_APPLY_STATUS.PROCESSING
+        }, {_id: 0, amount: 1, intervalStart: 1}, {session});
+        let beforeAmount = 0;
+        let beforeIntervalStart = 0;
+        if (beforeProcessingApply.length > 0) {
+          // cancel beforeApply
+          beforeAmount = beforeProcessingApply.map(item => {
+            beforeIntervalStart = beforeIntervalStart === 0 ? item.intervalStart : item.intervalStart < beforeIntervalStart ? item.intervalStart : beforeIntervalStart
+            return item.amount;
+          }).reduce((pre, cur) => pre + cur, 0);
+          await WithdrawApplyModel.update({uuid, status: WITHDRAW_APPLY_STATUS.PROCESSING}, {$set: {status: WITHDRAW_APPLY_STATUS.CANCELED}})
+        }
+        await WithdrawApplyModel.create([{
+          uuid,
+          amount: amount + beforeAmount,
+          intervalStart: beforeIntervalStart === 0 ? user.freezeWithdrawTime : beforeIntervalStart,
+          intervalEnd: now,
+          status: WITHDRAW_APPLY_STATUS.PROCESSING
+        }], {session});
+        user.freezeWithdrawTime = freezeTime;
         await user.save();
         await session.commitTransaction();
         session.endSession();
@@ -62,7 +87,7 @@ export default class Withdraw {
 
   @DEL("/:id")
   @AuthRequired()
-  async cancel (ctx: IRouterContext) {
+  async cancel(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const id = ctx.params.id;
 
@@ -72,6 +97,8 @@ export default class Withdraw {
         writeConcern: {w: "majority"}
       }
     });
+    session.startTransaction();
+
     // 查询可提现收入
     const userFields = {
       broadcaster: 1,
@@ -80,14 +107,18 @@ export default class Withdraw {
     }
     const user = await UserModel.findOne({uuid}, userFields, {session})
     if (user?.broadcaster) {
-        await WithdrawApplyModel.update({_id: Types.ObjectId(id)}, {$set: {
-          status: WITHDRAW_APPLY_STATUS.CANCELED
-        }}, {session});
-        user.freezeWithdrawTime = 0;
+      const apply = await WithdrawApplyModel.findOne({_id: Types.ObjectId(id), status: WITHDRAW_APPLY_STATUS.PROCESSING}, {_id: 1, intervalStart: 1}, {session});
+      if (apply) {
+        apply.status = WITHDRAW_APPLY_STATUS.CANCELED;
+        user.freezeWithdrawTime = apply.intervalStart;
+        await apply.save()
         await user.save();
         await session.commitTransaction();
         session.endSession();
         ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
+      } else {
+        ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "apply is not exists or can't cancel"});
+      }
     } else {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "user is not a broadcaster"});
     }
@@ -100,11 +131,11 @@ export default class Withdraw {
   @GET("/records")
   @AuthRequired()
   @PaginationDec()
-  async records (ctx: IRouterContext) {
+  async records(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const status = ctx.query.status;
     const pagination: Pagination = ctx.state.pagination;
-    const filter: any = { uuid };
+    const filter: any = {uuid};
     if (status) {
       filter.status = Number(status as WITHDRAW_APPLY_STATUS);
     }
