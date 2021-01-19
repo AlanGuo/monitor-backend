@@ -19,11 +19,11 @@ export default class TipController {
     const postId = ctx.request.body.postId;
     let target = ctx.request.body.targetUser;
     if (!amount) {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "must fill amount"});
+      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "must fill amount"});
       return
     }
     if (!target && !postId) {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "must select the user or post"});
+      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "must select the user or post"});
       return
     }
     const session = await TipPaymentModel.db.startSession({
@@ -43,7 +43,7 @@ export default class TipController {
       }
     }
     if (target === uuid) {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "You can't tip yourself"});
+      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "You can't tip yourself"});
     } else {
       const user = await UserModel.findOne({uuid}, {balance: 1, uuid: 1}, {session});
       if (user && user.balance > amount && await UserModel.exists({uuid: target})) {

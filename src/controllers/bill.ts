@@ -62,7 +62,7 @@ export default class BillController {
     const id: string = ctx.params.id
     const fields = {type: 1, amount: 1, consumeType: 1, createdAt: 1, rechargeId: 1, consumeId: 1, target: 1}
     if (!Types.ObjectId.isValid(id)) {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "id error"});
+      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "id error"});
       return
     }
     const bill = await BillModel.findOne({_id: Types.ObjectId(id), $or: [{uuid}, {target: uuid}]}, fields);
@@ -96,7 +96,7 @@ export default class BillController {
       }
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: info})
     } else {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "the bill does not belong to you"});
+      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "the bill does not belong to you"});
     }
   }
 }

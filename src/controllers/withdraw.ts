@@ -1,4 +1,4 @@
-import {Controller, GET, POST} from "@src/infrastructure/decorators/koa";
+import {Controller, DEL, GET, POST} from "@src/infrastructure/decorators/koa";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {IRouterContext} from "koa-router";
 import WithdrawApplyModel from "@src/models/withdrawApply";
@@ -49,10 +49,47 @@ export default class Withdraw {
         ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         return
       } else {
-        ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: `remaining income less than $${WITHDRAW_MIN_AMOUNT}`});
+        ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: `remaining income less than $${WITHDRAW_MIN_AMOUNT}`});
       }
     } else {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.SHOW_MESSAGE, msg: "user is not a broadcaster"});
+      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "user is not a broadcaster"});
+    }
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+      session.endSession();
+    }
+  }
+
+  @DEL("/:id")
+  @AuthRequired()
+  async cancel (ctx: IRouterContext) {
+    const uuid = ctx.state.user.uuid;
+    const id = ctx.params.id;
+
+    const session = await WithdrawApplyModel.db.startSession({
+      defaultTransactionOptions: {
+        readConcern: {level: "snapshot"},
+        writeConcern: {w: "majority"}
+      }
+    });
+    // 查询可提现收入
+    const userFields = {
+      broadcaster: 1,
+      freezeWithdrawTime: 1,
+      withdrawTime: 1
+    }
+    const user = await UserModel.findOne({uuid}, userFields, {session})
+    if (user?.broadcaster) {
+        await WithdrawApplyModel.update({_id: Types.ObjectId(id)}, {$set: {
+          status: WITHDRAW_APPLY_STATUS.CANCELED
+        }}, {session});
+        user.freezeWithdrawTime = 0;
+        await user.save();
+        await session.commitTransaction();
+        session.endSession();
+        ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
+    } else {
+      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "user is not a broadcaster"});
     }
     if (session.inTransaction()) {
       await session.abortTransaction();
@@ -71,9 +108,8 @@ export default class Withdraw {
     if (status) {
       filter.status = Number(status as WITHDRAW_APPLY_STATUS);
     }
-    console.log(filter);
     const records = await WithdrawApplyModel.find(filter, {
-      _id: false,
+      _id: 1,
       uuid: 1,
       amount: 1,
       status: 1,

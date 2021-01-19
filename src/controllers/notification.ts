@@ -48,7 +48,7 @@ export default class Notification {
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
     } else {
       ctx.body = jsonResponse({
-        code: RESPONSE_CODE.SHOW_MESSAGE,
+        code: RESPONSE_CODE.ERROR,
         msg: "the notification not exists or not belong with you"
       })
     }

@@ -141,7 +141,6 @@ export enum DialogueStatus {
 
 export enum RESPONSE_CODE {
   NORMAL = 0,
-  SHOW_MESSAGE = 1,
   ERROR = 500,
   LOGIN_IN_ERR = "login in error",
   CAN_NOT_SUBSCRIBE_YOURSELF = "can not subscribe yourself",
@@ -175,7 +174,8 @@ export enum WITHDRAW_APPLY_STATUS {
   REJECTED,
   PROCESSING,
   PAID,
-  ARRIVED
+  ARRIVED,
+  CANCELED
 }
 
 export enum PAYONEER_PAYEES_STATUS {
