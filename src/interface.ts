@@ -186,5 +186,6 @@ export interface Config {
     Consumer_Secret: string
   },
   HOST: string,
-  RABBITMQ: string
+  RABBITMQ: string,
+  SLACK_WEB_HOOK: string
 }

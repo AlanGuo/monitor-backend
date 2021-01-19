@@ -86,7 +86,6 @@ module.exports = {
   },
 
   HOST: "https://test.mfans.com",
-
-  RABBITMQ: "amqp://localhost:5672"
-
+  RABBITMQ: "amqp://localhost:5672",
+  SLACK_WEB_HOOK: "https://hooks.slack.com/services/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"
 };

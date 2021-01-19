@@ -4,8 +4,9 @@ import kycApplyModel from "../models/kycApply";
 import { jsonResponse } from "@src/infrastructure/utils";
 import {KYC_APPLY_STATUS, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
-import { Types } from "mongoose";
 import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
+import axios from "axios";
+import config from "config";
 
 @Controller({prefix: "/kyc"})
 export default class Kyc {
@@ -45,6 +46,9 @@ export default class Kyc {
       idCardReverse: body.idBackKey,
       handheld: body.idHandKey,
       status: KYC_APPLY_STATUS.AUDIT
+    });
+    await axios.post(config.get("SLACK_WEB_HOOK"), {
+      text: `您有新的KYC申请, 请群里有空的人尽快处理, 用户主页是: https://mfans.com/u/${uuid}`
     });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: kyc});
   }
