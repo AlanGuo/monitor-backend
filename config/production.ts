@@ -87,5 +87,5 @@ module.exports = {
 
   HOST: "https://mfans.com",
   RABBITMQ: "amqp://localhost:5672",
-  SLACK_WEB_HOOK: "https://hooks.slack.com/services/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"
+  SLACK_WEB_HOOK: "https://hooks.slack.com/services/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"
 };

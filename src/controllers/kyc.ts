@@ -6,7 +6,7 @@ import {KYC_APPLY_STATUS, RESPONSE_CODE} from "@src/infrastructure/utils/constan
 import { AuthRequired } from "@src/infrastructure/decorators/auth";
 import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
 import axios from "axios";
-import config from "config";
+import config from "@src/infrastructure/utils/config";
 
 @Controller({prefix: "/kyc"})
 export default class Kyc {
@@ -47,8 +47,8 @@ export default class Kyc {
       handheld: body.idHandKey,
       status: KYC_APPLY_STATUS.AUDIT
     });
-    await axios.post(config.get("SLACK_WEB_HOOK"), {
-      text: `您有新的KYC申请, 请群里有空的人尽快处理, 用户主页是: https://mfans.com/u/${uuid}`
+    await axios.post(config.SLACK_WEB_HOOK, {
+      text: `您有新的KYC申请, 请群里有空的人尽快登录管理端审核[https://admin.mfans.com/], 用户个人主页是: https://mfans.com/u/${uuid}`
     });
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: kyc});
   }
