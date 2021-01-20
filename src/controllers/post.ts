@@ -22,6 +22,7 @@ import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import Subscriber from "@src/controllers/subscriber";
+import {CheckPostPrice} from "@src/infrastructure/decorators/checkPostPrice";
 
 @Controller({prefix: "/post"})
 export default class PostsController {
@@ -349,6 +350,7 @@ export default class PostsController {
 
   @POST("/new")
   @AuthRequired()
+  @CheckPostPrice()
   async new(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
     const data = ctx.request.body;

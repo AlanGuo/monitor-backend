@@ -8,20 +8,18 @@ import UserModel from "@src/models/user";
 import TipPaymentModel from "@src/models/tipPayment";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
+import {CheckTipAmount} from "@src/infrastructure/decorators/checkTipAmount";
 
 @Controller({prefix: "/tip"})
 export default class TipController {
   @POST("")
   @AuthRequired()
+  @CheckTipAmount()
   async tip(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const amount = ctx.request.body.amount;
     const postId = ctx.request.body.postId;
     let target = ctx.request.body.targetUser;
-    if (!amount) {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "must fill amount"});
-      return
-    }
     if (!target && !postId) {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "must select the user or post"});
       return
