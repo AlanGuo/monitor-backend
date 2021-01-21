@@ -232,7 +232,7 @@ export default class PostsController {
   @PaginationDec()
   async getUserPosts(ctx: IRouterContext, next: any) {
     const pagination: Pagination = ctx.state.pagination;
-    const uuid = ctx.params.id;
+    const uuid = Number(ctx.params.id);
     const fields = {
       _id: 1,
       from: 1,
