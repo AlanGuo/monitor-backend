@@ -252,8 +252,8 @@ export default class PostsController {
     const content = ctx.query.content;
 
     // 收费主播
-    const user = await userModel.findOne({uuid}, {_id: 0, subPrice: 1, displayName: 1, avatar: 1, name: 1});
-    const needSub = user && user.subPrice > 0;
+    const user = await userModel.findOne({uuid}, {_id: 0, subPrice: 1, displayName: 1, avatar: 1, name: 1, broadcaster: 1});
+    const needSub = user && user.broadcaster;
 
     const isFan = ctx.state.user ? needSub ? await subscriberModel.exists({
       uuid: ctx.state.user.uuid,
@@ -335,7 +335,10 @@ export default class PostsController {
     ]);
     posts.forEach(item => {
       item.user = [userInfo];
-      item.payment = item.payment.length > 0 || item.from === uuid || isFan;
+      // 1. 付费过 可看
+      // 2. 是自己 可看
+      // 3. 是粉丝 post收费 不可看
+      item.payment = item.payment.length > 0 || item.from === uuid || ( item.price > 0 ? isFan && item.payment.length > 0 : isFan);
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
