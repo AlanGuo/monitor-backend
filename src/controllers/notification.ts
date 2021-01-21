@@ -29,7 +29,7 @@ export default class Notification {
   async unReadNum(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const unread = await NotificationModel.countDocuments({
-      uuid, type: {$nin: NotificationSpecial},
+      uuid,
       status: NotificationStatus.unread
     })
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: unread})
@@ -40,8 +40,7 @@ export default class Notification {
   async read(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const notificationId = ctx.params.id;
-    const notification = await NotificationModel.findOne({uuid, _id: notificationId, type: {$nin: NotificationSpecial},
-    });
+    const notification = await NotificationModel.findOne({uuid, _id: notificationId});
     if (notification) {
       notification.status = NotificationStatus.read;
       await notification.save();

@@ -81,9 +81,10 @@ function addGoogleStrategy() {
         delete profile._json;
         delete profile._raw;
         const googleProfile: GoogleProfile = profile as GoogleProfile;
+        const invite = (req.query.state ?? "") as string
         try {
           if (!req.user) {
-            const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile);
+            const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile, invite);
             cb(null, user)
           } else {
             const user = await bindUser(OAUTH.GOOGLE, googleProfile, (req.user as { uuid: number }).uuid);
@@ -119,7 +120,7 @@ function addTwitterStrategy() {
   );
 }
 
-export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile): Promise<User> {
+export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile, invite?: string): Promise<User> {
   let filter;
   let update;
   switch (provider) {
@@ -132,7 +133,8 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
           "oauthProfile.google": profile,
           "email": emails ? (emails[0]?.value) : "",
           "avatar": photos ? (photos[0]?.value) : "",
-          "displayName": profile.displayName
+          "displayName": profile.displayName,
+          invite: invite || ""
         }
       };
       break;

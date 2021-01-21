@@ -206,3 +206,12 @@ export const NOTIFICATION_ROUTING_KEY = "notification"
 
 export const WITHDRAW_MIN_AMOUNT = 10;
 export const FROZEN_INCOME_TIME = 3600 * 24 * 7 * 1000;
+
+export const SUB_PRICE_MIN = 0.5;
+export const SUB_PRICE_MAX = 100;
+export const CHAT_PRICE_MIN = 0.5;
+export const CHAT_PRICE_MAX = 100;
+export const POST_PRICE_MIN = 0.5;
+export const POST_PRICE_MAX = 100;
+export const TIP_AMOUNT_MIN = 0.5;
+export const DEPOSIT_AMOUNT_MIN = 1;

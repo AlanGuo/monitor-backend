@@ -7,6 +7,7 @@ import userModel, {IUser} from "@src/models/user";
 import BillModel, {IBill} from "@src/models/bill";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {BillType, OrderStatus, OrderType} from "@src/infrastructure/utils/constants";
+import {CheckPaypalDepositAmount} from "@src/infrastructure/decorators/checkPaypalDepositAmount";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const paypal = require("@paypal/checkout-server-sdk");
@@ -24,6 +25,7 @@ export default class PaypalController {
 
   @POST("/create")
   @AuthRequired()
+  @CheckPaypalDepositAmount()
   async create(ctx: IRouterContext) {
     //创建支付
     const body = ctx.request.body

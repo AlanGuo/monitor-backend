@@ -31,6 +31,8 @@ export interface IUser extends Document {
 
   withdrawTime: number;
   freezeWithdrawTime: number;
+
+  invite?: string
 }
 
 const UserModel: Schema = new Schema({
@@ -59,6 +61,8 @@ const UserModel: Schema = new Schema({
   status: {type: USER_STATUS, required, default: USER_STATUS.NORMAL},
   withdrawTime: {type: Number, required, default: 0}, // 已完成提现的截止时间
   freezeWithdrawTime:  {type: Number, required, default: 0}, // 提现冻结中的截止时间
+
+  invite: {type: String, required: false} // 邀请人
 }, {
   timestamps: true
 });

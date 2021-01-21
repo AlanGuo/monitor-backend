@@ -11,6 +11,9 @@ import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {userChatPriceProducer} from "@src/services/producer/userChatPriceProducer";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import { createUserWatermarker } from "@src/infrastructure/utils/watermarker";
+import {CheckChatPrice} from "@src/infrastructure/decorators/checkChatPrice";
+import {CheckPostPrice} from "@src/infrastructure/decorators/checkPostPrice";
+import {CheckSubPrice} from "@src/infrastructure/decorators/checkSubPrice";
 
 @Controller({prefix: "/user"})
 export default class UserController {
@@ -157,6 +160,8 @@ export default class UserController {
 
   @PUT("/me")
   @AuthRequired()
+  @CheckChatPrice()
+  @CheckSubPrice()
   async updateMyInfo(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
     const body = ctx.request.body;
