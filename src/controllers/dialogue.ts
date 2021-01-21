@@ -23,7 +23,6 @@ import {Types} from "mongoose";
 import userModel from "@src/models/user";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
-import user from "@src/models/user";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -77,7 +76,7 @@ export default class UserController {
         as: "lastMessage"
       }
     };
-    const sort = {$sort: {updateAt: -1}};
+    const sort = {$sort: {updatedAt: -1}};
     const skip = {$skip: pagination.offset};
     const limit = {$limit: pagination.limit};
 

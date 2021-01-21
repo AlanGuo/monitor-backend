@@ -1,4 +1,4 @@
-import KoaRouter from "koa-router";
+import KoaRouter, {IRouterContext} from "koa-router";
 import passport from "koa-passport"
 import {jsonResponse} from "@src/infrastructure/utils";
 import {delOnlineUser, getOnlineUser} from "@src/infrastructure/redis";
@@ -11,9 +11,14 @@ export const router = new KoaRouter();
 const failureRedirect = "/auth/failure";
 const store = loadRedisStore();
 
+async function googlePassport(ctx: IRouterContext, next: any) {
+  const invite = ctx.query.invite;
+  passport.authorize("google", {scope: ["openid", "profile", "email"], state: invite})(ctx, next);
+}
+
 export function OAuthRouter(app: any) {
   // Google
-  router.get("/oauth/google", passport.authorize("google", {scope: ["openid", "profile", "email"]}));
+  router.get("/oauth/google", googlePassport);
   router.get("/oauth/google/callback",
     passport.authenticate("google", {failureRedirect, failureMessage: true, failWithError: true}),
     (req, next) => {
