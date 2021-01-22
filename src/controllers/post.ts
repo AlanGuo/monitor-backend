@@ -1,9 +1,9 @@
-import {Controller, GET, POST, DEL, PUT} from "@src/infrastructure/decorators/koa";
+import {Controller, DEL, GET, POST, PUT} from "@src/infrastructure/decorators/koa";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {IRouterContext} from "koa-router";
 import postModel from "@src/models/post";
-import userModel, {IUser} from "@src/models/user";
+import userModel from "@src/models/user";
 import postPaymentModel from "@src/models/postPayment";
 import subscriberModel from "@src/models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
@@ -13,7 +13,8 @@ import {
   MEDIA_TYPE,
   NotificationType,
   POST_STATUS,
-  RESPONSE_CODE
+  RESPONSE_CODE,
+  SLACK_WEB_HOOK
 } from "@src/infrastructure/utils/constants";
 import {Pagination} from "@src/interface";
 import {getMediaFileName, getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
@@ -21,8 +22,8 @@ import {Types} from "mongoose";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
-import Subscriber from "@src/controllers/subscriber";
 import {CheckPostPrice} from "@src/infrastructure/decorators/checkPostPrice";
+import {sendSlackWebHook} from "@src/infrastructure/slack";
 
 @Controller({prefix: "/post"})
 export default class PostsController {
@@ -558,8 +559,8 @@ export default class PostsController {
 
           const msg = {type: NotificationType.postPay, postId, from: uuid, uuid: post.from};
           await notificationProducer.publish(JSON.stringify(msg))
-
-          ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
+          await sendSlackWebHook(SLACK_WEB_HOOK.UNLOCK, `[https://mfans.com/u/${uuid}]解锁了post[https://mfans.com/post/5fe22366c20b0c44ec21e30c]`);
+          ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         } else {
           // await session.abortTransaction()
           // session.endSession()

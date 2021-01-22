@@ -9,7 +9,8 @@ import {
   DialogueStatus,
   MEDIA_TYPE,
   NotificationType,
-  RESPONSE_CODE
+  RESPONSE_CODE,
+  SLACK_WEB_HOOK
 } from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
@@ -23,6 +24,7 @@ import {Types} from "mongoose";
 import userModel from "@src/models/user";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
+import {sendSlackWebHook} from "@src/infrastructure/slack";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -317,8 +319,8 @@ export default class UserController {
           session.endSession();
 
           const message = {type: NotificationType.messagePay, msgId, from: uuid, uuid: msg.from};
-          await notificationProducer.publish(JSON.stringify(message))
-
+          await notificationProducer.publish(JSON.stringify(message));
+          await sendSlackWebHook(SLACK_WEB_HOOK.UNLOCK, `[https://mfans.com/u/${uuid}]解锁了与[https://mfans.com/u/${msg.from}]的聊天，价格$${msg?.price}`);
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
         } else {
           ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "has been payment"})
@@ -374,6 +376,7 @@ export default class UserController {
         }], {session})
         await session.commitTransaction();
         session.endSession();
+        await sendSlackWebHook(SLACK_WEB_HOOK.UNLOCK, `[https://mfans.com/u/${from}]解锁了与[https://mfans.com/u/${to}]的聊天，价格$${userTo?.chatPrice}`);
         ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
       } else {
         ctx.body = jsonResponse({code: RESPONSE_CODE.BALANCE_NOT_ENOUGH})

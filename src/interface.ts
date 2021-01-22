@@ -187,5 +187,9 @@ export interface Config {
   },
   HOST: string,
   RABBITMQ: string,
-  SLACK_WEB_HOOK: string
+  SLACK_KYC_HOOK: string,
+  SLACK_DEPOSIT_HOOK: string,
+  SLACK_SUB_HOOK: string,
+  SLACK_TIP_HOOK: string,
+  SLACK_UNLOCK_HOOK: string
 }

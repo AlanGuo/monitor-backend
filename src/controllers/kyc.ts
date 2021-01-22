@@ -1,12 +1,11 @@
-import {Controller, GET, POST, DEL} from "@src/infrastructure/decorators/koa";
+import {Controller, GET, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import kycApplyModel from "../models/kycApply";
-import { jsonResponse } from "@src/infrastructure/utils";
-import {KYC_APPLY_STATUS, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
-import { AuthRequired } from "@src/infrastructure/decorators/auth";
-import { getSignedUrl } from "@src/infrastructure/amazon/cloudfront";
-import axios from "axios";
-import config from "@src/infrastructure/utils/config";
+import {jsonResponse} from "@src/infrastructure/utils";
+import {KYC_APPLY_STATUS, RESPONSE_CODE, SLACK_WEB_HOOK} from "@src/infrastructure/utils/constants";
+import {AuthRequired} from "@src/infrastructure/decorators/auth";
+import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
+import {sendSlackWebHook} from "@src/infrastructure/slack";
 
 @Controller({prefix: "/kyc"})
 export default class Kyc {
@@ -47,9 +46,7 @@ export default class Kyc {
       handheld: body.idHandKey,
       status: KYC_APPLY_STATUS.AUDIT
     });
-    await axios.post(config.SLACK_WEB_HOOK, {
-      text: `您有新的KYC申请, 请群里有空的人尽快登录管理端审核[https://admin.mfans.com/], 用户个人主页是: https://mfans.com/u/${uuid}`
-    });
+    await sendSlackWebHook(SLACK_WEB_HOOK.KYC, `您有新的KYC申请, 请群里有空的人尽快登录管理端审核[https://admin.mfans.com/], 用户个人主页是: https://mfans.com/u/${uuid}`);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: kyc});
   }
 }

@@ -178,6 +178,14 @@ export enum WITHDRAW_APPLY_STATUS {
   CANCELED
 }
 
+export enum SLACK_WEB_HOOK {
+  KYC,
+  DEPOSIT,
+  SUB,
+  TIP,
+  UNLOCK
+}
+
 export enum PAYONEER_PAYEES_STATUS {
   NOT_EXISTS = "not exist",
   INACTIVE = "inactive",

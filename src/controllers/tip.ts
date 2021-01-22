@@ -2,13 +2,20 @@ import {Controller, POST} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {jsonResponse} from "@src/infrastructure/utils";
-import {BillType, ConsumeType, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
-import PostModel, {Post} from "@src/models/post";
+import {
+  BillType,
+  ConsumeType,
+  NotificationType,
+  RESPONSE_CODE,
+  SLACK_WEB_HOOK
+} from "@src/infrastructure/utils/constants";
+import PostModel from "@src/models/post";
 import UserModel from "@src/models/user";
 import TipPaymentModel from "@src/models/tipPayment";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import {CheckTipAmount} from "@src/infrastructure/decorators/checkTipAmount";
+import {sendSlackWebHook} from "@src/infrastructure/slack";
 
 @Controller({prefix: "/tip"})
 export default class TipController {
@@ -59,7 +66,9 @@ export default class TipController {
         await session.commitTransaction();
         session.endSession();
         const msg = {type: postId ? NotificationType.postTip : NotificationType.tip, uuid: target, from: uuid, postId, amount};
-        await notificationProducer.publish(JSON.stringify(msg))
+        await notificationProducer.publish(JSON.stringify(msg));
+
+        await sendSlackWebHook(SLACK_WEB_HOOK.TIP, `[https://mfans.com/u/${uuid}]打赏了$${amount}给主播[https://mfans.com/u/${target}]`);
 
         ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         return

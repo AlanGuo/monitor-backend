@@ -3,11 +3,12 @@ import {Controller, POST} from "@src/infrastructure/decorators/koa";
 import {jsonResponse} from "@src/infrastructure/utils/helper";
 import {IRouterContext} from "koa-router";
 import orderModel, {IOrder} from "@src/models/order";
-import userModel, {IUser} from "@src/models/user";
-import BillModel, {IBill} from "@src/models/bill";
+import userModel from "@src/models/user";
+import BillModel from "@src/models/bill";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
-import {BillType, OrderStatus, OrderType} from "@src/infrastructure/utils/constants";
+import {BillType, OrderStatus, OrderType, SLACK_WEB_HOOK} from "@src/infrastructure/utils/constants";
 import {CheckPaypalDepositAmount} from "@src/infrastructure/decorators/checkPaypalDepositAmount";
+import {sendSlackWebHook} from "@src/infrastructure/slack";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const paypal = require("@paypal/checkout-server-sdk");
@@ -103,7 +104,7 @@ export default class PaypalController {
     await BillModel.create([{uuid: uuid, type: BillType.deposit, rechargeId: paypalOrderId, amount}], {session})
     await session.commitTransaction();
     session.endSession();
-
+    await sendSlackWebHook(SLACK_WEB_HOOK.DEPOSIT, `用户[https://mfans.com/u/${uuid}]充值$${amount}成功`);
     ctx.status = 200
     ctx.body = jsonResponse({
       data: {

@@ -10,6 +10,7 @@ import {
   NotificationStatus,
   NotificationType,
   RESPONSE_CODE,
+  SLACK_WEB_HOOK,
   SUBSCRIBER_STATUS
 } from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
@@ -20,6 +21,7 @@ import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import {messageProducer} from "@src/services/producer/messageProducer";
 import NotificationModel from "@src/models/notification";
+import {sendSlackWebHook} from "@src/infrastructure/slack";
 
 @Controller({prefix: "/subscriber"})
 export default class Subscriber {
@@ -133,7 +135,7 @@ export default class Subscriber {
             content: "Thank you for your subscription!",
             media: []
           }));
-
+          await sendSlackWebHook(SLACK_WEB_HOOK.SUB, `[https://mfans.com/u/${uuid}]订阅了[https://mfans.com/u/${target}],订阅价格$${targetUser.subPrice}`);
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         } else {
           ctx.body = jsonResponse({code: RESPONSE_CODE.BALANCE_NOT_ENOUGH});
