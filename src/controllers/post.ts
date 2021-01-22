@@ -559,7 +559,7 @@ export default class PostsController {
 
           const msg = {type: NotificationType.postPay, postId, from: uuid, uuid: post.from};
           await notificationProducer.publish(JSON.stringify(msg))
-          await sendSlackWebHook(SLACK_WEB_HOOK.UNLOCK, `[https://mfans.com/u/${uuid}]解锁了post[https://mfans.com/post/5fe22366c20b0c44ec21e30c]`);
+          await sendSlackWebHook(SLACK_WEB_HOOK.UNLOCK, `[https://mfans.com/u/${uuid}]解锁了post[https://mfans.com/post/${postId}]`);
           ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         } else {
           // await session.abortTransaction()
