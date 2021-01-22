@@ -4,8 +4,8 @@ const required = true;
 
 export interface RecommendUser extends Document {
   uuid: number,
-  endTime: Schema.Types.Date,
-  startTime: Schema.Types.Date,
+  endTime: number,
+  startTime: number,
   sort: number
 }
 

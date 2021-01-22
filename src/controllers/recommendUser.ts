@@ -61,7 +61,7 @@ export default class RecommendUser {
       }
     }
     const recommend = await RecommendUserModel.aggregate([
-      {$match: {endTime: {$gt: new Date()}}},
+      {$match: {endTime: {$gt: Date.now()}}},
       {$sample: {size: 10}},
       {
         $lookup: {
