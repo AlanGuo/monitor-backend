@@ -451,7 +451,7 @@ export default class PostsController {
       {
         $match: {
           _id: Types.ObjectId(id),
-          from: {$in: matchFollowers},
+          // from: {$in: matchFollowers},
           deleted: false
         }
       },
@@ -510,18 +510,24 @@ export default class PostsController {
       },
       {$project: fields},
     ]);
-    posts.forEach(item => {
-      if (!/https?/i.test(item.user[0].avatar)) {
-        item.user[0].avatar = getSignedUrl(item.user[0].avatar);
+    const item = posts[0];
+    if (item) {
+      if (matchFollowers.indexOf(item.from) > -1) {
+        if (!/https?/i.test(item.user[0].avatar)) {
+          item.user[0].avatar = getSignedUrl(item.user[0].avatar);
+        }
+        item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
+        item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
+          media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
+          media.ready = true;
+        });
+        ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: item});
+      } else {
+        ctx.body = jsonResponse({code: RESPONSE_CODE.NOT_SUBSCRIBING, data: posts[0].from});
       }
-      item.payment = item.price <= 0 || item.payment.length > 0 || item.from === uuid;
-      item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
-        media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
-        media.ready = true;
-      })
-    });
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: posts[0]});
-
+    } else {
+      ctx.body = jsonResponse({code: RESPONSE_CODE.NOT_FOUND});
+    }
   }
 
   @POST("/pay/:id")
