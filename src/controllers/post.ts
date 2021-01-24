@@ -378,6 +378,7 @@ export default class PostsController {
     const msg = {type: NotificationType.newPost, post: {_id: post._id, from: uuid}};
     await notificationProducer.publish(JSON.stringify(msg))
 
+    await sendSlackWebHook(SLACK_WEB_HOOK.POST, `[https://mfans.com/u/${uuid}] made a new post [https://mfans.com/post]/${post._id}`)
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
 

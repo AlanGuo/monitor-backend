@@ -20,6 +20,9 @@ export async function sendSlackWebHook(type: SLACK_WEB_HOOK, msg: string) {
       case SLACK_WEB_HOOK.UNLOCK:
         await axios.post(config.SLACK_UNLOCK_HOOK, {text: msg});
         break;
+      case SLACK_WEB_HOOK.POST:
+        await axios.post(config.SLACK_POST_HOOK, {text: msg});
+        break
     }
   }
 }

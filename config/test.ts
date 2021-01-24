@@ -91,5 +91,6 @@ module.exports = {
   SLACK_DEPOSIT_HOOK: "https://hooks.slack.com/services/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",
   SLACK_SUB_HOOK: "https://hooks.slack.com/services/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",
   SLACK_TIP_HOOK: "https://hooks.slack.com/services/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",
-  SLACK_UNLOCK_HOOK: "https://hooks.slack.com/services/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"
+  SLACK_UNLOCK_HOOK: "https://hooks.slack.com/services/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",
+  SLACK_POST_HOOK: "https://hooks.slack.com/services/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"
 };

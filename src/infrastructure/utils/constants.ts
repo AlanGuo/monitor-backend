@@ -183,7 +183,8 @@ export enum SLACK_WEB_HOOK {
   DEPOSIT,
   SUB,
   TIP,
-  UNLOCK
+  UNLOCK,
+  POST
 }
 
 export enum PAYONEER_PAYEES_STATUS {
