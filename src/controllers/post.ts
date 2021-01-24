@@ -24,6 +24,7 @@ import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import {CheckPostPrice} from "@src/infrastructure/decorators/checkPostPrice";
 import {sendSlackWebHook} from "@src/infrastructure/slack";
+import {createBill} from "@src/infrastructure/bill";
 
 @Controller({prefix: "/post"})
 export default class PostsController {
@@ -378,7 +379,7 @@ export default class PostsController {
     const msg = {type: NotificationType.newPost, post: {_id: post._id, from: uuid}};
     await notificationProducer.publish(JSON.stringify(msg))
 
-    await sendSlackWebHook(SLACK_WEB_HOOK.POST, `[https://mfans.com/u/${uuid}] made a new post [https://mfans.com/post]/${post._id}`)
+    await sendSlackWebHook(SLACK_WEB_HOOK.POST, `[https://mfans.com/u/${uuid}] made a new post [https://mfans.com/post/${post._id}]`)
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }
 
@@ -546,15 +547,23 @@ export default class PostsController {
         );
         if (!tmp.lastErrorObject.updatedExisting) {
           user!.balance -= post.price;
-          await user!.save()
-          await BillModel.create([{
+          await user!.save();
+          await createBill({
             uuid: uuid,
             target: post.from,
             type: BillType.consume,
             amount: post.price,
             consumeType: ConsumeType.post,
             consumeId: tmp.value!._id
-          }], {session})
+          }, session);
+          // await BillModel.create([{
+          //   uuid: uuid,
+          //   target: post.from,
+          //   type: BillType.consume,
+          //   amount: post.price,
+          //   consumeType: ConsumeType.post,
+          //   consumeId: tmp.value!._id
+          // }], {session})
           await session.commitTransaction();
           session.endSession();
 

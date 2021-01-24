@@ -4,11 +4,11 @@ import {jsonResponse} from "@src/infrastructure/utils/helper";
 import {IRouterContext} from "koa-router";
 import orderModel, {IOrder} from "@src/models/order";
 import userModel from "@src/models/user";
-import BillModel from "@src/models/bill";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {BillType, OrderStatus, OrderType, SLACK_WEB_HOOK} from "@src/infrastructure/utils/constants";
 import {CheckPaypalDepositAmount} from "@src/infrastructure/decorators/checkPaypalDepositAmount";
 import {sendSlackWebHook} from "@src/infrastructure/slack";
+import {createBill} from "@src/infrastructure/bill";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const paypal = require("@paypal/checkout-server-sdk");
@@ -101,7 +101,9 @@ export default class PaypalController {
         balance: amount
       }
     }, {session});
-    await BillModel.create([{uuid: uuid, type: BillType.deposit, rechargeId: paypalOrderId, amount}], {session})
+
+    await createBill({uuid: uuid, type: BillType.deposit, rechargeId: paypalOrderId, amount}, session)
+    // await BillModel.create([{uuid: uuid, type: BillType.deposit, rechargeId: paypalOrderId, amount}], {session})
     await session.commitTransaction();
     session.endSession();
     await sendSlackWebHook(SLACK_WEB_HOOK.DEPOSIT, `用户[https://mfans.com/u/${uuid}]充值$${amount}成功`);

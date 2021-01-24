@@ -224,3 +224,5 @@ export const POST_PRICE_MIN = 0.5;
 export const POST_PRICE_MAX = 100;
 export const TIP_AMOUNT_MIN = 0.5;
 export const DEPOSIT_AMOUNT_MIN = 1;
+
+export const PLATFORM_COMMISSION_RATIO = 0.2

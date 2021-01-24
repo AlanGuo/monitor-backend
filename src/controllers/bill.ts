@@ -24,7 +24,7 @@ export default class BillController {
   async list(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const pagination = ctx.state.pagination as Pagination;
-    const fields = {_id: 1, type: 1, amount: 1, consumeType: 1, createdAt: 1, target: 1}
+    const fields = {_id: 1, type: 1, amount: 1, totalAmount: 1, consumeType: 1, createdAt: 1, target: 1}
     let match: any = {amount: {$ne: 0}}
     switch (ctx.query.type.toLowerCase()) {
       case BillType.consume:
@@ -45,7 +45,9 @@ export default class BillController {
     const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
     bill.forEach(item => {
       if (item.target === uuid) {
-        item.type = BillType.earn
+        item.type = BillType.earn;
+      } else {
+        item.amount = item.totalAmount;
       }
     });
     const total = await BillModel.countDocuments(match);
@@ -60,7 +62,7 @@ export default class BillController {
   async detail(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const id: string = ctx.params.id
-    const fields = {type: 1, amount: 1, consumeType: 1, createdAt: 1, rechargeId: 1, consumeId: 1, target: 1}
+    const fields = {type: 1, amount: 1, totalAmount: 1, consumeType: 1, createdAt: 1, rechargeId: 1, consumeId: 1, target: 1}
     if (!Types.ObjectId.isValid(id)) {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "id error"});
       return
@@ -94,6 +96,7 @@ export default class BillController {
               break;
           }
       }
+      info.amount= info.totalAmount;
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: info})
     } else {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "the bill does not belong to you"});

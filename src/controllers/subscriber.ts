@@ -22,6 +22,7 @@ import {notificationProducer} from "@src/services/producer/notificationProducer"
 import {messageProducer} from "@src/services/producer/messageProducer";
 import NotificationModel from "@src/models/notification";
 import {sendSlackWebHook} from "@src/infrastructure/slack";
+import {createBill} from "@src/infrastructure/bill";
 
 @Controller({prefix: "/subscriber"})
 export default class Subscriber {
@@ -96,15 +97,23 @@ export default class Subscriber {
             target,
             amount: targetUser.subPrice,
             price: targetUser.subPrice
-          }], {session})
-          await BillModel.create([{
+          }], {session});
+
+          await createBill({
             uuid: uuid,
             target,
             type: BillType.consume,
             amount: targetUser.subPrice,
             consumeType: ConsumeType.subscriber,
-            consumeId: payments[0]._id
-          }], {session})
+            consumeId: payments[0]._id}, session)
+          // await BillModel.create([{
+          //   uuid: uuid,
+          //   target,
+          //   type: BillType.consume,
+          //   amount: targetUser.subPrice,
+          //   consumeType: ConsumeType.subscriber,
+          //   consumeId: payments[0]._id
+          // }], {session})
           const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session});
           if (sub) {
             // TODO 自然月

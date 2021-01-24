@@ -25,6 +25,7 @@ import userModel from "@src/models/user";
 import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import {sendSlackWebHook} from "@src/infrastructure/slack";
+import {createBill} from "@src/infrastructure/bill";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -307,14 +308,22 @@ export default class UserController {
         if (!tmp.lastErrorObject.updatedExisting) {
           user!.balance -= msg.price;
           await user!.save();
-          await BillModel.create([{
+          await createBill({
             uuid: uuid,
             target: msg.from,
             type: BillType.consume,
             amount: msg.price,
             consumeType: ConsumeType.message,
             consumeId: tmp.value!._id
-          }], {session})
+          }, session);
+          // await BillModel.create([{
+          //   uuid: uuid,
+          //   target: msg.from,
+          //   type: BillType.consume,
+          //   amount: msg.price,
+          //   consumeType: ConsumeType.message,
+          //   consumeId: tmp.value!._id
+          // }], {session})
           await session.commitTransaction();
           session.endSession();
 
@@ -366,14 +375,22 @@ export default class UserController {
           price: userTo!.chatPrice,
           amount: userTo!.chatPrice
         }], {session});
-        await BillModel.create([{
+        await createBill({
           uuid: from,
           target: to,
           type: BillType.consume,
           amount: userTo!.chatPrice,
           consumeType: ConsumeType.talk,
           consumeId: payments[0]._id
-        }], {session})
+        }, session)
+        // await BillModel.create([{
+        //   uuid: from,
+        //   target: to,
+        //   type: BillType.consume,
+        //   amount: userTo!.chatPrice,
+        //   consumeType: ConsumeType.talk,
+        //   consumeId: payments[0]._id
+        // }], {session})
         await session.commitTransaction();
         session.endSession();
         await sendSlackWebHook(SLACK_WEB_HOOK.UNLOCK, `[https://mfans.com/u/${from}]解锁了与[https://mfans.com/u/${to}]的聊天，价格$${userTo?.chatPrice}`);

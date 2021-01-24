@@ -9,17 +9,21 @@ export interface IBill extends Document {
   uuid: number,
   type: BillType,
   amount: number,
+  commissionAmount: number,
+  totalAmount: number,
   target?: number,
   consumeType?: ConsumeType,
   consumeId?: Types.ObjectId,
   rechargeId?: string,
-  createdAt?: Date
+  createdAt?: Date,
 }
 
 const BillModel: Schema = new Schema({
   uuid: {type: Number, required},
   type: {type: BillType, required},
   amount: {type: Number, required},
+  commissionAmount: {type: Number, required, default: 0},
+  totalAmount: {type: Number, required},
   target: {type: Number, required: false, sparse},
   consumeType: {type: ConsumeType, required: false},
   consumeId: {type: Types.ObjectId, required: false},
