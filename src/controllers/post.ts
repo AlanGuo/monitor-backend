@@ -340,9 +340,7 @@ export default class PostsController {
       // 1. 付费过 可看
       // 2. 是自己 可看
       // 3. 是粉丝 post收费 不可看
-      console.log(item.payment.length, item.from, ctx.state.user.uuid, isFan, item.price)
-      console.log(item.payment.length > 0, item.from === ctx.state.user.uuid, (isFan ? item.price > 0 ? item.payment.length > 0 : false : false))
-      item.payment = item.payment.length > 0 || item.from === ctx.state.user.uuid || (isFan ? item.price > 0 ? item.payment.length > 0 : false : false);
+      item.payment = item.payment.length > 0 || item.from === ctx.state.user.uuid || (isFan ? item.price > 0 ? item.payment.length > 0 : true : false);
       item.media.forEach((media: { type: MEDIA_TYPE, fileName: string, [any: string]: any }) => {
         media.urls = getMediaUrl(media.type, media.fileName, item.payment, media.size);
         media.ready = true;
