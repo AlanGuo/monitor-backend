@@ -142,6 +142,7 @@ export enum DialogueStatus {
 export enum RESPONSE_CODE {
   NORMAL = 0,
   ERROR = 500,
+  NOT_FOUND = "not found",
   LOGIN_IN_ERR = "login in error",
   CAN_NOT_SUBSCRIBE_YOURSELF = "can not subscribe yourself",
   CAN_NOT_UNSUBSCRIBE_YOURSELF = "can not unsubscribe yourself",
@@ -150,7 +151,8 @@ export enum RESPONSE_CODE {
   USER_NAME_CANNOT_BE_THE_SAME = "user name can not be the same",
   MEDIA_NOT_FOUND = "media not found",
   MEDIA_CONVERT_JOB_FAILED = "media convert job failed",
-  MEDIA_UNDER_PROCESSING = "media is under processing"
+  MEDIA_UNDER_PROCESSING = "media is under processing",
+  NOT_SUBSCRIBING = "not subscribing"
 }
 
 export enum SUBSCRIBER_STATUS {
