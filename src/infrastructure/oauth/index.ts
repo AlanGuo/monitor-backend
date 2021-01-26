@@ -81,7 +81,7 @@ function addGoogleStrategy() {
         delete profile._json;
         delete profile._raw;
         const googleProfile: GoogleProfile = profile as GoogleProfile;
-        const invite = (req.query.state ?? "") as string
+        const invite = req.query.state ? isNaN(Number(req.query.state)) ? 0 : Number(req.query.state) : 0
         try {
           if (!req.user) {
             const user = await findOrCreateUser(OAUTH.GOOGLE, googleProfile, invite);
@@ -120,7 +120,7 @@ function addTwitterStrategy() {
   );
 }
 
-export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile, invite?: string): Promise<User> {
+export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile, invite?: number): Promise<User> {
   let filter;
   let update;
   switch (provider) {
@@ -128,13 +128,16 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
       filter = {google: profile.id};
       const emails = (profile as GoogleProfile).emails;
       const photos = (profile as GoogleProfile).photos;
+      // 二级邀请人
+      const preInvite = isNaN(Number(invite)) ? (await UserModel.findOne({uuid: Number(invite)}, {_id: 0, invite}))?.invite ?? 0 : 0
       update = {
         $setOnInsert: {google: profile.id}, $set: {
           "oauthProfile.google": profile,
           "email": emails ? (emails[0]?.value) : "",
           "avatar": photos ? (photos[0]?.value) : "",
           "displayName": profile.displayName,
-          invite: invite || ""
+          invite: invite || 0,
+          preInvite
         }
       };
       break;

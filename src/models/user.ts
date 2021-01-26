@@ -32,7 +32,8 @@ export interface IUser extends Document {
   withdrawTime: number;
   freezeWithdrawTime: number;
 
-  invite?: string
+  invite?: number,
+  preInvite?: number
 }
 
 const UserModel: Schema = new Schema({
@@ -68,7 +69,8 @@ const UserModel: Schema = new Schema({
   freezeWithdrawAmount: {type: Number, required, default: 0}, // 提现冻结中金额
   withdrawAmount: {type: Number, required, default: 0}, // 已提现金额
 
-  invite: {type: String, required: false} // 邀请人
+  invite: {type: Number, required: false}, // 邀请人
+  preInvite: {type: Number, required: false} // 二级邀请人
 }, {
   timestamps: true
 });
