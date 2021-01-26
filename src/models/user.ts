@@ -62,6 +62,12 @@ const UserModel: Schema = new Schema({
   withdrawTime: {type: Number, required, default: 0}, // 已完成提现的截止时间
   freezeWithdrawTime:  {type: Number, required, default: 0}, // 提现冻结中的截止时间
 
+  // 总收入 = 收入 + 提现冻结中 + 已提现
+  // 账期金额通过账单统计查询
+  incomeAmount: {type: Number, required, default: 0}, // 收入（可提现和账期）
+  freezeWithdrawAmount: {type: Number, required, default: 0}, // 提现冻结中金额
+  withdrawAmount: {type: Number, required, default: 0}, // 已提现金额
+
   invite: {type: String, required: false} // 邀请人
 }, {
   timestamps: true
