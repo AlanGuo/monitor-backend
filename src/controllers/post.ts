@@ -349,7 +349,7 @@ export default class PostsController {
     const total = await postModel.countDocuments(match);
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL,
-      data: {posts, total, page: pagination.page, size: pagination.size}
+      data: {posts, total, page: pagination.page, size: pagination.size, isFan}
     })
   }
 
