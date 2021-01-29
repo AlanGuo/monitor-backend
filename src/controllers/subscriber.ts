@@ -17,7 +17,6 @@ import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
-import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import {messageProducer} from "@src/services/producer/messageProducer";
 import NotificationModel from "@src/models/notification";
@@ -88,73 +87,77 @@ export default class Subscriber {
       session.startTransaction();
       const targetUser = await UserModel.findOne({uuid: target}, {subPrice: 1}, {session});
       const user = await UserModel.findOne({uuid}, {balance: 1}, {session});
-      if (targetUser && user) {
-        if (user.balance >= targetUser.subPrice) {
-          user.balance -= targetUser.subPrice
-          await user.save();
-          const payments = await SubscriberPaymentModel.create([{
-            uuid,
-            target,
-            amount: targetUser.subPrice,
-            price: targetUser.subPrice
-          }], {session});
-
-          await createBill({
-            uuid: uuid,
-            target,
-            type: BillType.consume,
-            amount: targetUser.subPrice,
-            consumeType: ConsumeType.subscriber,
-            consumeId: payments[0]._id}, session)
-          // await BillModel.create([{
-          //   uuid: uuid,
-          //   target,
-          //   type: BillType.consume,
-          //   amount: targetUser.subPrice,
-          //   consumeType: ConsumeType.subscriber,
-          //   consumeId: payments[0]._id
-          // }], {session})
-          const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session});
-          if (sub) {
-            // TODO 自然月
-            sub.expireAt = sub.expireAt > Date.now() ? sub.expireAt : Date.now();
-            sub.expireAt += 1000 * 60 * 60 * 24 * 30;
-            await sub.save();
-          } else {
-            // TODO 自然月
-            const createAt = Date.now();
-            await SubscriberModel.create([{
+      try {
+        if (targetUser && user) {
+          if (user.balance >= targetUser.subPrice) {
+            user.balance -= targetUser.subPrice
+            await user.save();
+            const payments = await SubscriberPaymentModel.create([{
               uuid,
               target,
-              createAt,
-              expireAt: createAt + 1000 * 60 * 60 * 24 * 30
+              amount: targetUser.subPrice,
+              price: targetUser.subPrice
             }], {session});
+
+            await createBill({
+              uuid: uuid,
+              target,
+              type: BillType.consume,
+              amount: targetUser.subPrice,
+              consumeType: ConsumeType.subscriber,
+              consumeId: payments[0]._id}, session)
+
+            const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session});
+            if (sub) {
+              // TODO 自然月
+              if (sub.expireAt > Date.now()) {
+                ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "subscription has not expired"})
+                return
+              } else {
+                sub.expireAt =  Date.now();
+                sub.expireAt += 1000 * 60 * 60 * 24 * 30;
+                await sub.save();
+              }
+            } else {
+              // TODO 自然月
+              const createAt = Date.now();
+              await SubscriberModel.create([{
+                uuid,
+                target,
+                createAt,
+                expireAt: createAt + 1000 * 60 * 60 * 24 * 30
+              }], {session});
+            }
+            await session.commitTransaction();
+            session.endSession();
+
+            const msg = {type: NotificationType.sub, uuid: target, from: uuid};
+            await notificationProducer.publish(JSON.stringify(msg));
+
+            // 感谢订阅
+            await messageProducer.publish(JSON.stringify({
+              from: target,
+              to: uuid,
+              price: 0,
+              content: "Thank you for your subscription!",
+              media: []
+            }));
+            await sendSlackWebHook(SLACK_WEB_HOOK.SUB, `[https://mfans.com/u/${uuid}]订阅了[https://mfans.com/u/${target}],订阅价格$${targetUser.subPrice}`);
+            ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
+          } else {
+            ctx.body = jsonResponse({code: RESPONSE_CODE.BALANCE_NOT_ENOUGH});
           }
-          await session.commitTransaction();
-          session.endSession();
-
-          const msg = {type: NotificationType.sub, uuid: target, from: uuid};
-          await notificationProducer.publish(JSON.stringify(msg));
-
-          // 感谢订阅
-          await messageProducer.publish(JSON.stringify({
-            from: target,
-            to: uuid,
-            price: 0,
-            content: "Thank you for your subscription!",
-            media: []
-          }));
-          await sendSlackWebHook(SLACK_WEB_HOOK.SUB, `[https://mfans.com/u/${uuid}]订阅了[https://mfans.com/u/${target}],订阅价格$${targetUser.subPrice}`);
-          ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
         } else {
-          ctx.body = jsonResponse({code: RESPONSE_CODE.BALANCE_NOT_ENOUGH});
+          ctx.body = jsonResponse({code: RESPONSE_CODE.USER_NOT_EXISTS});
         }
-      } else {
-        ctx.body = jsonResponse({code: RESPONSE_CODE.USER_NOT_EXISTS});
-      }
-      if (session.inTransaction()) {
-        await session.abortTransaction();
-        session.endSession();
+      } catch (e){
+
+      } finally
+      {
+        if (session.inTransaction()) {
+          await session.abortTransaction();
+          session.endSession();
+        }
       }
     }
   }
