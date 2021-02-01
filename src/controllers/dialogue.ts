@@ -22,10 +22,10 @@ import talkPaymentModel from "@src/models/talkPayment";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {Types} from "mongoose";
 import userModel from "@src/models/user";
-import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import {sendSlackWebHook} from "@src/infrastructure/slack";
 import {createBill} from "@src/infrastructure/bill";
+import BigNumber from "bignumber.js";
 
 @Controller({prefix: "/dialogue"})
 export default class UserController {
@@ -312,18 +312,10 @@ export default class UserController {
             uuid: uuid,
             target: msg.from,
             type: BillType.consume,
-            amount: msg.price,
+            amount: new BigNumber(msg.price),
             consumeType: ConsumeType.message,
             consumeId: tmp.value!._id
           }, session);
-          // await BillModel.create([{
-          //   uuid: uuid,
-          //   target: msg.from,
-          //   type: BillType.consume,
-          //   amount: msg.price,
-          //   consumeType: ConsumeType.message,
-          //   consumeId: tmp.value!._id
-          // }], {session})
           await session.commitTransaction();
           session.endSession();
 
@@ -379,7 +371,7 @@ export default class UserController {
           uuid: from,
           target: to,
           type: BillType.consume,
-          amount: userTo!.chatPrice,
+          amount: new BigNumber(userTo!.chatPrice),
           consumeType: ConsumeType.talk,
           consumeId: payments[0]._id
         }, session)

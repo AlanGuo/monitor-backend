@@ -9,6 +9,7 @@ import {BillType, OrderStatus, OrderType, SLACK_WEB_HOOK} from "@src/infrastruct
 import {CheckPaypalDepositAmount} from "@src/infrastructure/decorators/checkPaypalDepositAmount";
 import {sendSlackWebHook} from "@src/infrastructure/slack";
 import {createBill} from "@src/infrastructure/bill";
+import BigNumber from "bignumber.js";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const paypal = require("@paypal/checkout-server-sdk");
@@ -80,7 +81,7 @@ export default class PaypalController {
 
     //执行订单
     const capture = await client.execute(request);
-    const amount = Number(capture.result.purchase_units[0].payments.captures[0].amount.value);
+    const amount = new BigNumber(capture.result.purchase_units[0].payments.captures[0].amount.value);
 
     const updateObj = {
       ip: ctx.request.headers["x-real-ip"],
@@ -98,12 +99,11 @@ export default class PaypalController {
       uuid
     }, {
       $inc: {
-        balance: amount
+        balance: amount.toNumber()
       }
     }, {session});
 
     await createBill({uuid: uuid, type: BillType.deposit, rechargeId: paypalOrderId, amount}, session)
-    // await BillModel.create([{uuid: uuid, type: BillType.deposit, rechargeId: paypalOrderId, amount}], {session})
     await session.commitTransaction();
     session.endSession();
     await sendSlackWebHook(SLACK_WEB_HOOK.DEPOSIT, `用户[https://mfans.com/u/${uuid}]充值$${amount}成功`);

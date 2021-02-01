@@ -1,19 +1,18 @@
-import {Controller, GET, POST, PUT} from "@src/infrastructure/decorators/koa";
+import {Controller, GET, PUT} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
-import UserModel, {IUser} from "../models/user";
+import UserModel from "../models/user";
 import BillModel from "../models/bill";
-import SubscriberModel, {Subscriber} from "../models/subscriber";
-import {checkPayoneerUserStatus, jsonResponse} from "@src/infrastructure/utils";
+import SubscriberModel from "../models/subscriber";
+import {jsonResponse} from "@src/infrastructure/utils";
 import {FROZEN_INCOME_TIME, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {getOnlineUser} from "@src/infrastructure/redis";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
-import {userChatPriceProducer} from "@src/services/producer/userChatPriceProducer";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import { createUserWatermarker } from "@src/infrastructure/utils/watermarker";
 import {CheckChatPrice} from "@src/infrastructure/decorators/checkChatPrice";
-import {CheckPostPrice} from "@src/infrastructure/decorators/checkPostPrice";
 import {CheckSubPrice} from "@src/infrastructure/decorators/checkSubPrice";
+import BigNumber from "bignumber.js";
 
 @Controller({prefix: "/user"})
 export default class UserController {
@@ -58,18 +57,18 @@ export default class UserController {
         const now = Date.now();
         const freezeTime = now - FROZEN_INCOME_TIME;
         const bill = await BillModel.find({target: uuid}, {_id: 0, amount: 1, createdAt: 1});
-        rep.income = {total: 0, balance: 0, freezeBalance: 0, withdraw: 0, freezeWithdraw: 0};
+        rep.income = {total: new BigNumber(0), balance: new BigNumber(0), freezeBalance: new BigNumber(0), withdraw: new BigNumber(0), freezeWithdraw: new BigNumber(0)};
         bill.forEach(item => {
           const time = new Date(item.createdAt!).getTime();
-          rep.income.total += item.amount;
+          rep.income.total = rep.income.total.plus(item.amount);
           if (time > freezeTime) {
-            rep.income.freezeBalance += item.amount;
+            rep.income.freezeBalance = rep.income.freezeBalance.plus(item.amount);
           }
           if (time > user.withdrawTime && time <= user.freezeWithdrawTime) {
-            rep.income.freezeWithdraw += item.amount;
+            rep.income.freezeWithdraw = rep.income.freezeWithdraw.plus(item.amount);
           }
           if (time <= user.withdrawTime) {
-            rep.income.withdraw += item.amount;
+            rep.income.withdraw = rep.income.withdraw.plus(item.amount);
           }
         })
         rep.income.balance = rep.income.total - rep.income.withdraw - rep.income.freezeWithdraw - rep.income.freezeBalance;

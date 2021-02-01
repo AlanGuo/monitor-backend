@@ -24,7 +24,7 @@ export default class BillController {
   async list(ctx: IRouterContext) {
     const uuid = ctx.state.user.uuid;
     const pagination = ctx.state.pagination as Pagination;
-    const fields = {_id: 1, type: 1, amount: 1, totalAmount: 1, consumeType: 1, createdAt: 1, target: 1}
+    const fields = {_id: 1, type: 1, amount: 1, totalAmount: 1, consumeType: 1, createdAt: 1}
     let match: any = {amount: {$ne: 0}}
     switch (ctx.query.type.toLowerCase()) {
       case BillType.consume:
@@ -36,17 +36,17 @@ export default class BillController {
         match.uuid = uuid
         break;
       case BillType.earn:
-        match.type = BillType.consume;
-        match.target = uuid;
+        match.type = BillType.earn;
+        match.uuid = uuid;
         break;
       default:
         match = {$or: [{target: uuid}, {uuid}], amount: {$ne: 0}};
     }
+    console.log(match)
     const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
+    console.log(bill)
     bill.forEach(item => {
-      if (item.target === uuid) {
-        item.type = BillType.earn;
-      } else {
+      if (item.type !== BillType.earn) {
         item.amount = item.totalAmount;
       }
     });
@@ -75,9 +75,7 @@ export default class BillController {
           info = {...bill.toJSON(), detail: await OrderModel.findOne({orderId: bill.rechargeId})};
           break;
         case BillType.consume:
-          if (bill.target) {
-            bill.type = BillType.earn;
-          }
+        case BillType.earn:
           switch (bill.consumeType) {
             case ConsumeType.message:
               info = {...bill.toJSON(), detail: await MessagePaymentModel.findOne({_id: bill.consumeId})};

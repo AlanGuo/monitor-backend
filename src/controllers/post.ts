@@ -20,11 +20,11 @@ import {Pagination} from "@src/interface";
 import {getMediaFileName, getMediaUrl} from "@src/infrastructure/amazon/mediaConvert";
 import {Types} from "mongoose";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
-import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import {CheckPostPrice} from "@src/infrastructure/decorators/checkPostPrice";
 import {sendSlackWebHook} from "@src/infrastructure/slack";
 import {createBill} from "@src/infrastructure/bill";
+import BigNumber from "bignumber.js";
 
 @Controller({prefix: "/post"})
 export default class PostsController {
@@ -558,18 +558,10 @@ export default class PostsController {
             uuid: uuid,
             target: post.from,
             type: BillType.consume,
-            amount: post.price,
+            amount: new BigNumber(post.price),
             consumeType: ConsumeType.post,
             consumeId: tmp.value!._id
           }, session);
-          // await BillModel.create([{
-          //   uuid: uuid,
-          //   target: post.from,
-          //   type: BillType.consume,
-          //   amount: post.price,
-          //   consumeType: ConsumeType.post,
-          //   consumeId: tmp.value!._id
-          // }], {session})
           await session.commitTransaction();
           session.endSession();
 

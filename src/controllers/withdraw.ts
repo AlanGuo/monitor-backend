@@ -14,6 +14,7 @@ import {
 import {Types} from "mongoose";
 import {PaginationDec} from "@src/infrastructure/decorators/pagination";
 import {Pagination} from "@src/interface";
+import BigNumber from "bignumber.js";
 
 @Controller({prefix: "/withdraw"})
 export default class Withdraw {
@@ -44,8 +45,8 @@ export default class Withdraw {
         target: uuid,
         createdAt: {$gt: new Date(user.freezeWithdrawTime), $lte: new Date(freezeTime)}
       }, {_id: 0, amount: 1}, {session});
-      const amount = bills.map(item => item.amount).reduce((pre, cur) => pre + cur, 0)
-      if (amount >= WITHDRAW_MIN_AMOUNT) {
+      const amount = bills.map(item => item.amount).reduce((pre, cur) => pre.plus(cur), new BigNumber(0))
+      if (amount.isGreaterThanOrEqualTo(WITHDRAW_MIN_AMOUNT)) {
         const beforeProcessingApply = await WithdrawApplyModel.find({
           uuid,
           status: WITHDRAW_APPLY_STATUS.PROCESSING
@@ -62,7 +63,7 @@ export default class Withdraw {
         }
         await WithdrawApplyModel.create([{
           uuid,
-          amount: amount + beforeAmount,
+          amount: amount.plus(beforeAmount).toNumber(),
           intervalStart: beforeIntervalStart === 0 ? user.freezeWithdrawTime : beforeIntervalStart,
           intervalEnd: now,
           status: WITHDRAW_APPLY_STATUS.PROCESSING

@@ -1,5 +1,6 @@
 import {Schema, model, Types, Document} from "mongoose";
 import {BillType, ConsumeType} from "@src/infrastructure/utils/constants";
+import BigNumber from "bignumber.js";
 
 const required = true;
 const sparse = true;
@@ -8,9 +9,9 @@ const sparse = true;
 export interface IBill extends Document {
   uuid: number,
   type: BillType,
-  amount: number,
-  commissionAmount: number,
-  totalAmount: number,
+  amount: BigNumber,
+  commissionAmount: BigNumber,
+  totalAmount: BigNumber,
   target?: number,
   consumeType?: ConsumeType,
   consumeId?: Types.ObjectId,
@@ -21,9 +22,9 @@ export interface IBill extends Document {
 const BillModel: Schema = new Schema({
   uuid: {type: Number, required},
   type: {type: BillType, required},
-  amount: {type: Number, required},
-  commissionAmount: {type: Number, required, default: 0},
-  totalAmount: {type: Number, required},
+  amount: {type: String, required},
+  commissionAmount: {type: String, required, default: 0},
+  totalAmount: {type: String, required},
   target: {type: Number, required: false, sparse},
   consumeType: {type: ConsumeType, required: false},
   consumeId: {type: Types.ObjectId, required: false},

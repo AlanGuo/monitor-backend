@@ -1,11 +1,12 @@
 import {BillType, ConsumeType, PLATFORM_COMMISSION_RATIO} from "@src/infrastructure/utils/constants";
 import {ClientSession, Types} from "mongoose";
 import BillModel from "@src/models/bill";
+import BigNumber from "bignumber.js";
 
 export async function createBill(
   billData: {
     uuid: number,
-    amount: number,
+    amount: BigNumber,
     type: BillType,
     target?: number,
     consumeType?: ConsumeType,
@@ -22,22 +23,38 @@ export async function createBill(
           type: billData.type,
           rechargeId: billData.rechargeId,
           amount: billData.amount,
-          commissionAmount: 0,
-          totalAmount: billData.amount
+          commissionAmount: "0",
+          totalAmount: new BigNumber(billData.amount).toFixed(2)
         }
         ], {session})
       break;
     case BillType.consume:
-      await BillModel.create([{
+      const amount = new BigNumber(billData.amount).multipliedBy(new BigNumber(1 - PLATFORM_COMMISSION_RATIO));
+      const commissionAmount = new BigNumber(billData.amount).multipliedBy(PLATFORM_COMMISSION_RATIO);
+      await BillModel.create([
+        // consume
+        {
         uuid: billData.uuid,
         target: billData.target,
-        type: billData.type,
-        amount: billData.amount * (1 - PLATFORM_COMMISSION_RATIO),
-        commissionAmount: billData.amount * PLATFORM_COMMISSION_RATIO,
+        type: BillType.consume,
+        amount,
+        commissionAmount,
         totalAmount: billData.amount,
         consumeType: billData.consumeType,
         consumeId: billData.consumeId
-      }], {session})
+        },
+        // earn
+        {
+          uuid: billData.target!,
+          type: BillType.earn,
+          amount,
+          commissionAmount,
+          totalAmount: billData.amount,
+          consumeType: billData.consumeType,
+          consumeId: billData.consumeId
+        }
+      ], {session});
+
       break
   }
 }

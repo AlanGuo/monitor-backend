@@ -22,6 +22,7 @@ import {messageProducer} from "@src/services/producer/messageProducer";
 import NotificationModel from "@src/models/notification";
 import {sendSlackWebHook} from "@src/infrastructure/slack";
 import {createBill} from "@src/infrastructure/bill";
+import BigNumber from "bignumber.js";
 
 @Controller({prefix: "/subscriber"})
 export default class Subscriber {
@@ -103,7 +104,7 @@ export default class Subscriber {
               uuid: uuid,
               target,
               type: BillType.consume,
-              amount: targetUser.subPrice,
+              amount: new BigNumber(targetUser.subPrice),
               consumeType: ConsumeType.subscriber,
               consumeId: payments[0]._id}, session)
 
