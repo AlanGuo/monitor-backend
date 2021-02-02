@@ -106,7 +106,8 @@ export default class Subscriber {
               type: BillType.consume,
               amount: new BigNumber(targetUser.subPrice),
               consumeType: ConsumeType.subscriber,
-              consumeId: payments[0]._id}, session)
+              consumeId: payments[0]._id
+            }, session)
 
             const sub = await SubscriberModel.findOne({uuid, target}, {expireAt: 1}, {session});
             if (sub) {
@@ -115,7 +116,7 @@ export default class Subscriber {
                 ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "subscription has not expired"})
                 return
               } else {
-                sub.expireAt =  Date.now();
+                sub.expireAt = Date.now();
                 sub.expireAt += 1000 * 60 * 60 * 24 * 30;
                 await sub.save();
               }
@@ -151,10 +152,9 @@ export default class Subscriber {
         } else {
           ctx.body = jsonResponse({code: RESPONSE_CODE.USER_NOT_EXISTS});
         }
-      } catch (e){
-
-      } finally
-      {
+      } catch (e) {
+        console.error(e)
+      } finally {
         if (session.inTransaction()) {
           await session.abortTransaction();
           session.endSession();
@@ -350,7 +350,7 @@ export default class Subscriber {
     await SubscriberModel.updateOne({uuid, target}, {$set: {reBill: flag ?? true}});
     const notifyId = ctx.request.body.notifyId;
     if (notifyId) {
-      await NotificationModel.updateOne({_id:notifyId, uuid}, {$set: {status: NotificationStatus.read}});
+      await NotificationModel.updateOne({_id: notifyId, uuid}, {$set: {status: NotificationStatus.read}});
     }
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
   }

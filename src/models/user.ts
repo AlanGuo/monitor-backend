@@ -68,6 +68,7 @@ const UserModel: Schema = new Schema({
   incomeAmount: {type: Number, required, default: 0}, // 收入（可提现和账期）
   freezeWithdrawAmount: {type: Number, required, default: 0}, // 提现冻结中金额
   withdrawAmount: {type: Number, required, default: 0}, // 已提现金额
+  inviteAmount: {type: Number, required, default: 0}, // 邀请收入
 
   invite: {type: Number, required: false}, // 邀请人
   preInvite: {type: Number, required: false} // 二级邀请人

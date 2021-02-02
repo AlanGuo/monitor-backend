@@ -3,12 +3,13 @@ import {Strategy as FacebookStrategy} from "passport-facebook"
 import {OAuth2Strategy as GoogleStrategy} from "passport-google-oauth"
 import {Strategy as TwitterStrategy} from "passport-twitter"
 import UserModel from "../../models/user";
+import InviteModel from "../../models/invite";
 import passport from "koa-passport"
 import {OAUTH} from "../utils/constants"
 import {FaceBookProfile, GoogleProfile, User} from "@src/interface";
 import {getUserSequence} from "../utils/sequence";
 import {generateToken} from "@src/infrastructure/utils/auth";
-import { createUserWatermarker } from "../utils/watermarker";
+import {createUserWatermarker} from "../utils/watermarker";
 
 export function loaderPassport(oauthList: OAUTH[]) {
 
@@ -123,20 +124,32 @@ function addTwitterStrategy() {
 export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile | FaceBookProfile, invite?: number): Promise<User> {
   let filter;
   let update;
+
+  let preInvite = undefined
+  // 二级邀请人
+  if (!isNaN(Number(invite))) {
+    const inviteUser = await UserModel.findOne({uuid: Number(invite)}, {_id: 0, invite: 1, uuid: 1});
+    if (inviteUser) {
+      preInvite = inviteUser.invite;
+    } else {
+      invite = undefined
+    }
+  } else {
+    invite = undefined;
+  }
+
   switch (provider) {
     case OAUTH.GOOGLE:
       filter = {google: profile.id};
       const emails = (profile as GoogleProfile).emails;
       const photos = (profile as GoogleProfile).photos;
-      // 二级邀请人
-      const preInvite = isNaN(Number(invite)) ? (await UserModel.findOne({uuid: Number(invite)}, {_id: 0, invite}))?.invite ?? 0 : 0
       update = {
         $setOnInsert: {google: profile.id}, $set: {
           "oauthProfile.google": profile,
           "email": emails ? (emails[0]?.value) : "",
           "avatar": photos ? (photos[0]?.value) : "",
           "displayName": profile.displayName,
-          invite: invite || 0,
+          invite,
           preInvite
         }
       };
@@ -158,6 +171,15 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
       tmp.value.uuid = await getUserSequence();
       await createUserWatermarker(tmp.value);
       await tmp.value.save()
+      // 邀请关系
+      if (invite) {
+        await InviteModel.findOneAndUpdate({uuid: tmp.value.uuid}, {
+          $setOnInsert: {
+            uuid: tmp.value.uuid,
+            inviteUser: invite
+          }
+        }, {new: true, upsert: true})
+      }
     }
     return tmp.value as User
   } else {
