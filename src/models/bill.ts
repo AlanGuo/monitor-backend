@@ -17,6 +17,7 @@ export interface IBill extends Document {
   consumeId?: Types.ObjectId,
   rechargeId?: string,
   createdAt?: Date,
+  from?: number
 }
 
 const BillModel: Schema = new Schema({
@@ -28,7 +29,8 @@ const BillModel: Schema = new Schema({
   target: {type: Number, required: false, sparse},
   consumeType: {type: ConsumeType, required: false},
   consumeId: {type: Types.ObjectId, required: false},
-  rechargeId: {type: String, required: false}
+  rechargeId: {type: String, required: false},
+  from: {type: Number, required: false} // type=invite 来自谁
 }, {
   timestamps: true
 });

@@ -42,9 +42,7 @@ export default class BillController {
       default:
         match = {$or: [{target: uuid}, {uuid}], amount: {$ne: 0}};
     }
-    console.log(match)
     const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
-    console.log(bill)
     bill.forEach(item => {
       if (item.type !== BillType.earn) {
         item.amount = item.totalAmount;

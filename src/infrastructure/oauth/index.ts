@@ -173,13 +173,23 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
       await tmp.value.save()
       // 邀请关系
       if (invite) {
-        await InviteModel.findOneAndUpdate({uuid: tmp.value.uuid}, {
+        await InviteModel.findOneAndUpdate({uuid: tmp.value.uuid, level: 1}, {
           $setOnInsert: {
             uuid: tmp.value.uuid,
-            inviteUser: invite
+            inviteUser: invite,
+            level: 1
           }
         }, {new: true, upsert: true})
       }
+    if (preInvite) {
+      await InviteModel.findOneAndUpdate({uuid: tmp.value.uuid, level: 2}, {
+        $setOnInsert: {
+          uuid: tmp.value.uuid,
+          inviteUser: preInvite,
+          level: 2
+        }
+      }, {new: true, upsert: true})
+    }
     }
     return tmp.value as User
   } else {

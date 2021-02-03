@@ -57,7 +57,8 @@ export enum OrderType {
 export enum BillType {
   deposit = "deposit",
   consume = "consume",
-  earn = "earn"
+  earn = "earn",
+  invite = "invite"
 }
 
 export enum ConsumeType {
@@ -228,3 +229,5 @@ export const TIP_AMOUNT_MIN = 0.5;
 export const DEPOSIT_AMOUNT_MIN = 1;
 
 export const PLATFORM_COMMISSION_RATIO = 0.2
+export const LEVEL1_INVITE_COMMISSION_RATIO = 0.04
+export const LEVEL2_INVITE_COMMISSION_RATIO = 0.01
