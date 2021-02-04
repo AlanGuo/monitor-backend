@@ -65,7 +65,7 @@ export default class BillController {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "id error"});
       return
     }
-    const bill = await BillModel.findOne({_id: Types.ObjectId(id), $or: [{uuid}, {target: uuid}]}, fields);
+    const bill = await BillModel.findOne({_id: Types.ObjectId(id), target: uuid}, fields);
     let info: any;
     if (bill) {
       switch (bill.type) {
