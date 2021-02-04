@@ -36,18 +36,14 @@ export default class BillController {
         match.uuid = uuid
         break;
       case BillType.earn:
-        match.type = BillType.earn;
+        match.type = {$in: [BillType.earn, BillType.invite]};
         match.uuid = uuid;
         break;
       default:
         match = {uuid, amount: {$ne: 0}};
     }
     const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
-    bill.forEach(item => {
-      if (item.type !== BillType.earn) {
-        item.amount = item.totalAmount;
-      }
-    });
+
     const total = await BillModel.countDocuments(match);
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL,
@@ -65,7 +61,7 @@ export default class BillController {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "id error"});
       return
     }
-    const bill = await BillModel.findOne({_id: Types.ObjectId(id), target: uuid}, fields);
+    const bill = await BillModel.findOne({_id: Types.ObjectId(id)}, fields);
     let info: any;
     if (bill) {
       switch (bill.type) {
@@ -74,6 +70,7 @@ export default class BillController {
           break;
         case BillType.consume:
         case BillType.earn:
+        case BillType.invite:
           switch (bill.consumeType) {
             case ConsumeType.message:
               info = {...bill.toJSON(), detail: await MessagePaymentModel.findOne({_id: bill.consumeId})};
@@ -92,7 +89,6 @@ export default class BillController {
               break;
           }
       }
-      info.amount= info.totalAmount;
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: info})
     } else {
       ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "the bill does not belong to you"});
