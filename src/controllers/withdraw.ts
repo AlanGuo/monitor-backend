@@ -37,52 +37,59 @@ export default class Withdraw {
     const userFields = {
       broadcaster: 1,
       freezeWithdrawTime: 1,
-      withdrawTime: 1
+      withdrawTime: 1,
+      incomeAmount: 1,
+      freezeWithdrawAmount: 1
     }
-    const user = await UserModel.findOne({uuid}, userFields, {session})
-    if (user?.broadcaster) {
-      const bills = await BillModel.find({
-        target: uuid,
-        createdAt: {$gt: new Date(user.freezeWithdrawTime), $lte: new Date(freezeTime)}
-      }, {_id: 0, amount: 1}, {session});
-      const amount = bills.map(item => item.amount).reduce((pre, cur) => pre.plus(cur), new BigNumber(0))
-      if (amount.isGreaterThanOrEqualTo(WITHDRAW_MIN_AMOUNT)) {
-        const beforeProcessingApply = await WithdrawApplyModel.find({
-          uuid,
-          status: WITHDRAW_APPLY_STATUS.PROCESSING
-        }, {_id: 0, amount: 1, intervalStart: 1}, {session});
-        let beforeAmount = 0;
-        let beforeIntervalStart = 0;
-        if (beforeProcessingApply.length > 0) {
-          // cancel beforeApply
-          beforeAmount = beforeProcessingApply.map(item => {
-            beforeIntervalStart = beforeIntervalStart === 0 ? item.intervalStart : item.intervalStart < beforeIntervalStart ? item.intervalStart : beforeIntervalStart
-            return item.amount;
-          }).reduce((pre, cur) => pre + cur, 0);
-          await WithdrawApplyModel.update({uuid, status: WITHDRAW_APPLY_STATUS.PROCESSING}, {$set: {status: WITHDRAW_APPLY_STATUS.CANCELED}})
+    const user = await UserModel.findOne({uuid}, userFields, {session});
+    try {
+      if (user?.broadcaster) {
+        const bills = await BillModel.find({
+          target: uuid,
+          createdAt: {$gt: new Date(user.freezeWithdrawTime), $lte: new Date(freezeTime)}
+        }, {_id: 0, amount: 1}, {session});
+        const amount = bills.map(item => item.amount).reduce((pre, cur) => pre.plus(cur), new BigNumber(0))
+        if (amount.isGreaterThanOrEqualTo(WITHDRAW_MIN_AMOUNT)) {
+          const beforeProcessingApply = await WithdrawApplyModel.find({
+            uuid,
+            status: WITHDRAW_APPLY_STATUS.PROCESSING
+          }, {_id: 0, amount: 1, intervalStart: 1}, {session});
+          let beforeAmount = 0;
+          let beforeIntervalStart = 0;
+          if (beforeProcessingApply.length > 0) {
+            // cancel beforeApply
+            beforeAmount = beforeProcessingApply.map(item => {
+              beforeIntervalStart = beforeIntervalStart === 0 ? item.intervalStart : item.intervalStart < beforeIntervalStart ? item.intervalStart : beforeIntervalStart
+              return item.amount;
+            }).reduce((pre, cur) => pre + cur, 0);
+            await WithdrawApplyModel.update({uuid, status: WITHDRAW_APPLY_STATUS.PROCESSING}, {$set: {status: WITHDRAW_APPLY_STATUS.CANCELED}})
+          }
+          await WithdrawApplyModel.create([{
+            uuid,
+            amount: amount.plus(beforeAmount).toNumber(),
+            intervalStart: beforeIntervalStart === 0 ? user.freezeWithdrawTime : beforeIntervalStart,
+            intervalEnd: now,
+            status: WITHDRAW_APPLY_STATUS.PROCESSING
+          }], {session});
+          user.freezeWithdrawTime = freezeTime;
+          await user.save();
+          await session.commitTransaction();
+          session.endSession();
+          ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
+          return
+        } else {
+          ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: `remaining income less than $${WITHDRAW_MIN_AMOUNT}`});
         }
-        await WithdrawApplyModel.create([{
-          uuid,
-          amount: amount.plus(beforeAmount).toNumber(),
-          intervalStart: beforeIntervalStart === 0 ? user.freezeWithdrawTime : beforeIntervalStart,
-          intervalEnd: now,
-          status: WITHDRAW_APPLY_STATUS.PROCESSING
-        }], {session});
-        user.freezeWithdrawTime = freezeTime;
-        await user.save();
-        await session.commitTransaction();
-        session.endSession();
-        ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
-        return
       } else {
-        ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: `remaining income less than $${WITHDRAW_MIN_AMOUNT}`});
+        ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "user is not a broadcaster"});
       }
-    } else {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.ERROR, msg: "user is not a broadcaster"});
-    }
-    if (session.inTransaction()) {
-      await session.abortTransaction();
-      session.endSession();
+    } catch (e) {
+      console.error(e)
+    } finally {
+      if (session.inTransaction()) {
+        await session.abortTransaction();
+        session.endSession();
+      }
     }
   }
 

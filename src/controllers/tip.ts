@@ -12,7 +12,6 @@ import {
 import PostModel from "@src/models/post";
 import UserModel from "@src/models/user";
 import TipPaymentModel from "@src/models/tipPayment";
-import BillModel from "@src/models/bill";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
 import {CheckTipAmount} from "@src/infrastructure/decorators/checkTipAmount";
 import {sendSlackWebHook} from "@src/infrastructure/slack";
@@ -64,14 +63,6 @@ export default class TipController {
           consumeType: ConsumeType.tip,
           consumeId: payment._id
         }, session)
-        // await BillModel.create([{
-        //   uuid,
-        //   target,
-        //   type: BillType.consume,
-        //   amount,
-        //   consumeType: ConsumeType.tip,
-        //   consumeId: payment._id
-        // }], {session});
         await session.commitTransaction();
         session.endSession();
         const msg = {type: postId ? NotificationType.postTip : NotificationType.tip, uuid: target, from: uuid, postId, amount};

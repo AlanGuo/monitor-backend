@@ -49,6 +49,8 @@ export async function createBill(
       switch (level) {
         case 0:
           commissionAmount = commissionAmount.multipliedBy(PLATFORM_COMMISSION_RATIO);
+          targetUser!.incomeAmount = earnAmount.plus(targetUser!.incomeAmount);
+          await targetUser!.save();
           break;
         case 1:
           level1Amount = level1Amount.plus(level2Amount);
@@ -65,9 +67,22 @@ export async function createBill(
             consumeId: billData.consumeId
           });
           // update invite
+          targetUser!.incomeAmount = earnAmount.plus(targetUser!.incomeAmount);
+          await targetUser!.save();
+          inviteUser!.incomeAmount = level1Amount.plus(inviteUser!.incomeAmount);
+          inviteUser!.inviteAmount = level1Amount.plus(inviteUser!.inviteAmount);
+          await inviteUser!.save()
           break;
         case 2:
           commissionAmount = commissionAmount.minus(level1Amount).minus(level2Amount);
+          targetUser!.incomeAmount = earnAmount.plus(targetUser!.incomeAmount);
+          await targetUser!.save();
+          inviteUser!.incomeAmount = level1Amount.plus(inviteUser!.incomeAmount);
+          inviteUser!.inviteAmount = level1Amount.plus(inviteUser!.inviteAmount);
+          await inviteUser!.save()
+          preInviteUser!.incomeAmount = level2Amount.plus(preInviteUser!.incomeAmount);
+          preInviteUser!.inviteAmount = level2Amount.plus(preInviteUser!.inviteAmount);
+          await preInviteUser!.save()
           // invite bill
           bills.push({
             uuid: inviteUser!.uuid,
@@ -114,7 +129,6 @@ export async function createBill(
         consumeId: billData.consumeId
       });
       await BillModel.create(bills, {session});
-
       break
   }
 }
@@ -127,7 +141,7 @@ async function checkInvite(uuid: number, session: ClientSession): Promise<{ leve
     inviteUser: undefined,
     preInviteUser: undefined
   };
-  const fields = {invite: 1, uuid: 1};
+  const fields = {invite: 1, uuid: 1, incomeAmount: 1, inviteAmount: 1};
   const user = await UserModel.findOne({uuid: uuid}, fields, {session});
   if (user && user.invite && user.invite !== 0) {
     rep.user = user;

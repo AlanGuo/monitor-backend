@@ -4,12 +4,12 @@ import UserModel from "../models/user";
 import BillModel from "../models/bill";
 import SubscriberModel from "../models/subscriber";
 import {jsonResponse} from "@src/infrastructure/utils";
-import {FROZEN_INCOME_TIME, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
+import {BillType, FROZEN_INCOME_TIME, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
 import {getOnlineUser} from "@src/infrastructure/redis";
 import {getSignedUrl} from "@src/infrastructure/amazon/cloudfront";
 import {notificationProducer} from "@src/services/producer/notificationProducer";
-import { createUserWatermarker } from "@src/infrastructure/utils/watermarker";
+import {createUserWatermarker} from "@src/infrastructure/utils/watermarker";
 import {CheckChatPrice} from "@src/infrastructure/decorators/checkChatPrice";
 import {CheckSubPrice} from "@src/infrastructure/decorators/checkSubPrice";
 import BigNumber from "bignumber.js";
@@ -38,7 +38,12 @@ export default class UserController {
       balance: 1,
       broadcaster: 1,
       freezeWithdrawTime: 1,
-      withdrawTime: 1
+      withdrawTime: 1,
+
+      incomeAmount: 1, // 收入（可提现和账期）
+      freezeWithdrawAmount: 1, // 提现冻结中金额
+      withdrawAmount: 1, // 已提现金额
+      inviteAmount: 1, // 邀请收入
     };
     const user = await UserModel.findOne({uuid}, fields);
     let rep: any;
@@ -57,7 +62,13 @@ export default class UserController {
         const now = Date.now();
         const freezeTime = now - FROZEN_INCOME_TIME;
         const bill = await BillModel.find({target: uuid}, {_id: 0, amount: 1, createdAt: 1});
-        rep.income = {total: new BigNumber(0), balance: new BigNumber(0), freezeBalance: new BigNumber(0), withdraw: new BigNumber(0), freezeWithdraw: new BigNumber(0)};
+        rep.income = {
+          total: new BigNumber(0),
+          balance: new BigNumber(0),
+          freezeBalance: new BigNumber(0),
+          withdraw: new BigNumber(0),
+          freezeWithdraw: new BigNumber(0)
+        };
         bill.forEach(item => {
           const time = new Date(item.createdAt!).getTime();
           rep.income.total = rep.income.total.plus(item.amount);
@@ -72,6 +83,26 @@ export default class UserController {
           }
         })
         rep.income.balance = rep.income.total - rep.income.withdraw - rep.income.freezeWithdraw - rep.income.freezeBalance;
+
+        const bill2 = await BillModel.find({
+          uuid,
+          type: {$in: [BillType.earn, BillType.invite]},
+          createdAt: {$gt: new Date(Date.now() - FROZEN_INCOME_TIME)}
+        }, {
+          _id: 0,
+          amount: 1,
+          createdAt: 1
+        });
+        const freezeBalance = bill2.map(item=>item.amount).reduce((pre, cur)=>new BigNumber(cur).plus(pre), new BigNumber(0));
+        const total = new BigNumber(user.incomeAmount).plus(user.freezeWithdrawAmount).plus(user.withdrawAmount);
+        rep.income2 = {
+          total,
+          balance: total.minus(freezeBalance),
+          freezeBalance,
+          withdraw: user.withdrawAmount,
+          freezeWithdraw: user.freezeWithdrawAmount,
+          inviteAmount: user.inviteAmount
+        };
       }
     }
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: rep ? rep : user})

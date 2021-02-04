@@ -40,7 +40,7 @@ export default class BillController {
         match.uuid = uuid;
         break;
       default:
-        match = {$or: [{target: uuid}, {uuid}], amount: {$ne: 0}};
+        match = {uuid, amount: {$ne: 0}};
     }
     const bill = await BillModel.find(match, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
     bill.forEach(item => {

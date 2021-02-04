@@ -1,6 +1,7 @@
 import {Schema, model, Document} from "mongoose";
 import {Profile} from "@src/interface";
 import {USER_STATUS} from "@src/infrastructure/utils/constants";
+import BigNumber from "bignumber.js";
 
 const required = true;
 const unique = true;
@@ -34,6 +35,11 @@ export interface IUser extends Document {
 
   invite?: number,
   preInvite?: number
+
+  incomeAmount: string, // 收入（可提现和账期）
+  freezeWithdrawAmount: string, // 提现冻结中金额
+  withdrawAmount: string, // 已提现金额
+  inviteAmount: string, // 邀请收入
 }
 
 const UserModel: Schema = new Schema({
@@ -65,10 +71,10 @@ const UserModel: Schema = new Schema({
 
   // 总收入 = 收入 + 提现冻结中 + 已提现
   // 账期金额通过账单统计查询
-  incomeAmount: {type: Number, required, default: 0}, // 收入（可提现和账期）
-  freezeWithdrawAmount: {type: Number, required, default: 0}, // 提现冻结中金额
-  withdrawAmount: {type: Number, required, default: 0}, // 已提现金额
-  inviteAmount: {type: Number, required, default: 0}, // 邀请收入
+  incomeAmount: {type: String, required, default: "0"}, // 收入（可提现和账期）
+  freezeWithdrawAmount: {type: String, required, default: "0"}, // 提现冻结中金额
+  withdrawAmount: {type: String, required, default: "0"}, // 已提现金额
+  inviteAmount: {type: String, required, default: "0"}, // 邀请收入
 
   invite: {type: Number, required: false}, // 邀请人
   preInvite: {type: Number, required: false} // 二级邀请人

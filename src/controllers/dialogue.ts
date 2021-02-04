@@ -375,14 +375,6 @@ export default class UserController {
           consumeType: ConsumeType.talk,
           consumeId: payments[0]._id
         }, session)
-        // await BillModel.create([{
-        //   uuid: from,
-        //   target: to,
-        //   type: BillType.consume,
-        //   amount: userTo!.chatPrice,
-        //   consumeType: ConsumeType.talk,
-        //   consumeId: payments[0]._id
-        // }], {session})
         await session.commitTransaction();
         session.endSession();
         await sendSlackWebHook(SLACK_WEB_HOOK.UNLOCK, `[https://mfans.com/u/${from}]解锁了与[https://mfans.com/u/${to}]的聊天，价格$${userTo?.chatPrice}`);
