@@ -36,10 +36,10 @@ export interface IUser extends Document {
   invite?: number,
   preInvite?: number
 
-  incomeAmount: string, // 收入（可提现和账期）
-  freezeWithdrawAmount: string, // 提现冻结中金额
-  withdrawAmount: string, // 已提现金额
-  inviteAmount: string, // 邀请收入
+  incomeAmount: BigNumber, // 收入（可提现和账期）
+  freezeWithdrawAmount: BigNumber, // 提现冻结中金额
+  withdrawAmount: BigNumber, // 已提现金额
+  inviteAmount: BigNumber, // 邀请收入
 }
 
 const UserModel: Schema = new Schema({

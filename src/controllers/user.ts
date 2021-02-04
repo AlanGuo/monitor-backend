@@ -61,28 +61,28 @@ export default class UserController {
       if (user.broadcaster) {
         const now = Date.now();
         const freezeTime = now - FROZEN_INCOME_TIME;
-        const bill = await BillModel.find({target: uuid}, {_id: 0, amount: 1, createdAt: 1});
-        rep.income = {
-          total: new BigNumber(0),
-          balance: new BigNumber(0),
-          freezeBalance: new BigNumber(0),
-          withdraw: new BigNumber(0),
-          freezeWithdraw: new BigNumber(0)
-        };
-        bill.forEach(item => {
-          const time = new Date(item.createdAt!).getTime();
-          rep.income.total = rep.income.total.plus(item.amount);
-          if (time > freezeTime) {
-            rep.income.freezeBalance = rep.income.freezeBalance.plus(item.amount);
-          }
-          if (time > user.withdrawTime && time <= user.freezeWithdrawTime) {
-            rep.income.freezeWithdraw = rep.income.freezeWithdraw.plus(item.amount);
-          }
-          if (time <= user.withdrawTime) {
-            rep.income.withdraw = rep.income.withdraw.plus(item.amount);
-          }
-        })
-        rep.income.balance = rep.income.total - rep.income.withdraw - rep.income.freezeWithdraw - rep.income.freezeBalance;
+        // const bill = await BillModel.find({target: uuid}, {_id: 0, amount: 1, createdAt: 1});
+        // rep.income = {
+        //   total: new BigNumber(0),
+        //   balance: new BigNumber(0),
+        //   freezeBalance: new BigNumber(0),
+        //   withdraw: new BigNumber(0),
+        //   freezeWithdraw: new BigNumber(0)
+        // };
+        // bill.forEach(item => {
+        //   const time = new Date(item.createdAt!).getTime();
+        //   rep.income.total = rep.income.total.plus(item.amount);
+        //   if (time > freezeTime) {
+        //     rep.income.freezeBalance = rep.income.freezeBalance.plus(item.amount);
+        //   }
+        //   if (time > user.withdrawTime && time <= user.freezeWithdrawTime) {
+        //     rep.income.freezeWithdraw = rep.income.freezeWithdraw.plus(item.amount);
+        //   }
+        //   if (time <= user.withdrawTime) {
+        //     rep.income.withdraw = rep.income.withdraw.plus(item.amount);
+        //   }
+        // })
+        // rep.income.balance = rep.income.total - rep.income.withdraw - rep.income.freezeWithdraw - rep.income.freezeBalance;
 
         const bill2 = await BillModel.find({
           uuid,
@@ -95,9 +95,9 @@ export default class UserController {
         });
         const freezeBalance = bill2.map(item=>item.amount).reduce((pre, cur)=>new BigNumber(cur).plus(pre), new BigNumber(0));
         const total = new BigNumber(user.incomeAmount).plus(user.freezeWithdrawAmount).plus(user.withdrawAmount);
-        rep.income2 = {
+        rep.income = {
           total,
-          balance: total.minus(freezeBalance),
+          balance: total.minus(freezeBalance).minus(user.freezeWithdrawAmount),
           freezeBalance,
           withdraw: user.withdrawAmount,
           freezeWithdraw: user.freezeWithdrawAmount,
