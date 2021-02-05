@@ -1,6 +1,6 @@
-import {dbConnect} from "@src/infrastructure/mongo";
-import BillModel from "@src/models/bill";
-import {BillType} from "@src/infrastructure/utils/constants";
+import {dbConnect} from "../infrastructure/mongo";
+import BillModel from "../models/bill";
+import {BillType} from "../infrastructure/utils/constants";
 
 async function updateIncome() {
   await dbConnect();
