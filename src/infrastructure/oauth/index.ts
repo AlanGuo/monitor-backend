@@ -181,11 +181,12 @@ export async function findOrCreateUser(provider: OAUTH, profile: GoogleProfile |
           }
         }, {new: true, upsert: true})
       }
-    if (preInvite) {
+    if (preInvite && invite) {
       await InviteModel.findOneAndUpdate({uuid: tmp.value.uuid, level: 2}, {
         $setOnInsert: {
           uuid: tmp.value.uuid,
           inviteUser: preInvite,
+          indirectInviteUser: invite,
           level: 2
         }
       }, {new: true, upsert: true})

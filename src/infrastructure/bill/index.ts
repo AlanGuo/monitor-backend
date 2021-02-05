@@ -8,6 +8,7 @@ import {ClientSession, Types} from "mongoose";
 import BillModel from "@src/models/bill";
 import UserModel, {IUser} from "@src/models/user";
 import BigNumber from "bignumber.js";
+import InviteModel, {IInvite} from "@src/models/invite";
 
 export async function createBill(
   billData: {
@@ -45,7 +46,7 @@ export async function createBill(
       const level2Amount = new BigNumber(billData.amount).multipliedBy(LEVEL2_INVITE_COMMISSION_RATIO);
       // 判断邀请关系计算分成
       // 没有 有一级 有二级
-      const {level, user: targetUser, inviteUser, preInviteUser} = await checkInvite(billData.target!, session);
+      const {level, user: targetUser, inviteUser, preInviteUser, inviteRecoder, preInviteRecoder} = await checkInvite(billData.target!, session);
       switch (level) {
         case 0:
           commissionAmount = commissionAmount.multipliedBy(PLATFORM_COMMISSION_RATIO);
@@ -71,7 +72,9 @@ export async function createBill(
           await targetUser!.save();
           inviteUser!.incomeAmount = level1Amount.plus(inviteUser!.incomeAmount);
           inviteUser!.inviteAmount = level1Amount.plus(inviteUser!.inviteAmount);
-          await inviteUser!.save()
+          await inviteUser!.save();
+          inviteRecoder!.commissionAmount = level1Amount.plus(inviteRecoder!.commissionAmount);
+          await inviteRecoder!.save();
           break;
         case 2:
           commissionAmount = commissionAmount.minus(level1Amount).minus(level2Amount);
@@ -83,6 +86,10 @@ export async function createBill(
           preInviteUser!.incomeAmount = level2Amount.plus(preInviteUser!.incomeAmount);
           preInviteUser!.inviteAmount = level2Amount.plus(preInviteUser!.inviteAmount);
           await preInviteUser!.save()
+          inviteRecoder!.commissionAmount = level1Amount.plus(inviteRecoder!.commissionAmount);
+          await inviteRecoder!.save();
+          preInviteRecoder!.commissionAmount = level2Amount.plus(preInviteRecoder!.commissionAmount);
+          await preInviteRecoder!.save();
           // invite bill
           bills.push({
             uuid: inviteUser!.uuid,
@@ -134,23 +141,28 @@ export async function createBill(
 }
 
 
-async function checkInvite(uuid: number, session: ClientSession): Promise<{ level: 0 | 1 | 2, user?: IUser, inviteUser?: IUser, preInviteUser?: IUser }> {
-  const rep: { level: 0 | 1 | 2, user?: IUser, inviteUser?: IUser, preInviteUser?: IUser } = {
+async function checkInvite(uuid: number, session: ClientSession): Promise<{ level: 0 | 1 | 2, user?: IUser, inviteUser?: IUser, preInviteUser?: IUser, inviteRecoder?: IInvite, preInviteRecoder?: IInvite }> {
+  const rep: { level: 0 | 1 | 2, user?: IUser, inviteUser?: IUser, preInviteUser?: IUser, inviteRecoder?: IInvite, preInviteRecoder?: IInvite } = {
     level: 0,
     user: undefined,
     inviteUser: undefined,
-    preInviteUser: undefined
+    inviteRecoder: undefined,
+    preInviteUser: undefined,
+    preInviteRecoder: undefined
   };
   const fields = {invite: 1, uuid: 1, incomeAmount: 1, inviteAmount: 1};
+  const inviteFields = {commissionAmount: 1};
   const user = await UserModel.findOne({uuid: uuid}, fields, {session});
   if (user && user.invite && user.invite !== 0) {
     rep.user = user;
     const inviteUser = await UserModel.findOne({uuid: user.invite}, fields, {session});
     if (inviteUser && inviteUser.invite && inviteUser.invite !== 0) {
       rep.inviteUser = inviteUser;
+      rep.inviteRecoder = await InviteModel.findOne({uuid, inviteUser: user.invite}, inviteFields) || undefined
       const preInviteUser = await UserModel.findOne({uuid: inviteUser.invite}, fields, {session});
       if (preInviteUser) {
         rep.preInviteUser = preInviteUser;
+        rep.preInviteRecoder = await InviteModel.findOne({uuid, inviteUser: inviteUser.invite}, inviteFields) || undefined
         rep.level = 2
       } else {
         rep.level = 1;

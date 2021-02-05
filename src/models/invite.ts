@@ -1,4 +1,5 @@
 import {Schema, model, Types, Document} from "mongoose";
+import BigNumber from "bignumber.js";
 
 const required = true;
 const sparse = true;
@@ -7,15 +8,17 @@ const sparse = true;
 export interface IInvite extends Document {
   uuid: number,
   inviteUser: number,
-  commissionAmount: string,
+  indirectInviteUser?: number,
+  commissionAmount: BigNumber,
   level: 1 | 2
 }
 
 const InviteModel: Schema = new Schema({
   uuid: {type: Number, required}, // 被邀请人
   inviteUser: {type: Number, required}, // 邀请人
+  indirectInviteUser: {type: Number, required: false}, // 间接邀请人 当level=2 记录中间人
   level: {type: Number, required}, // 层级
-  commissionAmount: {type: Number, required, default: 0},
+  commissionAmount: {type: String, required, default: 0},
 }, {
   timestamps: true
 });

@@ -3,6 +3,7 @@ import {IRouterContext} from "koa-router";
 import UserModel from "../models/user";
 import BillModel from "../models/bill";
 import SubscriberModel from "../models/subscriber";
+import InviteModel from "../models/invite";
 import {jsonResponse} from "@src/infrastructure/utils";
 import {BillType, FROZEN_INCOME_TIME, NotificationType, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 import {AuthRequired} from "@src/infrastructure/decorators/auth";
@@ -13,6 +14,7 @@ import {createUserWatermarker} from "@src/infrastructure/utils/watermarker";
 import {CheckChatPrice} from "@src/infrastructure/decorators/checkChatPrice";
 import {CheckSubPrice} from "@src/infrastructure/decorators/checkSubPrice";
 import BigNumber from "bignumber.js";
+import {groupBy} from "lodash";
 
 @Controller({prefix: "/user"})
 export default class UserController {
@@ -93,7 +95,7 @@ export default class UserController {
           amount: 1,
           createdAt: 1
         });
-        const freezeBalance = bill2.map(item=>item.amount).reduce((pre, cur)=>new BigNumber(cur).plus(pre), new BigNumber(0));
+        const freezeBalance = bill2.map(item => item.amount).reduce((pre, cur) => new BigNumber(cur).plus(pre), new BigNumber(0));
         const total = new BigNumber(user.incomeAmount).plus(user.freezeWithdrawAmount).plus(user.withdrawAmount);
         rep.income = {
           total,
@@ -218,5 +220,28 @@ export default class UserController {
     const updatedUser = await UserModel.findOneAndUpdate({uuid}, body);
     await createUserWatermarker(updatedUser!);
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL})
+  }
+
+  @GET("/me/invite")
+  @AuthRequired()
+  async getInviteInfo(ctx: IRouterContext, next: any) {
+    const uuid = ctx.state.user.uuid;
+    const invites = await InviteModel.find({inviteUser: uuid}, {
+      _id: 0,
+      uuid: 1,
+      commissionAmount: 1,
+      level: 1,
+      indirectInviteUser: 1
+    });
+    const groupedInvites = groupBy(invites, item => item.indirectInviteUser || "index");
+    const level1Invites = groupedInvites["index"];
+    const data = level1Invites?.map(item => {
+      return {
+        ...item.toJSON(),
+        level2: groupedInvites[item.uuid.toString()] || [],
+        totalAmount: groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount) || item.commissionAmount
+      }
+    })[0] || {commissionAmount: new BigNumber(0), level: 1, totalAmount: new BigNumber(0), level2: []};
+    ctx.body = jsonResponse({data: data});
   }
 }
