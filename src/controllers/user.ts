@@ -214,9 +214,14 @@ export default class UserController {
       return {
         ...item.toJSON(),
         level2: groupedInvites[item.uuid.toString()] || [],
-        totalAmount: groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount) || item.commissionAmount
+        totalAmount: groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount) || new BigNumber(item.commissionAmount)
       }
-    })[0] || {commissionAmount: new BigNumber(0), level: 1, totalAmount: new BigNumber(0), level2: []};
-    ctx.body = jsonResponse({data: data});
+    }) || [];
+    ctx.body = jsonResponse({
+      data: {
+        totalAmount: data.map(item => item.totalAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)),
+        data
+      }
+    });
   }
 }
