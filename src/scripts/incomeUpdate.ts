@@ -1,6 +1,7 @@
 import {dbConnect} from "../infrastructure/mongo";
 import BillModel from "../models/bill";
 import {BillType} from "../infrastructure/utils/constants";
+import BigNumber from "bignumber.js";
 
 async function updateIncome() {
   await dbConnect();
@@ -10,7 +11,11 @@ async function updateIncome() {
 
   // 插入新规则bill
   consumeBills.forEach(item => {
-    console.log(item.toJSON())
+    if (new BigNumber(item.amount).isGreaterThan(0)) {
+      console.log(item.toJSON())
+    } else {
+      console.log("amount less than 0 or equal 0")
+    }
   })
 
   // 取消所有订单
