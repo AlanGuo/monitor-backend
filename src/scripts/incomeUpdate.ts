@@ -17,7 +17,7 @@ async function updateIncome() {
       const earnBill = {
         uuid: item.target!,
         type: BillType.earn,
-        amount: new BigNumber(item.totalAmount).multipliedBy(1- PLATFORM_COMMISSION_RATIO),
+        amount: new BigNumber(item.totalAmount || item.amount).multipliedBy(1- PLATFORM_COMMISSION_RATIO),
         commissionAmount: 0,
         totalAmount: item.totalAmount || item.amount,
         consumeType: item.consumeType,
