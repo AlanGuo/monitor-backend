@@ -21,9 +21,13 @@ async function updateIncome() {
         commissionAmount: 0,
         totalAmount: item.totalAmount,
         consumeType: item.consumeType,
-        consumeId: item.consumeId
+        consumeId: item.consumeId,
+        createdAt: item.createdAt,
+        updatedAt: item.createdAt,
       };
-      // await BillModel.create(earnBill);
+      await BillModel.create(earnBill);
+      item.amount = item.totalAmount;
+      await item.save();
       console.log(earnBill)
     } else {
       console.log("amount less than 0 or equal 0")
