@@ -10,7 +10,7 @@
     "lint:fix": "eslint --fix . --ext .ts,.tsx",
     "pm2:test": "pm2 reload ecosystem.test.json --watch",
     "pm2": "pm2 reload ecosystem.json  --watch",
-    "updataIncome": "NODE_ENV=producction ts-node-dev -r tsconfig-paths/registe ./src/scripts/incomeUpdate.ts"
+    "updataIncome": "NODE_ENV=dev ts-node-dev -r tsconfig-paths/register ./src/scripts/incomeUpdate.ts"
   },
   "author": "",
   "license": "ISC",
