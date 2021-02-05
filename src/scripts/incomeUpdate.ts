@@ -26,7 +26,7 @@ async function updateIncome() {
         updatedAt: item.createdAt,
       };
       await BillModel.create(earnBill);
-      item.amount = item.totalAmount;
+      item.amount = item.totalAmount || item.amount;
       await item.save();
       console.log(earnBill)
     } else {
