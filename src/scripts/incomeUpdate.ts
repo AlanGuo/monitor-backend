@@ -10,13 +10,13 @@ async function updateIncome() {
   const consumeBills = await BillModel.find({type: BillType.consume});
 
   // 插入新规则bill
-  consumeBills.forEach(item => {
+  for (const item of consumeBills) {
     if (new BigNumber(item.amount).isGreaterThan(0)) {
       console.log(item.toJSON())
     } else {
       console.log("amount less than 0 or equal 0")
     }
-  })
+  }
 
   // 取消所有订单
 }
