@@ -52,6 +52,7 @@ async function updateIncome() {
     user.freezeWithdrawAmount = freezeWithdrawAmount;
     user.withdrawAmount = withdrawAmount;
     user.inviteAmount = inviteAmount;
+    user.chatPrice = user.chatPrice ?? 0
     await user.save();
     console.log(`${user.uuid} income ${earnAmount}`)
   }
