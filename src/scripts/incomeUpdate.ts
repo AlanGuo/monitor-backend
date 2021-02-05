@@ -1,6 +1,6 @@
 import {dbConnect} from "../infrastructure/mongo";
 import BillModel from "../models/bill";
-import {BillType} from "../infrastructure/utils/constants";
+import {BillType, PLATFORM_COMMISSION_RATIO} from "../infrastructure/utils/constants";
 import BigNumber from "bignumber.js";
 
 async function updateIncome() {
@@ -11,8 +11,20 @@ async function updateIncome() {
 
   // 插入新规则bill
   for (const item of consumeBills) {
+    console.log("========================")
     if (new BigNumber(item.amount).isGreaterThan(0)) {
-      console.log(item.toJSON())
+      console.log(item.toJSON());
+      const earnBill = {
+        uuid: item.target!,
+        type: BillType.earn,
+        amount: new BigNumber(item.totalAmount).multipliedBy(1- PLATFORM_COMMISSION_RATIO),
+        commissionAmount: 0,
+        totalAmount: item.totalAmount,
+        consumeType: item.consumeType,
+        consumeId: item.consumeId
+      };
+      // await BillModel.create(earnBill);
+      console.log(earnBill)
     } else {
       console.log("amount less than 0 or equal 0")
     }
