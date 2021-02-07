@@ -199,21 +199,41 @@ export default class UserController {
   @AuthRequired()
   async getInviteInfo(ctx: IRouterContext, next: any) {
     const uuid = ctx.state.user.uuid;
-    const invites = await InviteModel.find({inviteUser: uuid}, {
-      _id: 0,
-      uuid: 1,
-      commissionAmount: 1,
-      level: 1,
-      indirectInviteUser: 1,
-      createdAt: 1
-    });
+    const fields = {
+      $project: {
+        _id: 0,
+        uuid: 1,
+        commissionAmount: 1,
+        level: 1,
+        indirectInviteUser: 1,
+        createdAt: 1,
+        "user.name": 1,
+        "user.displayName": 1,
+        "user.uuid": 1
+      }
+    }
+    const invites = await InviteModel.aggregate([
+      {
+        $match: {inviteUser: uuid}
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "uuid",
+          foreignField: "uuid",
+          as: "user"
+        }
+      },
+      fields
+    ]);
     const groupedInvites = groupBy(invites, item => item.indirectInviteUser || "index");
     const level1Invites = groupedInvites["index"];
     const data = level1Invites?.map(item => {
+      console.log(groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount || 0))
       return {
-        ...item.toJSON(),
+        ...item, user: item.user[0],
         level2: groupedInvites[item.uuid.toString()] || [],
-        totalAmount: groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount) || new BigNumber(item.commissionAmount)
+        totalAmount: groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount || 0) || new BigNumber(item.commissionAmount || 0)
       }
     }) || [];
     ctx.body = jsonResponse({

@@ -18,7 +18,7 @@ const InviteModel: Schema = new Schema({
   inviteUser: {type: Number, required}, // 邀请人
   indirectInviteUser: {type: Number, required: false}, // 间接邀请人 当level=2 记录中间人
   level: {type: Number, required}, // 层级
-  commissionAmount: {type: String, required, default: 0},
+  commissionAmount: {type: String, required, default: "0"},
 }, {
   timestamps: true
 });
