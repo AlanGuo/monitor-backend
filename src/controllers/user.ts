@@ -231,7 +231,7 @@ export default class UserController {
     const data = level1Invites?.map(item => {
       console.log(groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount || 0))
       return {
-        ...item, user: item.user[0],
+        ...item, user: item.user[0], commissionAmount: item.commissionAmount ?? new BigNumber(0),
         level2: groupedInvites[item.uuid.toString()] || [],
         totalAmount: groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount || 0) || new BigNumber(item.commissionAmount || 0)
       }
