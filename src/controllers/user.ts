@@ -204,7 +204,8 @@ export default class UserController {
       uuid: 1,
       commissionAmount: 1,
       level: 1,
-      indirectInviteUser: 1
+      indirectInviteUser: 1,
+      createdAt: 1
     });
     const groupedInvites = groupBy(invites, item => item.indirectInviteUser || "index");
     const level1Invites = groupedInvites["index"];
