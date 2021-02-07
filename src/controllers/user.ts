@@ -39,8 +39,6 @@ export default class UserController {
       subPrice: 1,
       balance: 1,
       broadcaster: 1,
-      freezeWithdrawTime: 1,
-      withdrawTime: 1,
 
       incomeAmount: 1, // 收入（可提现和账期）
       freezeWithdrawAmount: 1, // 提现冻结中金额
