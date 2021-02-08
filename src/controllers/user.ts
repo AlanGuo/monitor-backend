@@ -1,6 +1,6 @@
 import {Controller, GET, PUT} from "@src/infrastructure/decorators/koa";
 import {IRouterContext} from "koa-router";
-import UserModel from "../models/user";
+import UserModel, {IUser} from "../models/user";
 import BillModel from "../models/bill";
 import SubscriberModel from "../models/subscriber";
 import InviteModel from "../models/invite";
@@ -44,6 +44,8 @@ export default class UserController {
       freezeWithdrawAmount: 1, // 提现冻结中金额
       withdrawAmount: 1, // 已提现金额
       inviteAmount: 1, // 邀请收入
+
+      invite: 1
     };
     const user = await UserModel.findOne({uuid}, fields);
     let rep: any;
@@ -78,6 +80,11 @@ export default class UserController {
           freezeWithdraw: user.freezeWithdrawAmount,
           inviteAmount: user.inviteAmount
         };
+      }
+
+      if (user.invite && user.invite !== 0) {
+        console.log(user.invite)
+        rep.invite = await UserModel.findOne({uuid: user.invite}, {_id: 0, displayName: 1, name: 1, uuid: 1})
       }
     }
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: rep ? rep : user})
@@ -231,8 +238,10 @@ export default class UserController {
     const data = level1Invites?.map(item => {
       return {
         ...item, user: item.user[0], commissionAmount: item.commissionAmount ?? new BigNumber(0),
-        level2: groupedInvites[item.uuid.toString()] || [],
-        totalAmount: groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount || 0) || new BigNumber(item.commissionAmount || 0)
+        level2: groupedInvites[item.uuid.toString()].map(item => {
+          return {...item, commissionAmount: item.commissionAmount ?? new BigNumber(0)}
+        }) || [],
+        totalAmount: groupedInvites[item.uuid.toString()]?.map(item => item.commissionAmount ?? 0).reduce((pre, cur) => new BigNumber(pre).plus(cur), new BigNumber(0)).plus(item.commissionAmount || 0) || new BigNumber(item.commissionAmount || 0)
       }
     }) || [];
     ctx.body = jsonResponse({
