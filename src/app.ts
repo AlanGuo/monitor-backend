@@ -7,22 +7,12 @@ import serve from "koa-static";
 import {routerLoader} from "@src/infrastructure/router/loader";
 import {dbConnect} from "./infrastructure/mongo";
 import {logger as serviceLogger} from "./infrastructure/logger";
-import {loaderPassport} from "./infrastructure/oauth";
-import {OAUTH, SESSION_KEY, SESSION_OVERDUE_SECOND} from "@src/infrastructure/utils/constants";
-import {OAuthRouter} from "@src/infrastructure/oauth/router";
-import {createSocket} from "./infrastructure/socket";
-import {loadSocketService} from "./services/socket";
+import {SESSION_KEY, SESSION_OVERDUE_SECOND} from "@src/infrastructure/utils/constants";
 import passport from "koa-passport"
 import session from "koa-generic-session"
-import {initSequence} from "@src/infrastructure/utils/sequence";
 import {loadRedisStore} from "@src/infrastructure/redisStore";
-import cors from "@koa/cors"
-import {loadConsumer} from "@src/services/consumer";
-import {loadProducer} from "@src/services/producer";
-
 async function bootstrap() {
   await dbConnect();
-  await initSequence();
   const app = new Koa();
 
   /** Middlewares */
@@ -41,12 +31,7 @@ async function bootstrap() {
     return next();
   });
   app.use(bodyParser());
-  app.use(cors({
-    "origin": config.CORS.origin,
-  }));
   app.use(serve("./static"));
-
-  app.keys = ["secret", "mfans", "alan", "lonzo"];
   app.use(session({
     store: await loadRedisStore(),
     key: SESSION_KEY,
@@ -58,22 +43,11 @@ async function bootstrap() {
       SESSION_OVERDUE_SECOND
     }
   }));
-  // OAuth
-  loaderPassport([OAUTH.TWITTER, OAUTH.GOOGLE, OAUTH.FACEBOOK]);
   app.use(passport.initialize());
   app.use(passport.session());
-  OAuthRouter(app);
   routerLoader(app);
-
   // websocket
   const server = http.createServer(app.callback());
-  await loadSocketService(createSocket(server));
-
-  // consumer can be start another service. Now, just for test
-  // load mq consumer producer
-  await loadConsumer();
-  await loadProducer();
-
   app.proxy = true;
   server.listen(Number(config.HTTPS_PORT), "0.0.0.0", () => serviceLogger.info(`Server started at http://localhost:${config.HTTPS_PORT}`));
 

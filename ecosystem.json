@@ -1,16 +1,16 @@
 {
   "apps" : [
     {
-      "name"      : "mfans-backend",
-      "instance_var":"newonlyfans-backend",
+      "name"      : "monitor-backend",
+      "instance_var":"monitor-backend",
       "script": "ts-node",
       "args": " -r tsconfig-paths/register ./src/app.ts",
       "instances" : 1,
       "exec_mode" : "cluster",
       "watch"     : false,
       "ignore_watch" : ["logs"],
-      "error_file":"logs/mfans-backend.stderr.log",
-      "out_file"  :"logs/mfans-backend.stdout.log",
+      "error_file":"logs/monitor-backend.stderr.log",
+      "out_file"  :"logs/monitor-backend.stdout.log",
       "log_date_format": "MM-DD HH:mm:ss",
       "env": {
         "NODE_ENV": "production"

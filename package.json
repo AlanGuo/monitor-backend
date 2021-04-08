@@ -1,5 +1,5 @@
 {
-  "name": "newonlyfans-backend",
+  "name": "monitor-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,8 +15,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@paypal/checkout-server-sdk": "^1.0.2",
-    "@types/paypal-rest-sdk": "^1.7.5",
     "amqplib": "^0.6.0",
     "aws-cloudfront-sign": "^2.2.0",
     "aws-sdk": "^2.717.0",

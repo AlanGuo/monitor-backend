@@ -107,58 +107,6 @@ export interface ImageAmazonUrl {
 export interface Config {
   HTTPS_PORT: number,
   API_PREFIX: string,
-  AWS_ACCESS_KEY_ID: string,
-  AWS_SECRET_ACCESS_KEY: string,
-  AWS_REGION: string,
-  AWS_SIGNATURE_VERSION: string,
-  AWS_MEDIA_CONVERT: {
-    "sourceBucket": string,
-    "publicBucket": string,
-    "endpoint": string,
-    "sourcePath": string,
-    "videoDestination": string,
-    "kycFolder": string,
-    "imageFolder": string,
-    "videoFolder": string,
-    "videoSourceFolder": string,
-    "imageSourceFolder": string,
-    "otherSourceFolder": string,
-    "imageAssetFolder": string,
-    "otherAssetFolder": string
-  },
-  AWS_S3: {
-    videoPrefix: string,
-    imagePrefix: string,
-    successActionStatus: string,
-  },
-  AWS_CLOUDFRONT: {
-    keyPairId: string,
-    url: string,
-    // 一小时
-    timeLimit: number
-  },
-  PAYPAL: {
-    payment: {
-      name: string,
-      currency: string,
-      sign: string
-    },
-    clientId: string,
-    clientSecret: string,
-    mode: string,
-    paymentWebhookId: string
-  },
-  PAYONEER: {
-    host: string,
-    clientId: string,
-    auth: string
-  },
-  CORS: {
-    origin: string
-  },
-  WEBSOCKET: {
-    origins: string
-  },
   REDIS: {
     Host: string,
     Port: number,
@@ -173,24 +121,5 @@ export interface Config {
     Connection_String_URI: string,
     Connection_String_URI_Test: string
   },
-  FACEBOOK: {
-    Client_Id: string,
-    Client_Secret: string
-  },
-  GOOGLE: {
-    Client_Id: string,
-    Client_Secret: string,
-  },
-  TWITTER: {
-    Consumer_Key: string,
-    Consumer_Secret: string
-  },
-  HOST: string,
-  RABBITMQ: string,
-  SLACK_KYC_HOOK: string,
-  SLACK_DEPOSIT_HOOK: string,
-  SLACK_SUB_HOOK: string,
-  SLACK_TIP_HOOK: string,
-  SLACK_UNLOCK_HOOK: string,
-  SLACK_POST_HOOK: string
+  HOST: string
 }
