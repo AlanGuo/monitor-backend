@@ -1,9 +1,7 @@
 import {IRouterContext} from "koa-router";
 import {isVideo} from "@src/infrastructure/utils/video";
 import {isImage} from "@src/infrastructure/utils/image";
-import {MEDIA_TYPE, PAYONEER_PAYEES_STATUS, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
-import axios from "axios";
-import config from "@src/infrastructure/utils/config";
+import {MEDIA_TYPE, RESPONSE_CODE} from "@src/infrastructure/utils/constants";
 
 export function jsonResponse({data, code, msg}: { data?: any, code?: number | string, msg?: string } = {}) {
   return {
@@ -50,20 +48,5 @@ export function mediaType(ext: string): {
     }
   } else {
     throw Error("can't recognize media type: " + ext)
-  }
-}
-
-export async function checkPayoneerUserStatus(uuid: number): Promise<PAYONEER_PAYEES_STATUS>  {
-  const url = `${config.PAYONEER.host}/v2/programs/${config.PAYONEER.clientId}/payees/${uuid}/status`;
-  const res = await axios.get(url, {
-    validateStatus: () => true,
-    headers: {
-      "Authorization": config.PAYONEER.auth
-    },
-  });
-  if (res.status === 200) {
-    return res.data.status as PAYONEER_PAYEES_STATUS
-  } else {
-    return PAYONEER_PAYEES_STATUS.NOT_EXISTS
   }
 }
