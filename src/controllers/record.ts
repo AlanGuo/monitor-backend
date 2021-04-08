@@ -28,7 +28,7 @@ export default class RecordController {
       short_close_balance: 1,
       profit: 1
     };
-    const records = await recordModel.find({}, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
+    const records = await recordModel.find({profit: {$exists: true}}, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
     const total = await recordModel.countDocuments({});
     ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {records, total}});
   }
