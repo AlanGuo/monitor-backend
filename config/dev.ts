@@ -20,7 +20,6 @@ module.exports = {
   MONGODB: {
     Name: "dev",
     DB: "arbetrage-engine",
-    ReplicaSet: "mongo_replSet",
     Connection_String_URI: "mongodb://localhost:27017"
   },
   HOST: "https://localmonitor.bitapp.com"
