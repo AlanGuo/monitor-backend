@@ -22,11 +22,12 @@ export default class RecordController {
       long_open_balance: 1,
       short_open_balance: 1,
       long_open_price: 1,
-      short_open_price: 1
+      short_open_price: 1,
+      profit: 1
     };
     const records = await recordModel.find({}, fields).sort({_id: -1}).limit(1);
     const rec: IRecord = records[0].toJSON();
-    if (!rec.profit) {
+    if (rec.profit == null) {
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: rec});
     } else {
       ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
