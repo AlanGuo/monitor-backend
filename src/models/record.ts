@@ -44,4 +44,4 @@ const recordModel: Schema = new Schema({
   timestamps: false
 });
 
-export default model<Record>("record", recordModel);
+export default model<IRecord>("record", recordModel);
