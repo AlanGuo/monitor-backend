@@ -2,7 +2,7 @@ import {Controller, GET, PUT} from "@src/infrastructure/decorators/koa";
 import { PaginationDec } from "@src/infrastructure/decorators/pagination";
 import { Pagination } from "@src/interface";
 import { IRouterContext } from "koa-router";
-import recordModel from "@src/models/record";
+import recordModel, { IRecord } from "@src/models/record";
 import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
 
@@ -24,8 +24,13 @@ export default class RecordController {
       long_open_price: 1,
       short_open_price: 1
     };
-    const records = await recordModel.find({profit: {$exists: false}}, fields).sort({_id: -1}).limit(1);
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: records[0]});
+    const records = await recordModel.find({}, fields).sort({_id: -1}).limit(1);
+    const rec: IRecord = records[0].toJSON();
+    if (!rec.profit) {
+      ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: rec});
+    } else {
+      ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
+    }
   }
 
   @GET("")

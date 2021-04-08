@@ -2,7 +2,7 @@ import {Schema, model, Document} from "mongoose";
 
 const required = true;
 
-export interface Record extends Document {
+export interface IRecord extends Document {
   datetime: Date,
   symbol: string,
   longex: string;
