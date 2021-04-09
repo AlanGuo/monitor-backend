@@ -71,7 +71,7 @@ export default class RecordController {
       }
     ]);
     const latestRecord = await recordModel.find({}, {datetime: 1}).sort({ _id: -1 }).limit(1);
-    const firstRecord = await recordModel.find({}, {datetime: 1}).limit(1);
+    const firstRecord = await recordModel.find({}, {datetime: 1}).sort({ _id: 1 }).limit(1);
     const lastTime = new Date(latestRecord[0].datetime);
     const firstTime = new Date(firstRecord[0].datetime);
     let duration = lastTime.getTime() - firstTime.getTime();
@@ -80,7 +80,7 @@ export default class RecordController {
         {
           balance: config.FINACIAL.balance,
           totalProfit: totalProfitRecords[0].totalProfit,
-          days: duration / 1000 / 60 / 3600 / 24
+          days: duration / 1000 / 3600 / 24
         }
     });
   }
