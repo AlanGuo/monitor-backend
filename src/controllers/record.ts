@@ -1,12 +1,13 @@
-import {Controller, GET, PUT} from "@src/infrastructure/decorators/koa";
+import { Controller, GET, PUT } from "@src/infrastructure/decorators/koa";
 import { PaginationDec } from "@src/infrastructure/decorators/pagination";
 import { Pagination } from "@src/interface";
 import { IRouterContext } from "koa-router";
 import recordModel, { IRecord } from "@src/models/record";
 import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
+import config from "@src/infrastructure/utils/config";
 
-@Controller({prefix: "/records"})
+@Controller({ prefix: "/records" })
 export default class RecordController {
 
   @GET("/running")
@@ -25,12 +26,12 @@ export default class RecordController {
       short_open_price: 1,
       profit: 1
     };
-    const records = await recordModel.find({}, fields).sort({_id: -1}).limit(1);
+    const records = await recordModel.find({}, fields).sort({ _id: -1 }).limit(1);
     const rec: IRecord = records[0].toJSON();
     if (rec.profit == null) {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: rec});
+      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: rec });
     } else {
-      ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL});
+      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL });
     }
   }
 
@@ -54,8 +55,33 @@ export default class RecordController {
       short_close_balance: 1,
       profit: 1
     };
-    const records = await recordModel.find({profit: {$exists: true}}, fields).sort({_id: -1}).skip(pagination.offset).limit(pagination.limit);
-    const total = await recordModel.countDocuments({});
-    ctx.body = jsonResponse({code: RESPONSE_CODE.NORMAL, data: {records, total}});
+    const records = await recordModel.find({}, fields).sort({ _id: -1 }).skip(pagination.offset).limit(pagination.limit);
+    const total = await recordModel.countDocuments();
+    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: { records, total } });
+  }
+
+  @GET("/stats")
+  async statsData(ctx: IRouterContext) {
+    const totalProfitRecords = await recordModel.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalProfit: { $sum: "$profit" },
+        }
+      }
+    ]);
+    const latestRecord = await recordModel.find({}, {datetime: 1}).sort({ _id: -1 }).limit(1);
+    const firstRecord = await recordModel.find({}, {datetime: 1}).limit(1);
+    const lastTime = new Date(latestRecord[0].datetime);
+    const firstTime = new Date(firstRecord[0].datetime);
+    let duration = lastTime.getTime() - firstTime.getTime();
+    ctx.body = jsonResponse({
+      code: RESPONSE_CODE.NORMAL, data:
+        {
+          balance: config.FINACIAL.balance,
+          totalProfit: totalProfitRecords[0].totalProfit,
+          days: duration / 1000 / 60 / 3600 / 24
+        }
+    });
   }
 }

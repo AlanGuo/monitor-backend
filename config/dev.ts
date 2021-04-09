@@ -9,6 +9,10 @@ module.exports = {
     origins: "*:*"
   },
 
+  FINACIAL: {
+    balance: 9000
+  },
+
   REDIS: {
     Host: "127.0.0.1",
     Port: 6379,

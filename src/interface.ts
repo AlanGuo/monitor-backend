@@ -114,6 +114,9 @@ export interface Config {
     Store_DB: number,
     Password: string
   },
+  FINACIAL: {
+    balance: number
+  },
   MONGODB: {
     Name: string,
     DB: string,

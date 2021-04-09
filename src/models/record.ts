@@ -3,7 +3,7 @@ import {Schema, model, Document} from "mongoose";
 const required = true;
 
 export interface IRecord extends Document {
-  datetime: Date,
+  datetime: string,
   symbol: string,
   longex: string;
   shortex: string;
