@@ -16,6 +16,8 @@ export interface IRecord extends Document {
   short_funding_rate_next: number;
   long_final_price: number;
   short_final_price: number;
+  long_open_price: number;
+  short_open_price: number;
   long_open_volume: number;
   short_open_volume: number;
   long_final_volume: number;
@@ -49,6 +51,8 @@ const recordModel: Schema = new Schema({
   price_precision: {type: Number, required},
   long_open_balance: {type: Number, required},
   short_open_balance: {type: Number, required},
+  long_open_price: {type: Number, required},
+  short_open_price:{type: Number, required},
   long_final_price: {type: Number, required},
   short_final_price: {type: Number, required},
   long_close_balance: {type: Number, required},
