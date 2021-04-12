@@ -17,6 +17,7 @@ export default class RecordController {
       symbol: 1,
       longex: 1,
       shortex: 1,
+      price: 1,
       long_funding_rate:1,
       long_funding_rate_next:1,
       short_funding_rate: 1,
