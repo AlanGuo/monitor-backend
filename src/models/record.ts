@@ -9,6 +9,10 @@ export interface IRecord extends Document {
   shortex: string;
   max_volume: number;
   min_volume: number;
+  long_funding_rate: number;
+  long_funding_rate_next: number;
+  short_funding_rate: number;
+  short_funding_rate_next: number;
   long_final_price: number;
   short_final_price: number;
   long_open_volume: number;
@@ -31,6 +35,10 @@ const recordModel: Schema = new Schema({
   shortex: {type: String, required},
   max_volume: {type: Number, required},
   min_volume: {type: Number, required},
+  long_funding_rate: {type: Number, required},
+  long_funding_rate_next:{type: Number, required},
+  short_funding_rate:{type: Number, required},
+  short_funding_rate_next: {type: Number, required},
   long_open_volume: {type: Number, required},
   short_open_volume: {type: Number, required},
   long_final_volume: {type: Number, required},
