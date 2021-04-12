@@ -53,6 +53,8 @@ export default class RecordController {
       shortex: 1,
       long_funding_rate:1,
       short_funding_rate: 1,
+      long_open_volume: 1,
+      short_open_volume: 1,
       long_final_volume: 1,
       short_final_volume: 1,
       max_volume: 1,
