@@ -27,6 +27,8 @@ export default class RecordController {
       max_volume: 1,
       long_open_balance: 1,
       short_open_balance: 1,
+      long_final_price: 1,
+      short_final_price: 1,
       long_open_price: 1,
       short_open_price: 1,
       profit: 1
