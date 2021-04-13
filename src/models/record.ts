@@ -3,7 +3,9 @@ import {Schema, model, Document} from "mongoose";
 const required = true;
 
 export interface IRecord extends Document {
-  datetime: string,
+  first_settle_time: string,
+  next_settle_time: string,
+  hold: boolean,
   symbol: string,
   longex: string;
   shortex: string;
@@ -32,8 +34,10 @@ export interface IRecord extends Document {
 }
 
 const recordModel: Schema = new Schema({
-  datetime: {type: Date, required},
+  first_settle_time: {type: Date, required},
+  next_settle_time: {type: Date, required},
   symbol: {type: String, required},
+  hold: {type: Boolean, required},
   longex: {type: String, required},
   shortex: {type: String, required},
   max_volume: {type: Number, required},

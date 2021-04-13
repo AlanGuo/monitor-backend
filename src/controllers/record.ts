@@ -13,7 +13,9 @@ export default class RecordController {
   @GET("/running")
   async getRunningRecord(ctx: IRouterContext) {
     const fields = {
-      datetime: 1,
+      first_settle_time: 1,
+      hold: 1,
+      next_settle_time: 1,
       symbol: 1,
       longex: 1,
       shortex: 1,
@@ -47,7 +49,7 @@ export default class RecordController {
   async getRecords(ctx: IRouterContext) {
     const pagination: Pagination = ctx.state.pagination
     const fields = {
-      datetime: 1,
+      first_settle_time: 1,
       symbol: 1,
       longex: 1,
       shortex: 1,
