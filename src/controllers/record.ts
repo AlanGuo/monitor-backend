@@ -83,10 +83,10 @@ export default class RecordController {
         }
       }
     ]);
-    const latestRecord = await recordModel.find({}, {datetime: 1}).sort({ _id: -1 }).limit(1);
-    const firstRecord = await recordModel.find({}, {datetime: 1}).sort({ _id: 1 }).limit(1);
-    const lastTime = new Date(latestRecord[0].datetime);
-    const firstTime = new Date(firstRecord[0].datetime);
+    const latestRecord = await recordModel.find({}, {first_settle_time: 1}).sort({ _id: -1 }).limit(1);
+    const firstRecord = await recordModel.find({}, {first_settle_time: 1}).sort({ _id: 1 }).limit(1);
+    const lastTime = new Date(latestRecord[0].first_settle_time);
+    const firstTime = new Date(firstRecord[0].first_settle_time);
     let duration = lastTime.getTime() - firstTime.getTime();
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL, data:
