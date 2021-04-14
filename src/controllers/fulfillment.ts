@@ -11,8 +11,10 @@ import {Types} from "mongoose";
 @Controller({ prefix: "/fulfillments" })
 export default class fulfillmentController {
 
+  @PaginationDec()
   @GET("/task/:id")
   async getRunningRecord(ctx: IRouterContext) {
+    const pagination: Pagination = ctx.state.pagination;
     const fields = {
       datetime: 1,
       exchange: 1,
@@ -24,8 +26,7 @@ export default class fulfillmentController {
       fill: 1
     };
     const fills = await fullfilmentModel.find({
-      task_id: Types.ObjectId(ctx.params.id)
-    }, fields).sort({ _id: -1 });
+    }, fields).sort({ _id: -1 }).skip(pagination.offset).limit(pagination.limit);
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {fills} });
   }
 }
