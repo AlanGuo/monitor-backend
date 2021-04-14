@@ -37,6 +37,7 @@ export default class fulfillmentController {
         "$lt": record[0].max_volume / FINACIAL.volume_div
       }
     }
+    console.log(filter);
     const fills = await fullfilmentModel.find(filter, fields).sort({ _id: -1 }).skip(pagination.offset).limit(pagination.limit);
     const total = await fullfilmentModel.countDocuments(filter);
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {fills, total} });
