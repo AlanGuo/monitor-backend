@@ -10,8 +10,8 @@ import config from "@src/infrastructure/utils/config";
 @Controller({ prefix: "/fulfillments" })
 export default class fulfillmentController {
 
-  @PaginationDec()
   @GET("/task/:id")
+  @PaginationDec()
   async getRunningRecord(ctx: IRouterContext) {
     const pagination: Pagination = ctx.state.pagination;
     const fields = {
