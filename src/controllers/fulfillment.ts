@@ -34,7 +34,7 @@ export default class fulfillmentController {
     if (query.fulfill && query.fulfill.toLowerCase() == "false") {
       const record = await recordModel.find({"_id": ctx.params.id}).limit(1);
       filter.fill  = {
-        "$lt": record[0].max_volume / FINACIAL.volume_div
+        $expr: { $lt: [ "$fill" , "$volume" ] } 
       }
     }
     console.log(filter);
