@@ -6,7 +6,6 @@ import fullfilmentModel, { IFulfillment } from "@src/models/fulfillment";
 import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
 import config from "@src/infrastructure/utils/config";
-import {Types} from "mongoose";
 
 @Controller({ prefix: "/fulfillments" })
 export default class fulfillmentController {
@@ -27,6 +26,7 @@ export default class fulfillmentController {
     };
     const fills = await fullfilmentModel.find({
     }, fields).sort({ _id: -1 }).skip(pagination.offset).limit(pagination.limit);
-    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {fills} });
+    const total = await fullfilmentModel.countDocuments();
+    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {fills, total} });
   }
 }
