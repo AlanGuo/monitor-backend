@@ -11,11 +11,10 @@ import {Types} from "mongoose";
 @Controller({ prefix: "/fulfillments" })
 export default class fulfillmentController {
 
-  @GET("/task")
+  @GET("/task/:id")
   async getRunningRecord(ctx: IRouterContext) {
     const fields = {
       datetime: 1,
-      task_id: 1,
       exchange: 1,
       symbol: 1,
       side: 1,
