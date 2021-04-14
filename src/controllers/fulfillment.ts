@@ -28,12 +28,12 @@ export default class fulfillmentController {
       fill: 1
     };
     const filter: any = {
-      task_id: Types.ObjectId(ctx.params.id)
+      $expr: { 
+        "$and": [{$eq: [ "$task_id" , Types.ObjectId(ctx.params.id) ] }]
+      }
     };
     if (query.fulfill && query.fulfill.toLowerCase() == "false") {
-      filter.fill  = {
-        $expr: { $lt: [ "$fill" , "$volume" ] } 
-      }
+      filter.$expr.$and.push({$lt: [ "$fill" , "$volume" ] });
     }
     console.log(filter);
     const fills = await fullfilmentModel.find(filter, fields).sort({ _id: -1 }).skip(pagination.offset).limit(pagination.limit);
