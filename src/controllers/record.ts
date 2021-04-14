@@ -49,6 +49,7 @@ export default class RecordController {
   async getRecords(ctx: IRouterContext) {
     const pagination: Pagination = ctx.state.pagination
     const fields = {
+      _id: 1,
       first_settle_time: 1,
       next_settle_time: 1,
       symbol: 1,
