@@ -50,6 +50,7 @@ export default class RecordController {
     const pagination: Pagination = ctx.state.pagination
     const fields = {
       first_settle_time: 1,
+      next_settle_time: 1,
       symbol: 1,
       longex: 1,
       shortex: 1,
