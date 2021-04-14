@@ -6,6 +6,7 @@ export interface IRecord extends Document {
   first_settle_time: string,
   next_settle_time: string,
   hold: boolean,
+  refill: boolean,
   symbol: string,
   longex: string;
   shortex: string;
@@ -38,6 +39,7 @@ const recordModel: Schema = new Schema({
   next_settle_time: {type: Date, required},
   symbol: {type: String, required},
   hold: {type: Boolean, required},
+  refill: {type: Boolean, required},
   longex: {type: String, required},
   shortex: {type: String, required},
   max_volume: {type: Number, required},

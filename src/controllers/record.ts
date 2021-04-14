@@ -15,6 +15,7 @@ export default class RecordController {
     const fields = {
       first_settle_time: 1,
       hold: 1,
+      refill: 1,
       next_settle_time: 1,
       symbol: 1,
       longex: 1,
