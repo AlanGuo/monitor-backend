@@ -1,9 +1,9 @@
-import {Schema, model, Document} from "mongoose";
+import {Schema, Types, model, Document} from "mongoose";
 
 const required = true;
 
 export interface IFulfillment extends Document {
-  task_id: Schema.Types.ObjectId,
+  task_id: Types.ObjectId,
   datetime: string,
   exchange: string,
   symbol: string,
@@ -16,7 +16,7 @@ export interface IFulfillment extends Document {
 }
 
 const fulfillmentModel: Schema = new Schema({
-  task_id: {type: Schema.Types.ObjectId, required},
+  task_id: {type: Types.ObjectId, required},
   datetime: {type: Date, required},
   symbol: {type: String, required},
   exchange: {type: String, required},
