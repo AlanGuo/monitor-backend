@@ -25,10 +25,13 @@ export default class fulfillmentController {
       volume: 1,
       fill: 1
     };
+    console.log(ctx.params);
     const fills = await fullfilmentModel.find({
       task_id: Types.ObjectId(ctx.params.id)
     }, fields).sort({ _id: -1 }).skip(pagination.offset).limit(pagination.limit);
-    const total = await fullfilmentModel.countDocuments();
+    const total = await fullfilmentModel.countDocuments({
+      task_id: Types.ObjectId(ctx.params.id)
+    });
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {fills, total} });
   }
 }
