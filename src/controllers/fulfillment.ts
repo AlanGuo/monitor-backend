@@ -2,7 +2,6 @@ import { Controller, GET, PUT } from "@src/infrastructure/decorators/koa";
 import { PaginationDec } from "@src/infrastructure/decorators/pagination";
 import { Pagination } from "@src/interface";
 import { IRouterContext } from "koa-router";
-import recordModel, { IRecord } from "@src/models/record";
 import fullfilmentModel, { IFulfillment } from "@src/models/fulfillment";
 import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
@@ -32,7 +31,6 @@ export default class fulfillmentController {
       task_id: Types.ObjectId(ctx.params.id)
     };
     if (query.fulfill && query.fulfill.toLowerCase() == "false") {
-      const record = await recordModel.find({"_id": ctx.params.id}).limit(1);
       filter.fill  = {
         $expr: { $lt: [ "$fill" , "$volume" ] } 
       }
