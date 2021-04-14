@@ -16,6 +16,7 @@ export default class fulfillmentController {
   async getRunningRecord(ctx: IRouterContext) {
     const pagination: Pagination = ctx.state.pagination;
     const fields = {
+      task_id: 1,
       datetime: 1,
       exchange: 1,
       symbol: 1,
@@ -25,7 +26,6 @@ export default class fulfillmentController {
       volume: 1,
       fill: 1
     };
-    console.log(ctx.params);
     const fills = await fullfilmentModel.find({
       task_id: Types.ObjectId(ctx.params.id)
     }, fields).sort({ _id: -1 }).skip(pagination.offset).limit(pagination.limit);
