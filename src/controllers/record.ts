@@ -75,7 +75,7 @@ export default class RecordController {
       long_close_balance: 1,
       short_close_balance: 1,
       profit: 1,
-      "fulfillment.totalFee": 1
+      "fulfillments.totalFee": 1
     };
     const records = await recordModel.aggregate([
       {$sort: {_id: -1}},
@@ -83,16 +83,16 @@ export default class RecordController {
       {$limit: pagination.limit},
       {
         $lookup: {
-          from: "fulfillment",
+          from: "fulfillments",
           localField: "_id",
           foreignField: "task_id",
-          as: "fulfillment"
+          as: "fulfillments"
         }
       },
       {
         $group: {
           _id: "$_id",
-          totalFee: { $sum: "$fulfillment.fee" },
+          totalFee: { $sum: "$fulfillments.fee" },
         }
       },
       {$project: fields}
