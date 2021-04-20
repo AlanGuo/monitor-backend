@@ -80,7 +80,6 @@ export default class RecordController {
       "total_fee": 1
     };
     const records = await recordModel.aggregate([
-      {$match: {}},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
@@ -101,6 +100,7 @@ export default class RecordController {
           total_fee: { $sum: "$fulfillments.fee" },
         }
       },
+      {$match: {}},
       {$project: fields}
     ]);
     const total = await recordModel.countDocuments();
