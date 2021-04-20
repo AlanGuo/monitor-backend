@@ -97,7 +97,7 @@ export default class RecordController {
           totalFee: { $sum: "$fulfillments.fee" },
         }
       },
-      {$project: fields}
+      //{$project: fields}
     ]);
     const total = await recordModel.countDocuments();
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: { records, total } });
