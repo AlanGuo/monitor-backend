@@ -75,6 +75,8 @@ export default class RecordController {
       long_close_balance: 1,
       short_close_balance: 1,
       profit: 1,
+      "fulfillments.task_id": 1,
+      "fulfillments.fee": 1,
       "fulfillments.totalFee": 1
     };
     const records = await recordModel.aggregate([
