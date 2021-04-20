@@ -6,6 +6,7 @@ import recordModel, { IRecord } from "@src/models/record";
 import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
 import config from "@src/infrastructure/utils/config";
+import { Types } from "mongoose";
 
 @Controller({ prefix: "/records" })
 export default class RecordController {
@@ -73,9 +74,29 @@ export default class RecordController {
       short_final_price: 1,
       long_close_balance: 1,
       short_close_balance: 1,
-      profit: 1
+      profit: 1,
+      "fulfillment.totalFee": 1
     };
-    const records = await recordModel.find({}, fields).sort({ _id: -1 }).skip(pagination.offset).limit(pagination.limit);
+    const records = await recordModel.aggregate([
+      {$sort: {_id: -1}},
+      {$skip: pagination.offset},
+      {$limit: pagination.limit},
+      {
+        $lookup: {
+          from: "fulfillment",
+          localField: "_id",
+          foreignField: "task_id",
+          as: "fulfillment"
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          totalFee: { $sum: "$fulfillment.fee" },
+        }
+      },
+      {$project: fields}
+    ]);
     const total = await recordModel.countDocuments();
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: { records, total } });
   }
