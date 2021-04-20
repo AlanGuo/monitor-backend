@@ -77,7 +77,7 @@ export default class RecordController {
       profit: 1,
       "fulfillments.task_id": 1,
       "fulfillments.fee": 1,
-      "fulfillments.total_fee": 1
+      "total_fee": 1
     };
     const records = await recordModel.aggregate([
       {$match: {}},
