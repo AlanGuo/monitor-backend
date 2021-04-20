@@ -93,6 +93,9 @@ export default class RecordController {
         }
       },
       {
+        $unwind: "$fulfillments"
+      },
+      {
         $group: {
           _id: "$fulfillments._id",
           total_fee: { $sum: "$fulfillments.fee" },
