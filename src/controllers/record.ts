@@ -80,6 +80,7 @@ export default class RecordController {
       "fulfillment.totalFee": 1
     };
     const records = await recordModel.aggregate([
+      {$match: {}},
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
