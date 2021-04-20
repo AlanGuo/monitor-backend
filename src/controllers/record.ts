@@ -91,15 +91,6 @@ export default class RecordController {
           as: "fulfillments"
         }
       },
-      // {
-      //   $unwind: "$fulfillments"
-      // },
-      // {
-      //   $group: {
-      //     _id: "$_id",
-      //     total_fee: { $sum: "$fulfillments.fee" },
-      //   }
-      // },
       {$project: fields}
     ]);
     const total = await recordModel.countDocuments();
