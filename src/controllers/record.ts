@@ -75,9 +75,9 @@ export default class RecordController {
       long_close_balance: 1,
       short_close_balance: 1,
       profit: 1,
-      "fulfillment.task_id": 1,
-      "fulfillment.fee": 1,
-      "fulfillment.totalFee": 1
+      "fulfillments.task_id": 1,
+      "fulfillments.fee": 1,
+      "fulfillments.total_fee": 1
     };
     const records = await recordModel.aggregate([
       {$match: {}},
@@ -89,15 +89,15 @@ export default class RecordController {
           from: "fulfillments",
           localField: "_id",
           foreignField: "task_id",
-          as: "fulfillment"
+          as: "fulfillments"
         }
       },
-      // {
-      //   $group: {
-      //     _id: "$_id",
-      //     totalFee: { $sum: "$fulfillment.fee" },
-      //   }
-      // },
+      {
+        $group: {
+          _id: "$fulfillments._id",
+          total_fee: { $sum: "$fulfillments.fee" },
+        }
+      },
       {$project: fields}
     ]);
     const total = await recordModel.countDocuments();
