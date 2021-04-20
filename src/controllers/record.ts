@@ -84,14 +84,14 @@ export default class RecordController {
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
-      // {
-      //   $lookup: {
-      //     from: "fulfillments",
-      //     localField: "_id",
-      //     foreignField: "task_id",
-      //     as: "fulfillment"
-      //   }
-      // },
+      {
+        $lookup: {
+          from: "fulfillments",
+          localField: "_id",
+          foreignField: "task_id",
+          as: "fulfillment"
+        }
+      },
       // {
       //   $group: {
       //     _id: "$_id",
