@@ -24,7 +24,8 @@ export default class fulfillmentController {
       position: 1,
       price: 1,
       volume: 1,
-      fill: 1
+      fill: 1,
+      fee: 1
     };
     const filter: any = {
       $expr: { 
