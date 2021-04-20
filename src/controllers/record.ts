@@ -97,10 +97,14 @@ export default class RecordController {
       {
         $group: {
           _id: "$_id",
+          symbol: "$symbol",
+          longex: "$longex",
+          shortex: "$shortex",
+          first_settle_time: "$first_settle_time",
+          next_settle_time: "$next_settle_time",
           total_fee: { $sum: "$fulfillments.fee" },
         }
       },
-      {$match: {}},
       {$project: fields}
     ]);
     const total = await recordModel.countDocuments();
