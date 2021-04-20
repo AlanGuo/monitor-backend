@@ -92,9 +92,9 @@ export default class RecordController {
           as: "fulfillments"
         }
       },
-      // {
-      //   $unwind: "$fulfillments"
-      // },
+      {
+        $unwind: "$fulfillments"
+      },
       // {
       //   $group: {
       //     _id: "$fulfillments.task_id",
