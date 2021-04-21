@@ -7,6 +7,7 @@ import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
 import config from "@src/infrastructure/utils/config";
 import { Types } from "mongoose";
+import axios from "axios";
 
 @Controller({ prefix: "/records" })
 export default class RecordController {
@@ -75,6 +76,7 @@ export default class RecordController {
       long_close_balance: 1,
       short_close_balance: 1,
       profit: 1,
+      fulfillment_lost: 1,
       "fulfillments.task_id": 1,
       "fulfillments.fee": 1,
       "total_fee": 1
