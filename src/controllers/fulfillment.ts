@@ -58,55 +58,73 @@ export default class fulfillmentController {
     const fulfillments = await fulfillmentModel.find({
       task_id: Types.ObjectId(ctx.params.id),
     });
+    interface IDetailItem {
+      unfillOrder: IFulfillment | undefined,
+      appendOrders: IFulfillment[]
+    }
     let totalLost = 0;
-    fulfillments.forEach((item, index) => {
-      const orderTime = new Date(item.datetime);
-      const nextItem = fulfillments[index+1];
-      if (nextItem) {
-        const nextItemOrderTime = new Date(nextItem.datetime);
-        if(orderTime.toDateString() == nextItemOrderTime.toDateString() &&
-        orderTime.getHours() == nextItemOrderTime.getHours() &&
-        orderTime.getMinutes() == nextItemOrderTime.getMinutes() &&
-        orderTime.getSeconds() == nextItemOrderTime.getSeconds()) {
-          if (item.fill != nextItem.fill) {
-            // 未完全成交
-            let findBalanceItemIndex = 2;
-            while(fulfillments[index + findBalanceItemIndex]) {
-              const balanceItem = fulfillments[index + findBalanceItemIndex];
-              if (balanceItem.fill > 0) {
-                // nulfillItem 不会为空，因为这里确定有两边没有同等成交
-                let nulfillItem = null;
-                if (item.fill < nextItem.fill) {
-                  nulfillItem = item;
-                } else {
-                  nulfillItem = nextItem;
-                }
-                if (nulfillItem) {
-                  console.info(nulfillItem.exchange + "的"+nulfillItem.side+"订单" + nulfillItem.order_id + "未完全成交, 挂单价: " + nulfillItem.price + ", 未成交量: " + (nulfillItem.volume - nulfillItem.fill));
-                  if(balanceItem.fill) {
-                    let lost = 0;
-                    if (nulfillItem.side === "buy") {
-                      lost = (nulfillItem.price - balanceItem.price) * balanceItem.fill;
-                    } else if (nulfillItem.side === "sell") {
-                      lost = (balanceItem.price - nulfillItem.price) * balanceItem.fill;
-                    }
-                    totalLost += lost;
-                    console.info("追加订单" + balanceItem.order_id+", 成交价: " + balanceItem.price + ", 成交量: "+ balanceItem.fill + ", 亏损: " + lost);
+    let detail: IDetailItem[] = [];
+    
+    for(let index = 0 ;index < fulfillments.length; index +=1) {
+      const item = fulfillments[index];
+      if (item) {
+        const orderTime = new Date(item.datetime);
+        const nextItem = fulfillments[index+1];
+        if (nextItem) {
+          const nextItemOrderTime = new Date(nextItem.datetime);
+          if(orderTime.toDateString() == nextItemOrderTime.toDateString() &&
+          orderTime.getHours() == nextItemOrderTime.getHours() &&
+          orderTime.getMinutes() == nextItemOrderTime.getMinutes() &&
+          orderTime.getSeconds() == nextItemOrderTime.getSeconds()) {
+            if (item.fill != nextItem.fill) {
+              let detailItem: IDetailItem = {
+                unfillOrder: undefined,
+                appendOrders: []
+              };
+              // 未完全成交
+              let findBalanceItemIndex = 2;
+              while(fulfillments[index + findBalanceItemIndex]) {
+                const balanceItem = fulfillments[index + findBalanceItemIndex];
+                if (balanceItem.fill > 0) {
+                  // nulfillItem 不会为空，因为这里确定有两边没有同等成交
+                  let nulfillItem = null;
+                  if (item.fill < nextItem.fill) {
+                    nulfillItem = item;
+                  } else {
+                    nulfillItem = nextItem;
                   }
+                  if (nulfillItem) {
+                    console.info(nulfillItem.exchange + "的"+nulfillItem.side+"订单" + nulfillItem.order_id + "未完全成交, 挂单价: " + nulfillItem.price + ", 未成交量: " + (nulfillItem.volume - nulfillItem.fill));
+                    detailItem.unfillOrder = nulfillItem;
+                    if(balanceItem.fill) {
+                      detailItem.appendOrders.push(balanceItem);
+                      let lost = 0;
+                      if (nulfillItem.side === "buy") {
+                        lost = (nulfillItem.price - balanceItem.price) * balanceItem.fill;
+                      } else if (nulfillItem.side === "sell") {
+                        lost = (balanceItem.price - nulfillItem.price) * balanceItem.fill;
+                      }
+                      totalLost += lost;
+                      console.info("追加订单" + balanceItem.order_id+", 成交价: " + balanceItem.price + ", 成交量: "+ balanceItem.fill + ", 亏损: " + lost);
+                    }
+                  }
+                } else {
+                  break;
                 }
-              } else {
-                break;
+                // 完全成交，表示两边仓位已拉平
+                if(balanceItem.fill == balanceItem.volume) {
+                  break;
+                }
+                findBalanceItemIndex++;
               }
-              // 完全成交，表示两边仓位已拉平
-              if(balanceItem.fill == balanceItem.volume) {
-                break;
+              if (detailItem.unfillOrder) {
+                detail.push(detailItem);
               }
-              findBalanceItemIndex++;
             }
           }
         }
       }
-    });
-    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {totalLost} });
+    }
+    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {totalLost, detail} });
   }
 }
