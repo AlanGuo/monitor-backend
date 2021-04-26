@@ -44,8 +44,9 @@ export default class fulfillmentController {
   async getTotalFee(ctx: IRouterContext) {
     const totalFeeRecords = await fulfillmentModel.aggregate([
       {
+        $match : { _id : Types.ObjectId(ctx.params.id) },
         $group: {
-          task_id: Types.ObjectId(ctx.params.id),
+          _id: Types.ObjectId(ctx.params.id),
           totalFee: { $sum: "$fee" },
         }
       }
