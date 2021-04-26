@@ -9,7 +9,7 @@ export interface IFulfillment extends Document {
   symbol: string,
   order_id: string;
   side: string;
-  position: number;
+  position: string;
   price: number;
   volume: number;
   fill: number;
