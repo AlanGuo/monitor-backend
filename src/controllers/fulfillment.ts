@@ -45,7 +45,7 @@ export default class fulfillmentController {
     const totalFeeRecords = await fulfillmentModel.aggregate([
       {
         $group: {
-          _id: Types.ObjectId(ctx.params.id),
+          task_id: Types.ObjectId(ctx.params.id),
           totalFee: { $sum: "$fee" },
         }
       }
