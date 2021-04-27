@@ -70,13 +70,11 @@ export default class fulfillmentController {
     
     for(let index = 0 ;index < fulfillments.length; index +=1) {
       const item = fulfillments[index];
-      console.log(item);
       if (item &&
         // 只统计平仓的损失
         ((item.position === "long" && item.side === "sell") || 
         (item.position === "short" && item.side === "buy"))
       ) {
-        console.log(item);
         const orderTime = new Date(item.datetime);
         const nextItem = fulfillments[index+1];
         if (nextItem) {

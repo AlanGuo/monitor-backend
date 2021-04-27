@@ -22,7 +22,7 @@ const fulfillmentModel: Schema = new Schema({
   exchange: {type: String, required},
   order_id: {type: String, required},
   side: {type: String, required},
-  position: {type: Number, required},
+  position: {type: String, required},
   price:{type: Number, required},
   volume:{type: Number, required},
   fill: {type: Number, required}
