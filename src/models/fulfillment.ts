@@ -17,7 +17,7 @@ export interface IFulfillment extends Document {
 
 const fulfillmentModel: Schema = new Schema({
   task_id: {type: Types.ObjectId, required},
-  datetime: {type: String, required},
+  datetime: {type: Date, required},
   symbol: {type: String, required},
   exchange: {type: String, required},
   order_id: {type: String, required},
