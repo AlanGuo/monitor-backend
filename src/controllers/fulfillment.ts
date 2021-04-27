@@ -75,6 +75,7 @@ export default class fulfillmentController {
         (item.position === "long" && item.side === "sell" || 
         item.position === "short" && item.side === "buy")
       ) {
+        console.log(item);
         const orderTime = new Date(item.datetime);
         const nextItem = fulfillments[index+1];
         if (nextItem) {
