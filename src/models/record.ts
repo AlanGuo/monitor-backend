@@ -38,8 +38,8 @@ export interface IRecord extends Document {
 }
 
 const recordModel: Schema = new Schema({
-  first_settle_time: {type: Date, required},
-  next_settle_time: {type: Date, required},
+  first_settle_time: {type: String, required},
+  next_settle_time: {type: String, required},
   symbol: {type: String, required},
   hold: {type: Boolean, required},
   refill: {type: Boolean, required},
