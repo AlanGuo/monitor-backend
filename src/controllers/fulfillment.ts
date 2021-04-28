@@ -53,7 +53,7 @@ export default class fulfillmentController {
         }
       }
     ]);
-    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {totalFee: totalFeeRecords[0].totalFee} });
+    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {totalFee: totalFeeRecords[0] ? totalFeeRecords[0].totalFee : 0} });
   }
 
   @GET("/task/lost/:id")
