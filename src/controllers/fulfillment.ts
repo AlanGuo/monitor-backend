@@ -63,7 +63,8 @@ export default class fulfillmentController {
     });
     interface IDetailItem {
       unfillOrder: IFulfillment | undefined,
-      appendOrders: IFulfillment[]
+      appendOrders: IFulfillment[],
+      lost: number
     }
     let totalLost = 0;
     let detail: IDetailItem[] = [];
@@ -85,6 +86,7 @@ export default class fulfillmentController {
           orderTime.getSeconds() == nextItemOrderTime.getSeconds()) {
             if (item.fill != nextItem.fill) {
               let detailItem: IDetailItem = {
+                lost: 0,
                 unfillOrder: undefined,
                 appendOrders: []
               };
@@ -111,6 +113,7 @@ export default class fulfillmentController {
                       } else if (nulfillItem.side === "sell") {
                         lost = (balanceItem.price - nulfillItem.price) * balanceItem.fill;
                       }
+                      detailItem.lost = lost;
                       totalLost += lost;
                       console.info("追加订单" + balanceItem.order_id+", 成交价: " + balanceItem.price + ", 成交量: "+ balanceItem.fill + ", 亏损: " + lost);
                     }
