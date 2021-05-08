@@ -11,7 +11,7 @@ module.exports = {
 
   FINACIAL: {
     balance: 50000,
-    volume_div: 10
+    volume_div: 30
   },
 
   REDIS: {
