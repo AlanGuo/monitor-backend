@@ -10,7 +10,7 @@ module.exports = {
   },
 
   FINACIAL: {
-    balance: 10000,
+    balance: 50000,
     volume_div: 10
   },
 
@@ -24,7 +24,7 @@ module.exports = {
 
   MONGODB: {
     Name: "dev",
-    DB: "arbetrage-engine",
+    DB: "abtg-perp-prod-2021-05-09",
     Connection_String_URI: "mongodb://localhost:27017"
   },
   HOST: "https://monitor.bitapp.com"
