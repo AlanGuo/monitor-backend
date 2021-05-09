@@ -10,7 +10,7 @@ module.exports = {
   },
 
   FINACIAL: {
-    balance: 50000,
+    balance: 50266.62,
     volume_div: 30
   },
 
