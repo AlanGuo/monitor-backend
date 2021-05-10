@@ -109,9 +109,8 @@ export default class RecordController {
         }
       }
     ]);
-    const latestRecord = await recordModel.find({}, {first_settle_time: 1}).sort({ _id: -1 }).limit(1);
     const firstRecord = await recordModel.find({}, {first_settle_time: 1}).sort({ _id: 1 }).limit(1);
-    const lastTime = new Date(latestRecord[0].first_settle_time);
+    const lastTime = new Date();
     const firstTime = new Date(firstRecord[0].first_settle_time);
     let duration = lastTime.getTime() - firstTime.getTime();
     ctx.body = jsonResponse({
