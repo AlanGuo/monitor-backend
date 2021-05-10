@@ -118,6 +118,7 @@ export default class RecordController {
         {
           balance: config.FINACIAL.balance,
           totalProfit: totalProfitRecords[0].totalProfit,
+          startTime: firstTime.getTime(),
           days: duration / 1000 / 3600 / 24
         }
     });
