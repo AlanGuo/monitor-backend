@@ -84,7 +84,6 @@ export default class fulfillmentController {
           orderTime.getHours() == nextItemOrderTime.getHours() &&
           orderTime.getMinutes() == nextItemOrderTime.getMinutes() &&
           orderTime.getSeconds() == nextItemOrderTime.getSeconds()) {
-            console.log(orderTime, nextItemOrderTime);
             if (item.fill != nextItem.fill) {
               let detailItem: IDetailItem = {
                 lost: 0,
@@ -119,8 +118,6 @@ export default class fulfillmentController {
                       console.info("追加订单" + balanceItem.order_id+", 成交价: " + balanceItem.price + ", 成交量: "+ balanceItem.fill + ", 亏损: " + lost);
                     }
                   }
-                } else {
-                  break;
                 }
                 // 完全成交，表示两边仓位已拉平
                 if(balanceItem.fill == balanceItem.volume) {
