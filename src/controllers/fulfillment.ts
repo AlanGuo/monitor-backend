@@ -80,6 +80,7 @@ export default class fulfillmentController {
         const nextItem = fulfillments[index+1];
         if (nextItem) {
           const nextItemOrderTime = new Date(nextItem.datetime);
+          console.log(orderTime, nextItemOrderTime);
           if(orderTime.toDateString() == nextItemOrderTime.toDateString() &&
           orderTime.getHours() == nextItemOrderTime.getHours() &&
           orderTime.getMinutes() == nextItemOrderTime.getMinutes() &&
@@ -103,7 +104,7 @@ export default class fulfillmentController {
                     nulfillItem = nextItem;
                   }
                   if (nulfillItem) {
-                    console.info(nulfillItem.exchange + "的"+nulfillItem.side+"订单" + nulfillItem.order_id + "未完全成交, 挂单价: " + nulfillItem.price + ", 未成交量: " + (nulfillItem.volume - nulfillItem.fill));
+                    console.info(nulfillItem.exchange + "的" + nulfillItem.side+"订单" + nulfillItem.order_id + "未完全成交, 挂单价: " + nulfillItem.price + ", 未成交量: " + (nulfillItem.volume - nulfillItem.fill));
                     detailItem.unfillOrder = nulfillItem;
                     if(balanceItem.fill) {
                       detailItem.appendOrders.push(balanceItem);
