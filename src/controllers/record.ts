@@ -112,14 +112,15 @@ export default class RecordController {
     const firstRecord = await recordModel.find({}, {first_settle_time: 1}).sort({ _id: 1 }).limit(1);
     const lastTime = new Date();
     const firstTime = new Date(firstRecord[0].first_settle_time);
+    const balance = firstRecord[0].long_open_balance + firstRecord[0].short_open_balance;
     let duration = lastTime.getTime() - firstTime.getTime();
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL, data:
         {
-          balance: config.FINACIAL.balance,
+          balance: balance,
           totalProfit: totalProfitRecords[0].totalProfit,
           startTime: firstTime.getTime(),
-          days: duration / 1000 / 3600 / 24
+          days: Math.abs(duration) / 1000 / 3600 / 24
         }
     });
   }
