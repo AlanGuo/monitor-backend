@@ -80,11 +80,11 @@ export default class fulfillmentController {
         const nextItem = fulfillments[index+1];
         if (nextItem) {
           const nextItemOrderTime = new Date(nextItem.datetime);
-          console.log(orderTime, nextItemOrderTime);
           if(orderTime.toDateString() == nextItemOrderTime.toDateString() &&
           orderTime.getHours() == nextItemOrderTime.getHours() &&
           orderTime.getMinutes() == nextItemOrderTime.getMinutes() &&
           orderTime.getSeconds() == nextItemOrderTime.getSeconds()) {
+            console.log(orderTime, nextItemOrderTime);
             if (item.fill != nextItem.fill) {
               let detailItem: IDetailItem = {
                 lost: 0,
