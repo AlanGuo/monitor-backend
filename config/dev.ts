@@ -10,8 +10,7 @@ module.exports = {
   },
 
   FINACIAL: {
-    balance: 10000,
-    volume_div: 10
+    balance: 10000
   },
 
   REDIS: {
