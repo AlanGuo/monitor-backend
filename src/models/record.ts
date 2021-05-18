@@ -31,7 +31,7 @@ export interface IRecord extends Document {
   short_open_balance: number;
   long_close_balance: number;
   short_close_balance: number;
-  fulfillment_lost: number;
+  price_diff_profit: number;
   profit: number;
 }
 

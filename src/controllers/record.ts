@@ -71,7 +71,7 @@ export default class RecordController {
       long_close_balance: 1,
       short_close_balance: 1,
       profit: 1,
-      fulfillment_lost: 1,
+      price_diff_profit: 1,
       "fulfillments.task_id": 1,
       "fulfillments.fee": 1,
       "total_fee": 1

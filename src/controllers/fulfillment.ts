@@ -174,10 +174,10 @@ export default class fulfillmentController {
     ]);
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
-        long_close_price: totalCloseLongRecords[0].totalPrice / totalCloseLongRecords[0].totalFill,
-        long_closed_volume: totalCloseLongRecords[0].totalFill,
-        short_close_price: totalCloseShortRecords[0].totalPrice / totalCloseShortRecords[0].totalFill,
-        short_closed_volume: totalCloseShortRecords[0].totalFill,
+        long_close_price: totalCloseLongRecords.length ? totalCloseLongRecords[0].totalPrice / totalCloseLongRecords[0].totalFill : 0,
+        long_closed_volume: totalCloseLongRecords.length ? totalCloseLongRecords[0].totalFill : 0,
+        short_close_price: totalCloseShortRecords.length ? totalCloseShortRecords[0].totalPrice / totalCloseShortRecords[0].totalFill : 0,
+        short_closed_volume: totalCloseShortRecords.length ? totalCloseShortRecords[0].totalFill : 0,
       } 
     });
   }
