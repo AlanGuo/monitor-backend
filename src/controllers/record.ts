@@ -5,9 +5,6 @@ import { IRouterContext } from "koa-router";
 import recordModel, { IRecord } from "@src/models/record";
 import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
-import config from "@src/infrastructure/utils/config";
-import { Types } from "mongoose";
-import axios from "axios";
 
 @Controller({ prefix: "/records" })
 export default class RecordController {
@@ -36,8 +33,6 @@ export default class RecordController {
       short_open_balance: 1,
       long_final_price: 1,
       short_final_price: 1,
-      long_open_price: 1,
-      short_open_price: 1,
       profit: 1
     };
     const records = await recordModel.find({}, fields).sort({ _id: -1 }).limit(1);

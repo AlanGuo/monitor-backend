@@ -135,4 +135,48 @@ export default class fulfillmentController {
     }
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {totalLost, detail} });
   }
+
+  @GET("/task/close_avg_price/:id")
+  async getAvgPrice(ctx: IRouterContext) {
+    const totalCloseLongRecords = await fulfillmentModel.aggregate([
+      {
+        $match: {
+          task_id: Types.ObjectId(ctx.params.id),
+          side: "sell",
+          position: "long"
+        }
+      },
+      {$project:{fill:1, total: { $multiply: [ "$price", "$fill" ] }}},
+      {
+        $group: {
+          _id: null,
+          totalFill: {$sum:"$fill"},
+          totalPrice:{$sum:"$total"}
+        }
+      }
+    ]);
+    const totalCloseShortRecords = await fulfillmentModel.aggregate([
+      {
+        $match: {
+          task_id: Types.ObjectId(ctx.params.id),
+          side: "buy",
+          position: "short"
+        }
+      },
+      {$project:{fill:1, total: { $multiply: [ "$price", "$fill" ] }}},
+      {
+        $group: {
+          _id: null,
+          totalFill: {$sum:"$fill"},
+          totalPrice:{$sum:"$total"}
+        }
+      }
+    ]);
+    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
+      data: {
+        long_close_price: totalCloseLongRecords[0].totalPrice / totalCloseLongRecords[0].totalFill,
+        short_close_price: totalCloseShortRecords[0].totalPrice / totalCloseShortRecords[0].totalFill
+      } 
+    });
+  }
 }
