@@ -175,7 +175,9 @@ export default class fulfillmentController {
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
         long_close_price: totalCloseLongRecords[0].totalPrice / totalCloseLongRecords[0].totalFill,
-        short_close_price: totalCloseShortRecords[0].totalPrice / totalCloseShortRecords[0].totalFill
+        long_closed_volume: totalCloseLongRecords[0].totalFill,
+        short_close_price: totalCloseShortRecords[0].totalPrice / totalCloseShortRecords[0].totalFill,
+        short_closed_volume: totalCloseShortRecords[0].totalFill,
       } 
     });
   }
