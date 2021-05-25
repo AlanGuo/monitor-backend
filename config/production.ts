@@ -11,7 +11,7 @@ module.exports = {
 
   FINACIAL: {
     balance: 59373,
-    bnb: 1.62,
+    bnb: 1.89,
     bnbPrice: 364
   },
 
