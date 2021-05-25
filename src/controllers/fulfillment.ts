@@ -42,9 +42,12 @@ export default class fulfillmentController {
 
   @GET("/task/fee/:id")
   async getTotalFee(ctx: IRouterContext) {
-    const totalFeeRecords = await fulfillmentModel.aggregate([
+    const totalUsdtFeeRecords = await fulfillmentModel.aggregate([
       {
-        $match: {task_id: Types.ObjectId(ctx.params.id)}
+        $match: {
+          task_id: Types.ObjectId(ctx.params.id),
+          fee_asset: "USDT"
+        }
       },
       {
         $group: {
@@ -53,7 +56,21 @@ export default class fulfillmentController {
         }
       }
     ]);
-    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {totalFee: totalFeeRecords[0] ? totalFeeRecords[0].totalFee : 0} });
+    const totalBNBFeeRecords = await fulfillmentModel.aggregate([
+      {
+        $match: {
+          fee_asset: "BNB",
+          task_id: Types.ObjectId(ctx.params.id)
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalFee: { $sum: "$fee" }
+        }
+      }
+    ]);
+    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {usdt: totalUsdtFeeRecords[0] ? totalUsdtFeeRecords[0].totalFee : 0, bnb: totalBNBFeeRecords[0] ? totalBNBFeeRecords[0].totalFee : 0} });
   }
 
   @GET("/task/lost/:id")

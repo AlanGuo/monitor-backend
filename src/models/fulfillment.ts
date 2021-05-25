@@ -13,6 +13,8 @@ export interface IFulfillment extends Document {
   price: number;
   volume: number;
   fill: number;
+  fee: number;
+  fee_asset: number;
 }
 
 const fulfillmentModel: Schema = new Schema({
@@ -25,7 +27,9 @@ const fulfillmentModel: Schema = new Schema({
   position: {type: String, required},
   price:{type: Number, required},
   volume:{type: Number, required},
-  fill: {type: Number, required}
+  fill: {type: Number, required},
+  fee: {type: Number, required},
+  fee_asset: {type: Number, required}
 }, {
   timestamps: false
 });
