@@ -115,7 +115,9 @@ export interface Config {
     Password: string
   },
   FINACIAL: {
-    balance: number
+    balance: number,
+    bnb: number,
+    bnbPrice: number
   },
   MONGODB: {
     Name: string,

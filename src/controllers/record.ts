@@ -3,8 +3,10 @@ import { PaginationDec } from "@src/infrastructure/decorators/pagination";
 import { Pagination } from "@src/interface";
 import { IRouterContext } from "koa-router";
 import recordModel, { IRecord } from "@src/models/record";
+import fulfillmentModel, { IFulfillment } from "@src/models/fulfillment";
 import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
+import config from "@src/infrastructure/utils/config";
 
 @Controller({ prefix: "/records" })
 export default class RecordController {
@@ -109,6 +111,19 @@ export default class RecordController {
         }
       }
     ]);
+    const totalBNBFeeRecords = await fulfillmentModel.aggregate([
+      {
+        $match: {
+          fee_asset: "BNB"
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalBNBFee: { $sum: "$fee" },
+        }
+      }
+    ]);
     const firstRecord = await recordModel.find({}, {first_settle_time: 1, long_open_balance:1, short_open_balance: 1}).sort({ _id: 1 }).limit(1);
     const lastTime = new Date();
     const firstTime = new Date(firstRecord[0].first_settle_time);
@@ -118,6 +133,9 @@ export default class RecordController {
       code: RESPONSE_CODE.NORMAL, data:
         {
           balance: balance,
+          bnb: config.FINACIAL.bnb,
+          bnbPrice: config.FINACIAL.bnbPrice,
+          bnbFee: totalBNBFeeRecords[0].totalBNBFee,
           totalProfit: totalProfitRecords[0].totalProfit,
           startTime: firstTime.getTime(),
           days: Math.abs(duration) / 1000 / 3600 / 24
