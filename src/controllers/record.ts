@@ -136,8 +136,8 @@ export default class RecordController {
           balance: balance,
           bnb: config.FINACIAL.bnb,
           bnbPrice: config.FINACIAL.bnbPrice,
-          bnbFee: totalBNBFeeRecords[0].totalBNBFee,
-          totalProfit: totalProfitRecords[0].totalProfit,
+          bnbFee: totalBNBFeeRecords.length ? totalBNBFeeRecords[0].totalBNBFee : 0,
+          totalProfit: totalProfitRecords.length ? totalProfitRecords[0].totalProfit : 0,
           startTime: firstTime.getTime(),
           days: Math.abs(duration) / 1000 / 3600 / 24
         }
