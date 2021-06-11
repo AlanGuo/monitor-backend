@@ -115,7 +115,7 @@ export default class RecordController {
     const totalBNBFeeRecords = await fulfillmentModel.aggregate([
       {
         $match: {
-          fee_asset: "BNB"
+          fee_asset: "bnb"
         }
       },
       {
