@@ -46,7 +46,7 @@ export default class fulfillmentController {
       {
         $match: {
           task_id: Types.ObjectId(ctx.params.id),
-          fee_asset: "USDT"
+          fee_asset: "usdt"
         }
       },
       {
@@ -59,7 +59,7 @@ export default class fulfillmentController {
     const totalBNBFeeRecords = await fulfillmentModel.aggregate([
       {
         $match: {
-          fee_asset: "BNB",
+          fee_asset: "bnb",
           task_id: Types.ObjectId(ctx.params.id)
         }
       },
@@ -163,7 +163,7 @@ export default class fulfillmentController {
           position: "long"
         }
       },
-      {$project:{fill:1, total: { $multiply: [ "$price", "$fill" ] }}},
+      {$project:{fill:1, total: { $multiply: [ "$trade_avg_price", "$fill" ] }}},
       {
         $group: {
           _id: null,
@@ -180,7 +180,7 @@ export default class fulfillmentController {
           position: "short"
         }
       },
-      {$project:{fill:1, total: { $multiply: [ "$price", "$fill" ] }}},
+      {$project:{fill:1, total: { $multiply: [ "$trade_avg_price", "$fill" ] }}},
       {
         $group: {
           _id: null,

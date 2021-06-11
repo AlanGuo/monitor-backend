@@ -26,6 +26,7 @@ const fulfillmentModel: Schema = new Schema({
   side: {type: String, required},
   position: {type: String, required},
   price:{type: Number, required},
+  trade_avg_price:{type: Number, required},
   volume:{type: Number, required},
   fill: {type: Number, required},
   fee: {type: Number, required},
