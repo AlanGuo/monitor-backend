@@ -40,6 +40,10 @@ export default class RecordController {
       short_open_balance: 1,
       long_open_price: 1,
       short_open_price: 1,
+      long_index_price: 1,
+      short_index_price: 1,
+      long_balance: 1,
+      short_balance: 1,
       profit: 1
     };
     const records = await recordModel.find({}, fields).sort({ _id: -1 }).limit(1);
