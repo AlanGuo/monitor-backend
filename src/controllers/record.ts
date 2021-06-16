@@ -33,7 +33,7 @@ export default class RecordController {
       long_funding_rate_next:1,
       short_funding_rate: 1,
       volume_precision: 1,
-      price_precistion: 1,
+      price_precision: 1,
       short_funding_rate_next: 1,
       long_open_volume: 1,
       short_open_volume: 1,
