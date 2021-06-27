@@ -42,6 +42,8 @@ export interface IRecord extends Document {
   long_balance: number;
   short_balance: number;
   profit: number;
+  usdt_fee: number;
+  bnb_fee: number;
 }
 
 const recordModel: Schema = new Schema({
@@ -80,6 +82,8 @@ const recordModel: Schema = new Schema({
   short_close_balance: {type: Number, required},
   fulfillment_lost: {type: Number, required},
   profit: {type: Number, required},
+  usdt_fee: {type: Number, required},
+  bnb_fee: {type: Number, required},
   long_index_price: {type: Number, required},
   short_index_price: {type: Number, required},
   long_balance: {type: Number, required},
