@@ -39,6 +39,7 @@ export interface IRecord extends Document {
   price_diff_profit: number;
   long_index_price: number;
   short_index_price: number;
+  task_index_price: number;
   long_balance: number;
   short_balance: number;
   profit: number;
@@ -86,6 +87,7 @@ const recordModel: Schema = new Schema({
   bnb_fee: {type: Number, required},
   long_index_price: {type: Number, required},
   short_index_price: {type: Number, required},
+  task_index_price: {type: Number, required},
   long_balance: {type: Number, required},
   short_balance: {type: Number, required}
 }, {
