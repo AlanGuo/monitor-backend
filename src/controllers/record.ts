@@ -49,13 +49,8 @@ export default class RecordController {
       short_balance: 1,
       profit: 1
     };
-    const records = await recordModel.find({}, fields).sort({ _id: -1 }).limit(1);
-    const rec: IRecord = records[0].toJSON();
-    if (rec.profit == null) {
-      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: rec });
-    } else {
-      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL });
-    }
+    const records = await recordModel.find({profit: { $exists: false }, fields}).sort({ _id: -1 }).limit(1);
+    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: records });
   }
 
   @GET("")
