@@ -49,7 +49,7 @@ export default class RecordController {
       short_balance: 1,
       profit: 1
     };
-    const records = await recordModel.find({profit: { $exists: false }, fields}).sort({ _id: -1 });
+    const records = await recordModel.find({profit: { $exists: false }}, fields).sort({ _id: -1 });
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: records });
   }
 
