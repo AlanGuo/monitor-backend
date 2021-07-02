@@ -115,11 +115,10 @@ export default class RecordController {
   @GET("/stats")
   async statsData(ctx: IRouterContext) {
     const totalProfitRecords = await recordModel.aggregate([
-      {$project:{ usdt_fee:1, profit:1, profitIncludingUsdtFee: { $add: [ "$profit", "$usdt_fee" ] }}},
       {
         $group: {
           _id: null,
-          totalProfit: { $sum: "$profitIncludingUsdtFee" },
+          totalProfit: { $sum: "$profit" },
         }
       }
     ]);
