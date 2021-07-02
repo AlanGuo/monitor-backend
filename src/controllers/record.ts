@@ -114,14 +114,6 @@ export default class RecordController {
 
   @GET("/stats")
   async statsData(ctx: IRouterContext) {
-    const totalProfitRecords = await recordModel.aggregate([
-      {
-        $group: {
-          _id: null,
-          totalProfit: { $sum: "$profit" },
-        }
-      }
-    ]);
     const totalBNBFeeRecords = await fulfillmentModel.aggregate([
       {
         $match: {
@@ -135,19 +127,24 @@ export default class RecordController {
         }
       }
     ]);
+    const records = await recordModel.find({profit: { $exists: true }}, {
+      long_close_balance: 1,
+      short_close_balance: 1
+    }).sort({ _id: -1 });
+    const current_balance = records.length ? records[0].long_close_balance + records[0].short_close_balance : 0;
     const firstRecord = await recordModel.find({}, {first_settle_time: 1, long_open_balance:1, short_open_balance: 1}).sort({ _id: 1 }).limit(1);
     const lastTime = new Date();
-    const firstTime = new Date(firstRecord[0].first_settle_time);
-    const balance = firstRecord[0].long_open_balance + firstRecord[0].short_open_balance;
+    const firstTime = new Date(firstRecord.length ? firstRecord[0].first_settle_time : Date.now());
+    const balance = firstRecord.length ? firstRecord[0].long_open_balance + firstRecord[0].short_open_balance : 0;
     let duration = lastTime.getTime() - firstTime.getTime();
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL, data:
         {
-          balance: balance,
+          balance,
           bnb: config.FINACIAL.bnb,
           bnbPrice: config.FINACIAL.bnbPrice,
           bnbFee: totalBNBFeeRecords.length ? totalBNBFeeRecords[0].totalBNBFee : 0,
-          totalProfit: totalProfitRecords.length ? totalProfitRecords[0].totalProfit : 0,
+          totalProfit: current_balance - balance,
           startTime: firstTime.getTime(),
           days: Math.abs(duration) / 1000 / 3600 / 24
         }
