@@ -40,8 +40,8 @@ export default class depthController {
     ]);
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
-        avgClosePriceDiff: avgPriceDiffRes.length > 0 ? avgPriceDiffRes[0].avgClosePriceDiff : 0,
-        avgOpenPriceDiff: avgPriceDiffRes.length > 0 ? avgPriceDiffRes[0].avgOpenPriceDiff : 0
+        avgClosePriceDiff: avgPriceDiffRes.length > 0 ? (avgPriceDiffRes[0].avgClosePriceDiff || 0) : 0,
+        avgOpenPriceDiff: avgPriceDiffRes.length > 0 ? (avgPriceDiffRes[0].avgOpenPriceDiff || 0) : 0
       } 
     });
   }
