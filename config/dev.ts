@@ -1,6 +1,7 @@
 module.exports = {
   HTTPS_PORT: 3010,
   API_PREFIX: "/api",
+  DEPTH_LIMIT: 10080,
 
   CORS: {
     origin: "*"

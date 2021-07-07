@@ -3,7 +3,7 @@ import { IRouterContext } from "koa-router";
 import depthModel, { IDepth } from "@src/models/depth";
 import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
-import { Types } from "mongoose";
+import config from "@src/infrastructure/utils/config";
 
 @Controller({ prefix: "/depths" })
 export default class depthController {
@@ -11,12 +11,14 @@ export default class depthController {
   async getAvgPrice(ctx: IRouterContext) {
     const long_ex = ctx.query.long;
     const short_ex = ctx.query.short;
+    const limit = ctx.query.limit;
     const avgPriceDiffRes = await depthModel.aggregate([
       {
         $match: {
           symbol: ctx.params.symbol
         }
       },
+      {$limit: limit || config.DEPTH_LIMIT},
       {
         $project:{
           binance_ask: 1, binance_bid: 1, huobi_ask: 1, huobi_bid: 1, okex_ask: 1, okex_bid: 1, 

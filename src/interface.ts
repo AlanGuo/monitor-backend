@@ -107,6 +107,7 @@ export interface ImageAmazonUrl {
 export interface Config {
   HTTPS_PORT: number,
   API_PREFIX: string,
+  DEPTH_LIMIT: number,
   REDIS: {
     Host: string,
     Port: number,
