@@ -11,23 +11,35 @@ export default class depthController {
   async getAvgPrice(ctx: IRouterContext) {
     const long_ex = ctx.query.long;
     const short_ex = ctx.query.short;
-    const avgClosePriceDiffRes = await depthModel.aggregate([
+    const avgPriceDiffRes = await depthModel.aggregate([
       {
         $match: {
           symbol: ctx.params.symbol
         }
       },
-      {$project:{binance_ask: 1, binance_bid: 1, huobi_ask: 1, huobi_bid: 1, okex_ask: 1, okex_bid: 1, close_price_diff: { $subtract: [ `$${short_ex}_ask`, `$${long_ex}_bid` ] }}},
+      {
+        $project:{
+          binance_ask: 1, binance_bid: 1, huobi_ask: 1, huobi_bid: 1, okex_ask: 1, okex_bid: 1, 
+          close_price_diff: { 
+            $subtract: [ `$${short_ex}_ask`, `$${long_ex}_bid` ] 
+          },
+          open_price_diff: { 
+            $subtract: [ `$${short_ex}_bid`, `$${long_ex}_ask` ] 
+          }
+        }
+      },
       {
         $group: {
           _id: null,
-          avgClosePriceDiff: {$avg:"$close_price_diff"}
+          avgClosePriceDiff: {$avg:"$close_price_diff"},
+          avgOpenPriceDiff: {$avg:"$open_price_diff"}
         }
       }
     ]);
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
-        avgClosePriceDiff: avgClosePriceDiffRes.length > 0 ? avgClosePriceDiffRes[0].avgClosePriceDiff : 0
+        avgClosePriceDiff: avgPriceDiffRes.length > 0 ? avgPriceDiffRes[0].avgClosePriceDiff : 0,
+        avgOpenPriceDiff: avgPriceDiffRes.length > 0 ? avgPriceDiffRes[0].avgOpenPriceDiff : 0
       } 
     });
   }
