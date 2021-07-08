@@ -105,7 +105,7 @@ export default class depthController {
     const step = ctx.query.step;
     const total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit).countDocuments();
     const targetCount = total * Number(pct);
-
+    console.log("targetCount: " + targetCount);
     const getCountByDiff = async function(diff: number) {
       const countRes = await depthModel.aggregate([
         {
@@ -147,6 +147,7 @@ export default class depthController {
 
     let finalDiff = 0;
     let countx = await getCountByDiff(finalDiff);
+    console.log("countx: " + countx);
     if (countx >= targetCount) {
       // diff 每次减少一个 step，直到下一个 count < targetCount
       finalDiff = finalDiff - Number(step);
