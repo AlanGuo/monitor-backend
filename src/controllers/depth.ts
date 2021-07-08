@@ -89,7 +89,9 @@ export default class depthController {
     ]);
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
-        avgClosePriceDiff: countRes.length > 0 ? (countRes[0].count / total) : 0,
+        pct: countRes.length > 0 ? (countRes[0].count / total) : 0,
+        count: countRes.length > 0 ? countRes[0].count : 0,
+        total
       } 
     });
   }
