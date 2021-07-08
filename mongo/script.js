@@ -29,6 +29,6 @@ db.depths.aggregate([
     }
   },
   {
-    $count: "ts"
+    $count: "count"
   }
 ]);
