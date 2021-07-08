@@ -19,7 +19,7 @@ db.depths.aggregate([
   {
     $project: {
       _id: 0,
-      binance_ask: 1, binance_bid: 1, huobi_ask: 1, huobi_bid: 1, ts: 1,
+      ts:1,
       closePriceLte0: {$lte:["$close_price_diff", 0]},
     }
   },
@@ -28,4 +28,7 @@ db.depths.aggregate([
       closePriceLte0: true
     }
   },
+  {
+    $count: "ts"
+  }
 ]);
