@@ -144,30 +144,34 @@ export default class depthController {
       return countRes.length > 0 ? countRes[0].count : 0;
     }
 
-    let finalDiff = 0;
-    let countx = await getCountByDiff(finalDiff);
-    console.log("targetCount: " + targetCount + ", countx: " + countx);
-    if (countx >= targetCount) {
-      // diff 每次减少一个 step，直到下一个 count < targetCount
-      do {
-        finalDiff = finalDiff - Number(step);
-        countx = await getCountByDiff(finalDiff);
-      } while(countx >= targetCount);
-      // diff = 上一个满足条件的 diff
-      finalDiff = finalDiff + Number(step);
+    if (step <= 0) {
+      ctx.body = jsonResponse({ code: RESPONSE_CODE.ERROR, msg: "step must be greater than 0"});
     } else {
-      // diff 每次增加一个 step，直到下一个 count >= targetCount
-      do {
+      let finalDiff = 0;
+      let countx = await getCountByDiff(finalDiff);
+      console.log("targetCount: " + targetCount + ", countx: " + countx);
+      if (countx >= targetCount) {
+        // diff 每次减少一个 step，直到下一个 count < targetCount
+        do {
+          finalDiff = finalDiff - Number(step);
+          countx = await getCountByDiff(finalDiff);
+        } while(countx >= targetCount);
+        // diff = 上一个满足条件的 diff
         finalDiff = finalDiff + Number(step);
-        countx = await getCountByDiff(finalDiff);
-      } while(countx < targetCount);
+      } else {
+        // diff 每次增加一个 step，直到下一个 count >= targetCount
+        do {
+          finalDiff = finalDiff + Number(step);
+          countx = await getCountByDiff(finalDiff);
+        } while(countx < targetCount);
+      }
+      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
+        data: {
+          diff: finalDiff,
+          count: countx,
+          total
+        } 
+      });
     }
-    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
-      data: {
-        diff: finalDiff,
-        count: countx,
-        total
-      } 
-    });
   }
 }
