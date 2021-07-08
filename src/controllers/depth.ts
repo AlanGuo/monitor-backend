@@ -149,7 +149,6 @@ export default class depthController {
     } else {
       let finalDiff = 0;
       let countx = await getCountByDiff(finalDiff);
-      console.log("targetCount: " + targetCount + ", countx: " + countx);
       if (countx >= targetCount) {
         // diff 每次减少一个 step，直到下一个 count < targetCount
         do {
