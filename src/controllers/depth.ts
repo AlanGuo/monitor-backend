@@ -150,16 +150,16 @@ export default class depthController {
     console.log("countx: " + countx);
     if (countx >= targetCount) {
       // diff 每次减少一个 step，直到下一个 count < targetCount
-      finalDiff = finalDiff - Number(step);
       do {
+        finalDiff = finalDiff - Number(step);
         countx = await getCountByDiff(finalDiff);
       } while(countx >= targetCount);
       // diff = 上一个满足条件的 diff
       finalDiff = finalDiff + Number(step);
     } else {
       // diff 每次增加一个 step，直到下一个 count >= targetCount
-      finalDiff = finalDiff + Number(step);
       do {
+        finalDiff = finalDiff + Number(step);
         countx = await getCountByDiff(finalDiff);
       } while(countx < targetCount);
     }
