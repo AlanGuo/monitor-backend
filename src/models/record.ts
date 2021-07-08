@@ -39,6 +39,7 @@ export interface IRecord extends Document {
   long_transfer_balance: number;
   short_transfer_balance: number;
   price_diff_profit: number;
+  best_close_price_diff: number;
   long_index_price: number;
   short_index_price: number;
   task_index_price: number;
@@ -85,6 +86,7 @@ const recordModel: Schema = new Schema({
   short_close_balance: {type: Number, required},
   long_transfer_balance:{type: Number, required},
   short_transfer_balance: {type: Number, required},
+  best_close_price_diff:{type: Number, required},
   fulfillment_lost: {type: Number, required},
   profit: {type: Number, required},
   usdt_fee: {type: Number, required},
