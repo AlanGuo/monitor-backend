@@ -103,7 +103,7 @@ export default class depthController {
     const limit = ctx.query.limit || config.DEPTH_LIMIT;
     const pct = ctx.query.pct;
     const step = ctx.query.step;
-    const total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit).countDocuments();
+    const total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit).estimatedDocumentCount();
     const targetCount = total * Number(pct);
 
     const getCountByDiff = async function(diff: number) {
