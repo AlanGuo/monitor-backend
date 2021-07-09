@@ -52,7 +52,7 @@ export default class depthController {
     const short_ex = ctx.query.short;
     const limit = ctx.query.limit;
     const diff = ctx.query.diff;
-    let total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit || config.DEPTH_LIMIT).count();
+    let total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit || config.DEPTH_LIMIT).countDocuments();
     const countRes = await depthModel.aggregate([
       {
         $match: {
@@ -64,10 +64,7 @@ export default class depthController {
         $project:{
           binance_ask: 1, binance_bid: 1, huobi_ask: 1, huobi_bid: 1, okex_ask: 1, okex_bid: 1, 
           close_price_diff: { 
-            $subtract: [ `$${short_ex}_ask`, `$${long_ex}_bid` ] 
-          },
-          open_price_diff: { 
-            $subtract: [ `$${short_ex}_bid`, `$${long_ex}_ask` ] 
+            $subtract: [ `$${short_ex}_ask`, `$${long_ex}_bid` ]
           }
         }
       },
