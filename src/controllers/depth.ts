@@ -126,6 +126,7 @@ export default class depthController {
         $limit: targetCount
       }
     ]);
+    console.log(countRes);
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
         diff: countRes.length > 1 ? countRes[countRes.length - 1].close_price_diff : 0,
