@@ -129,13 +129,13 @@ export default class depthController {
         $limit: targetCount
       }
     ]);
-
+    console.log(countRes);
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
         diff: countRes.length > 0 ? countRes[0].close_price_diff : 0,
         count: targetCount,
         total
-      } 
+      }
     });
   }
 }
