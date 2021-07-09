@@ -46,7 +46,6 @@ export default class RecordController {
       short_open_price: 1,
       long_index_price: 1,
       short_index_price: 1,
-      task_index_price: 1,
       best_close_price_diff: 1,
       long_balance: 1,
       short_balance: 1,
