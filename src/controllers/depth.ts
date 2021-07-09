@@ -103,7 +103,7 @@ export default class depthController {
     const limit = ctx.query.limit || config.DEPTH_LIMIT;
     const pct = ctx.query.pct;
     const total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit).countDocuments();
-    const targetCount = total * Number(pct);
+    const targetCount = (total * Number(pct)).toFixed(0);
 
     const countRes = await depthModel.aggregate([
       {
