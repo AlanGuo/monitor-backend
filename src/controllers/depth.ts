@@ -102,33 +102,14 @@ export default class depthController {
     const total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit).countDocuments();
     const targetCount = Number((total * Number(pct)).toFixed(0));
 
-    const countRes = await depthModel.aggregate([
-      {
-        $match: {
-          symbol: ctx.params.symbol
-        }
-      },
-      {$limit: limit},
-      {
-        $project:{
-          binance_ask: 1, binance_bid: 1, huobi_ask: 1, huobi_bid: 1, okex_ask: 1, okex_bid: 1, 
-          close_price_diff: { 
-            $subtract: [ `$${short_ex}_ask`, `$${long_ex}_bid` ] 
-          }
-        }
-      },
-      {
-        $sort: {
-          close_price_diff: 1
-        }
-      },
-      {
-        $limit: targetCount
-      }
-    ]);
+    const countRes = await depthModel.findOne({
+      symbol: ctx.params.symbol
+    }).sort({
+      [`${long_ex}_${short_ex}_close_diff`]: 1
+    }).skip(targetCount - 1).limit(1);
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
-        diff: countRes.length > 1 ? (countRes[countRes.length - 1].close_price_diff || 0) : 0,
+        diff: countRes ? (countRes.get(`${long_ex}_${short_ex}_close_diff`) || 0) : 0,
         count: targetCount,
         total
       }
