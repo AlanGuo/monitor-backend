@@ -102,13 +102,6 @@ export default class depthController {
     const total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit).countDocuments();
     const targetCount = Number((total * Number(pct)).toFixed(0));
 
-    const list = await depthModel.find({
-      symbol: ctx.params.symbol
-    }).sort({
-      [`${long_ex}_${short_ex}_close_diff`]: 1
-    }).limit(100);
-    console.log(list);
-
     const countRes = await depthModel.findOne({
       symbol: ctx.params.symbol
     }).sort({
