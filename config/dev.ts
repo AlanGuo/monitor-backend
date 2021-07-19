@@ -1,7 +1,7 @@
 module.exports = {
   HTTPS_PORT: 3010,
   API_PREFIX: "/api",
-  DEPTH_LIMIT: 10080,
+  DEPTH_LIMIT: 20160,
 
   CORS: {
     origin: "*"
@@ -24,7 +24,7 @@ module.exports = {
 
   MONGODB: {
     Name: "dev",
-    DB: "arbetrage-engine",
+    DB: "abtg-perp-prod-2021-06-28",
     Connection_String_URI: "mongodb://localhost:27017"
   },
   HOST: "https://localmonitor.bitapp.com"
