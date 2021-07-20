@@ -110,6 +110,7 @@ export default class depthController {
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
         diff: countRes ? (countRes.get(`${long_ex}_${short_ex}_close_diff`) || 0) : 0,
+        ts: countRes ? countRes.get(`ts`) : 0,
         count: targetCount,
         total
       }
