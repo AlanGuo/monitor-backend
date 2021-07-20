@@ -116,7 +116,7 @@ export default class depthController {
     });
   }
 
-  @GET("/:symbol/ts")
+  @GET("/:symbol/time")
   async getTimeByDiff(ctx: IRouterContext) {
     const long_ex = ctx.query.long;
     const short_ex = ctx.query.short;
@@ -133,7 +133,7 @@ export default class depthController {
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
         ts: countRes.length ? countRes[0].get("ts") : 0,
-        timeString: countRes.length ? new Date(countRes[0].get("ts")) : 0,
+        timeString: countRes.length ? new Date(countRes[0].get("ts")).toString() : 0,
       }
     });
   }
