@@ -110,9 +110,30 @@ export default class depthController {
     ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
       data: {
         diff: countRes ? (countRes.get(`${long_ex}_${short_ex}_close_diff`) || 0) : 0,
-        ts: countRes ? countRes.get(`ts`) : 0,
         count: targetCount,
         total
+      }
+    });
+  }
+
+  @GET("/:symbol/ts")
+  async getTimeByDiff(ctx: IRouterContext) {
+    const long_ex = ctx.query.long;
+    const short_ex = ctx.query.short;
+    const diff = ctx.query.diff * 1;
+
+    const countRes = await depthModel.find({
+      symbol: ctx.params.symbol,
+      [`${long_ex}_${short_ex}_close_diff`]: {
+        $lte: diff
+      }
+    }).sort({
+      ts: -1
+    }).limit(1);
+    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
+      data: {
+        ts: countRes.length ? countRes[0].get("ts") : 0,
+        timeString: countRes.length ? new Date(countRes[0].get("ts")) : 0,
       }
     });
   }
