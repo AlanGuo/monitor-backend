@@ -95,6 +95,11 @@ export default class RecordController {
       "total_fee": 1
     };
     const records = await recordModel.aggregate([
+      {
+        $match: {
+          long_final_volume: {$gt: 0}
+        }
+      },
       {$sort: {_id: -1}},
       {$skip: pagination.offset},
       {$limit: pagination.limit},
