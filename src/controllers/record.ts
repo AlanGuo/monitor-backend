@@ -79,6 +79,9 @@ export default class RecordController {
       max_volume: 1,
       long_open_balance: 1,
       short_open_balance: 1,
+      // 兼容旧数据
+      long_transfer_transfer: 1,
+      short_transfer_transfer: 1,
       long_transfer_vec: 1,
       short_transfer_vec: 1,
       long_open_price: 1,
