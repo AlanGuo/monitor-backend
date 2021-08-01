@@ -146,7 +146,7 @@ export default class RecordController {
     const firstRecord = await recordModel.find({}, {first_settle_time: 1, long_open_balance:1, short_open_balance: 1}).sort({ _id: 1 }).limit(1);
     const lastTime = new Date();
     const firstTime = new Date(firstRecord.length ? firstRecord[0].first_settle_time: Date.now());
-    const balance = firstRecord.length ? firstRecord[0].long_open_balance + firstRecord[0].short_open_balance : 0;
+    const balance = (firstRecord.length ? firstRecord[0].long_open_balance + firstRecord[0].short_open_balance : 0) + config.FINACIAL.addedBalance;
     let duration = lastTime.getTime() - firstTime.getTime();
     ctx.body = jsonResponse({
       code: RESPONSE_CODE.NORMAL, data:

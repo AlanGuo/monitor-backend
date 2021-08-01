@@ -116,7 +116,8 @@ export interface Config {
     Password: string
   },
   FINACIAL: {
-    balance: number,
+    initBalance: number,
+    addedBalance: number;
     bnb: number,
     bnbPrice: number
   },
