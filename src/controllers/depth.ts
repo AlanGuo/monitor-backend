@@ -114,7 +114,7 @@ export default class depthController {
     }
     ctx.body = jsonResponse({ code: hasCloseDiff ? RESPONSE_CODE.NORMAL : RESPONSE_CODE.NOT_FOUND,
       data: {
-        diff: countRes ? (countRes.get(`${long_ex}_${short_ex}_close_diff`) || null) : null,
+        diff: hasCloseDiff ? countRes?.get(`${long_ex}_${short_ex}_close_diff`) : null,
         count: targetCount,
         total
       }
