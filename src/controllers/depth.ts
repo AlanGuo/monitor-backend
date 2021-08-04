@@ -107,7 +107,12 @@ export default class depthController {
     }).sort({
       [`${long_ex}_${short_ex}_close_diff`]: 1
     }).skip(targetCount - 1).limit(1);
-    ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
+
+    let hasCloseDiff = false;
+    if (countRes && countRes.get(`${long_ex}_${short_ex}_close_diff`)) {
+      hasCloseDiff = true
+    }
+    ctx.body = jsonResponse({ code: hasCloseDiff ? RESPONSE_CODE.NORMAL : RESPONSE_CODE.NOT_FOUND,
       data: {
         diff: countRes ? (countRes.get(`${long_ex}_${short_ex}_close_diff`) || null) : null,
         count: targetCount,
