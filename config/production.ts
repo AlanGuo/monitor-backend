@@ -1,7 +1,8 @@
 module.exports = {
   HTTPS_PORT: 3010,
   API_PREFIX: "/api",
-  DEPTH_LIMIT: 20160,
+  // 大约6天
+  DEPTH_LIMIT: 17280,
 
   CORS: {
     origin: "*"
