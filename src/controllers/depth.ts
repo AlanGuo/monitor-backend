@@ -97,7 +97,7 @@ export default class depthController {
   async getPriceDiffByPct(ctx: IRouterContext) {
     const long_ex = ctx.query.long;
     const short_ex = ctx.query.short;
-    const limit = ctx.query.limit || Number.MAX_SAFE_INTEGER;
+    const limit = ctx.query.limit;
     const pct = ctx.query.pct;
     let rightTs = 0;
     let total = 0;
