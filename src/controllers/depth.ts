@@ -99,9 +99,17 @@ export default class depthController {
     const short_ex = ctx.query.short;
     const limit = ctx.query.limit || Number.MAX_SAFE_INTEGER;
     const pct = ctx.query.pct;
-    const total = await depthModel.find({symbol: ctx.params.symbol}).limit(Number(limit)).countDocuments();
+    let rightTs = 0;
+    let total = 0;
+    if (limit) {
+      const rightRecord = await depthModel.findOne({symbol: ctx.params.symbol}).sort({_id: -1}).skip(Number(limit) - 1);
+      total = limit;
+      rightTs = rightRecord!.ts;
+    } else {
+      total = await depthModel.find({symbol: ctx.params.symbol}).countDocuments();
+    }
     const targetCount = Number((total * Number(pct)).toFixed(0));
-    const countRes = await depthModel.findOne({symbol: ctx.params.symbol}).sort({_id: -1, [`${long_ex}_${short_ex}_close_diff`]: 1}).limit(Number(limit)).skip(targetCount);
+    const countRes = await depthModel.findOne({symbol: ctx.params.symbol, ts: {$gt: rightTs}}).sort({[`${long_ex}_${short_ex}_close_diff`]: 1}).skip(targetCount);
 
     let hasCloseDiff = false;
     if (countRes && countRes.get(`${long_ex}_${short_ex}_close_diff`)) {
