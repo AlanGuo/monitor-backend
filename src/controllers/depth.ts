@@ -97,8 +97,9 @@ export default class depthController {
   async getPriceDiffByPct(ctx: IRouterContext) {
     const long_ex = ctx.query.long;
     const short_ex = ctx.query.short;
-    const limit = ctx.query.limit || config.DEPTH_LIMIT;
+    const limit = Number(ctx.query.limit || config.DEPTH_LIMIT);
     const pct = ctx.query.pct;
+    console.log(limit);
     const total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit).countDocuments();
     const targetCount = Number((total * Number(pct)).toFixed(0));
 
