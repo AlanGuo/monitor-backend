@@ -97,16 +97,18 @@ export default class depthController {
   async getPriceDiffByPct(ctx: IRouterContext) {
     const long_ex = ctx.query.long;
     const short_ex = ctx.query.short;
-    const limit = Number(ctx.query.limit || config.DEPTH_LIMIT);
+    const limit = ctx.query.limit || Number.MAX_SAFE_INTEGER;
     const pct = ctx.query.pct;
-    const total = await depthModel.find({symbol: ctx.params.symbol}).sort({_id: -1}).limit(limit).countDocuments();
+    const total = await depthModel.find({symbol: ctx.params.symbol}).limit(Number(limit)).countDocuments();
+    const depthRange = await depthModel.find({symbol: ctx.params.symbol}).sort({_id: -1}).limit(Number(limit));
+    
     const targetCount = Number((total * Number(pct)).toFixed(0));
-
-    const countRes = await depthModel.findOne({
-      symbol: ctx.params.symbol
-    }).sort({
-      [`${long_ex}_${short_ex}_close_diff`]: 1
-    }).skip(targetCount - 1).limit(1);
+    // 从小到大
+    const sortedDepth = depthRange.sort((a: any, b: any) => {
+      return a[`${long_ex}_${short_ex}_close_diff`] -
+      b[`${long_ex}_${short_ex}_close_diff`];
+    });
+    const countRes = sortedDepth[targetCount];
 
     let hasCloseDiff = false;
     if (countRes && countRes.get(`${long_ex}_${short_ex}_close_diff`)) {
