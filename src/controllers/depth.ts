@@ -100,15 +100,8 @@ export default class depthController {
     const limit = ctx.query.limit || Number.MAX_SAFE_INTEGER;
     const pct = ctx.query.pct;
     const total = await depthModel.find({symbol: ctx.params.symbol}).limit(Number(limit)).countDocuments();
-    const depthRange = await depthModel.find({symbol: ctx.params.symbol}).sort({_id: -1}).limit(Number(limit));
-    
     const targetCount = Number((total * Number(pct)).toFixed(0));
-    // 从小到大
-    const sortedDepth = depthRange.sort((a: any, b: any) => {
-      return a[`${long_ex}_${short_ex}_close_diff`] -
-      b[`${long_ex}_${short_ex}_close_diff`];
-    });
-    const countRes = sortedDepth[targetCount];
+    const countRes = await depthModel.findOne({symbol: ctx.params.symbol}).sort({_id: -1, [`${long_ex}_${short_ex}_close_diff`]: 1}).limit(Number(limit)).skip(targetCount);
 
     let hasCloseDiff = false;
     if (countRes && countRes.get(`${long_ex}_${short_ex}_close_diff`)) {
