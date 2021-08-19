@@ -103,7 +103,7 @@ export default class depthController {
     let total = 0;
     if (limit) {
       const rightRecord = await depthModel.findOne({symbol: ctx.params.symbol}).sort({_id: -1}).skip(Number(limit) - 1);
-      total = limit;
+      total = Number(limit);
       rightTs = rightRecord!.ts;
     } else {
       total = await depthModel.find({symbol: ctx.params.symbol}).countDocuments();
