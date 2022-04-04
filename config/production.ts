@@ -24,8 +24,8 @@ module.exports = {
   },
 
   MONGODB: {
-    Name: "dev",
-    DB: "abtg-perp-prod-2021-04-01",
+    Name: "prod",
+    DB: "abtg-perp-prod-2022-04-01",
     Connection_String_URI: "mongodb://localhost:27017"
   },
   HOST: "https://monitor.openholder.com"
