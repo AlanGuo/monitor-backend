@@ -6,7 +6,7 @@
       "script": "ts-node",
       "args": " -r tsconfig-paths/register ./src/app.ts",
       "instances" : 1,
-      "exec_mode" : "fork",
+      "exec_mode" : "cluster",
       "watch"     : false,
       "ignore_watch" : ["logs"],
       "error_file":"logs/monitor-backend.stderr.log",
