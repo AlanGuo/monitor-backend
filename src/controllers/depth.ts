@@ -112,7 +112,7 @@ export default class depthController {
     const countRes = await depthModel.findOne({symbol: ctx.params.symbol, ts: {$gt: rightTs}}).sort({[`${long_ex}_${short_ex}_close_diff`]: 1}).skip(targetCount);
 
     let hasCloseDiff = false;
-    if (countRes && countRes.get(`${long_ex}_${short_ex}_close_diff`)) {
+    if (countRes && countRes.get(`${long_ex}_${short_ex}_close_diff`) != null) {
       hasCloseDiff = true
     }
     ctx.body = jsonResponse({ code: hasCloseDiff ? RESPONSE_CODE.NORMAL : RESPONSE_CODE.NOT_FOUND,
