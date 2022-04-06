@@ -42,13 +42,31 @@ export default class fulfillmentController {
 
   @GET("/task/fee/:id")
   async getTotalFee(ctx: IRouterContext) {
+    const query = ctx.query;
+    let usdtMatchQueries = {
+      $match: {
+        task_id: Types.ObjectId(ctx.params.id),
+        fee_asset: "usdt"
+      }
+    } as {
+      $match: any
+    };
+    if (query.exchange) {
+      usdtMatchQueries.$match.exchange = query.exchange.toUpperCase();
+    }
+    let bnbMatchQueries = {
+      $match: {
+        task_id: Types.ObjectId(ctx.params.id),
+        fee_asset: "bnb"
+      }
+    } as {
+      $match: any
+    };
+    if (query.exchange) {
+      bnbMatchQueries.$match.exchange = query.exchange.toUpperCase();
+    }
     const totalUsdtFeeRecords = await fulfillmentModel.aggregate([
-      {
-        $match: {
-          task_id: Types.ObjectId(ctx.params.id),
-          fee_asset: "usdt"
-        }
-      },
+      usdtMatchQueries,
       {
         $group: {
           _id: null,
@@ -57,12 +75,7 @@ export default class fulfillmentController {
       }
     ]);
     const totalBNBFeeRecords = await fulfillmentModel.aggregate([
-      {
-        $match: {
-          fee_asset: "bnb",
-          task_id: Types.ObjectId(ctx.params.id)
-        }
-      },
+      bnbMatchQueries,
       {
         $group: {
           _id: null,
