@@ -6,22 +6,22 @@ export interface IDepth extends Document {
   symbol: string,
   ts: number;
   binance_ask: number;
-  binance_bid: string;
-  huobi_ask: number;
-  huobi_bid: string;
+  binance_bid: number;
+  bybit_ask: number;
+  bybit_bid: number;
   okex_ask: number;
-  okex_bid: string;
+  okex_bid: number;
 }
 
 const depthModel: Schema = new Schema({
   symbol: {type: String, required},
   ts: {type: Number, required},
   binance_ask: {type: Number},
-  binance_bid: {type: String},
-  huobi_ask: {type: Number},
-  huobi_bid: {type: String},
+  binance_bid: {type: Number},
+  bybit_ask: {type: Number},
+  bybit_bid: {type: Number},
   okex_ask: {type: Number},
-  okex_bid: {type: String},
+  okex_bid: {type: Number},
 }, {
   timestamps: false
 });

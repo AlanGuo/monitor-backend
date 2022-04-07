@@ -7,12 +7,12 @@ db.depths.aggregate([
   {$limit: 10080},
   {
     $project:{
-      binance_ask: 1, binance_bid: 1, huobi_ask: 1, huobi_bid: 1, okex_ask: 1, okex_bid: 1, ts:1,
+      binance_ask: 1, binance_bid: 1, bybit_ask: 1, bybit_bid: 1, okex_ask: 1, okex_bid: 1, ts:1,
       close_price_diff: { 
-        $subtract: [ "$binance_ask", "$huobi_bid" ] 
+        $subtract: [ "$binance_ask", "$bybit_bid" ] 
       },
       open_price_diff: { 
-        $subtract: [ "$binance_bid", "$huobi_ask" ] 
+        $subtract: [ "$binance_bid", "$bybit_ask" ] 
       }
     }
   },
