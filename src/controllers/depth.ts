@@ -52,7 +52,7 @@ export default class depthController {
     const short_ex = ctx.query.short;
     const limit = ctx.query.limit;
     const diff = ctx.query.diff;
-    let total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit || config.DEPTH_LIMIT).countDocuments();
+    let total = await depthModel.find({symbol: ctx.params.symbol}).limit(Number(limit) || config.DEPTH_LIMIT).countDocuments();
     const countRes = await depthModel.aggregate([
       {
         $match: {
