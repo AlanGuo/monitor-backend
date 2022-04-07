@@ -63,7 +63,7 @@ export default class depthController {
       {
         $project:{
           binance_ask: 1, binance_bid: 1, bybit_ask: 1, bybit_bid: 1, okex_ask: 1, okex_bid: 1, 
-          close_price_diff: { 
+          close_price_diff: {
             $subtract: [ `$${short_ex}_ask`, `$${long_ex}_bid` ]
           }
         }
