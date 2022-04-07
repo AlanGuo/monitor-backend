@@ -59,7 +59,7 @@ export default class depthController {
           symbol: ctx.params.symbol
         }
       },
-      {$limit: limit || config.DEPTH_LIMIT},
+      {$limit: Number(limit) || config.DEPTH_LIMIT},
       {
         $project:{
           binance_ask: 1, binance_bid: 1, bybit_ask: 1, bybit_bid: 1, okex_ask: 1, okex_bid: 1, 
