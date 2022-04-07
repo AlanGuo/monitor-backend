@@ -31,6 +31,10 @@ export interface IRecord extends Document {
   long_final_volume: number;
   short_final_volume: number;
   volume_precision: number;
+  long_price_precision: number;
+  short_price_precision: number;
+  long_price_tick: number;
+  short_price_tick: number;
   price_precision: number;
   long_open_balance: number;
   short_open_balance: number;
@@ -76,7 +80,10 @@ const recordModel: Schema = new Schema({
   long_final_volume: {type: Number, required},
   short_final_volume: {type: Number, required},
   volume_precision: {type: Number, required},
-  price_precision: {type: Number, required},
+  long_price_precision: {type: Number, required},
+  short_price_precision: {type: Number, required},
+  long_price_tick: {type: Number, required},
+  short_price_tick: {type: Number, required},
   long_open_balance: {type: Number, required},
   short_open_balance: {type: Number, required},
   long_open_price: {type: Number, required},
