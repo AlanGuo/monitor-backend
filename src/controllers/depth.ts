@@ -21,7 +21,7 @@ export default class depthController {
       {$limit: limit || config.DEPTH_LIMIT},
       {
         $project:{
-          binance_ask: 1, binance_bid: 1, huobi_ask: 1, huobi_bid: 1, okex_ask: 1, okex_bid: 1, 
+          binance_ask: 1, binance_bid: 1, bybit_ask: 1, bybit_bid: 1, okex_ask: 1, okex_bid: 1, 
           close_price_diff: { 
             $subtract: [ `$${short_ex}_ask`, `$${long_ex}_bid` ] 
           },
@@ -52,18 +52,18 @@ export default class depthController {
     const short_ex = ctx.query.short;
     const limit = ctx.query.limit;
     const diff = ctx.query.diff;
-    let total = await depthModel.find({symbol: ctx.params.symbol}).limit(limit || config.DEPTH_LIMIT).countDocuments();
+    let total = await depthModel.find({symbol: ctx.params.symbol}).limit(Number(limit) || config.DEPTH_LIMIT).countDocuments();
     const countRes = await depthModel.aggregate([
       {
         $match: {
           symbol: ctx.params.symbol
         }
       },
-      {$limit: limit || config.DEPTH_LIMIT},
+      {$limit: Number(limit) || config.DEPTH_LIMIT},
       {
         $project:{
-          binance_ask: 1, binance_bid: 1, huobi_ask: 1, huobi_bid: 1, okex_ask: 1, okex_bid: 1, 
-          close_price_diff: { 
+          binance_ask: 1, binance_bid: 1, bybit_ask: 1, bybit_bid: 1, okex_ask: 1, okex_bid: 1, 
+          close_price_diff: {
             $subtract: [ `$${short_ex}_ask`, `$${long_ex}_bid` ]
           }
         }
