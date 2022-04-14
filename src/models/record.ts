@@ -26,6 +26,8 @@ export interface IRecord extends Document {
   short_funding_rate_next: number;
   long_open_price: number;
   short_open_price: number;
+  long_final_price: number,
+  short_final_price: number,
   long_open_volume: number;
   short_open_volume: number;
   long_final_volume: number;
