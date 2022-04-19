@@ -3,7 +3,6 @@ import {connect} from "mongoose";
 
 export async function dbConnect(test = false): Promise<void> {
   const url = config.MONGODB.Connection_String_URI;
-  console.log(url)
   await connect(
     url,
     {
