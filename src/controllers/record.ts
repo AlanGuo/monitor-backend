@@ -119,7 +119,7 @@ export default class RecordController {
       {
         $lookup: {
           from: "fulfillments",
-          pipeline: [{ $match:{"$fee": {$gt: 0}}}],
+          pipeline: [{ $match:{"$$fee": {$gt: 0}}}],
           localField: "_id",
           foreignField: "task_id",
           as: "fulfillments"
