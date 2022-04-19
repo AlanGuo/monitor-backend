@@ -110,8 +110,7 @@ export default class RecordController {
     const records = await recordModel.aggregate([
       {
         $match: {
-          long_final_volume: {$gt: 0},
-          "fulfillments.fee": {$gt: 0}
+          long_final_volume: {$gt: 0}
         }
       },
       {$sort: {_id: -1}},
@@ -120,6 +119,7 @@ export default class RecordController {
       {
         $lookup: {
           from: "fulfillments",
+          pipeline: [{ $match:{"$fee": {$gt: 0}}}],
           localField: "_id",
           foreignField: "task_id",
           as: "fulfillments"
