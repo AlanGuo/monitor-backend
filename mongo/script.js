@@ -40,3 +40,4 @@ db.fulfillments.find({exchange: "BYBIT", position: "short",side: "buy", fill:{$g
 
 db.fulfillments.update({order_id: "14190c98-fa1c-470e-928d-23fb7986919e"}, {$set: {trade_avg_price: 2.6009}});
 db.fulfillments.insertOne( { "task_id" : ObjectId("624d3a959de4cc11d2dbfb15"), "datetime" : "2022-04-07T20:34:48.748587190+08:00", "exchange" : "BINANCE", "symbol" : "one", "order_id" : "-", "side" : "buy", "position" : "short", "price" : 0.14183, "volume" : 8398, "fill" : 8398, "fee" : 0.00029947, "fee_asset" : "bnb", "trade_avg_price" : 0.14087 } );
+db.records.update({"_id" : ObjectId("625837c1769eaae6aa090554")}, {$set: {price_diff_profit: 0 }})

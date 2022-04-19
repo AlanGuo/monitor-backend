@@ -27,5 +27,5 @@ module.exports = {
     DB: "abtg-perp-prod-2022-04-01",
     Connection_String_URI: "mongodb://localhost:27017"
   },
-  HOST: "https://localmonitor.bitapp.com"
+  HOST: "http://local.openholder.com"
 };
