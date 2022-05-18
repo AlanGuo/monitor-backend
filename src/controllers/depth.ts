@@ -260,26 +260,45 @@ export default class depthController {
           }
         }
       }
-      console.log(binanceAskTotalLoss, binanceBidTotalLoss, bybitAskTotalLoss, bybitBidTotalLoss, okxAskTotalLoss, okxBidTotalLoss)
+      const binanceAskAvgLoss =  binanceAskUnfillTimes > 0 ? binanceAskTotalLoss / binanceAskUnfillTimes : 0;
+      const binanceBidAvgLoss = binanceBidUnfillTimes > 0 ? binanceBidTotalLoss / binanceBidUnfillTimes : 0;
+      const binanceAskLoss = binanceAllTimes > 0 ? binanceAskAvgLoss * binanceAskUnfillTimes / binanceAllTimes : 0;
+      const binanceBidLoss = binanceAllTimes > 0 ? binanceBidAvgLoss * binanceBidUnfillTimes / binanceAllTimes : 0;
+
+      const bybitAskAvgLoss =  bybitAskUnfillTimes > 0 ? bybitAskTotalLoss / bybitAskUnfillTimes : 0;
+      const bybitBidAvgLoss = bybitBidUnfillTimes > 0 ? bybitBidTotalLoss / bybitBidUnfillTimes : 0;
+      const bybitAskLoss = bybitAllTimes > 0 ? bybitAskAvgLoss * bybitAskUnfillTimes / bybitAllTimes : 0;
+      const bybitBidLoss = bybitAllTimes > 0 ? bybitBidAvgLoss * bybitBidUnfillTimes / bybitAllTimes : 0;
+
+      const okxAskAvgLoss =  okxAskUnfillTimes > 0 ? okxAskTotalLoss / okxAskUnfillTimes : 0;
+      const okxBidAvgLoss = okxBidUnfillTimes > 0 ? okxBidTotalLoss / okxBidUnfillTimes : 0;
+      const okxAskLoss = okxAllTimes > 0 ? okxAskAvgLoss * okxAskUnfillTimes / okxAllTimes : 0;
+      const okxBidLoss = okxAllTimes > 0 ? okxBidAvgLoss * okxBidUnfillTimes / okxAllTimes : 0;
       ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
         data: {
           binanceAllTimes,
           binanceAskUnfillTimes,
           binanceBidUnfillTimes,
-          binanceAskAvgLoss: binanceAskUnfillTimes > 0 ? binanceAskTotalLoss / binanceAskUnfillTimes : 0,
-          binanceBidAvgLoss: binanceBidUnfillTimes > 0 ? binanceBidTotalLoss / binanceBidUnfillTimes : 0,
+          binanceAskAvgLoss,
+          binanceBidAvgLoss,
+          binanceAskLoss,
+          binanceBidLoss,
           // bybit
           bybitAllTimes,
           bybitAskUnfillTimes,
           bybitBidUnfillTimes,
           bybitAskAvgLoss: bybitAskUnfillTimes > 0 ? bybitAskTotalLoss / bybitAskUnfillTimes : 0,
-          bybitBidAvgLoss: bybitBidUnfillTimes > 0 ? bybitBidTotalLoss / bybitBidUnfillTimes : 0,
+          bybitBidAvgLoss: bybitBidUnfillTimes > 0 ? bybitBidTotalLoss / bybitBidUnfillTimes : 0, 
+          bybitAskLoss,
+          bybitBidLoss,
           // okx
           okxAllTimes,
           okxAskUnfillTimes,
           okxBidUnfillTimes,
           okxAskAvgLoss: okxAskUnfillTimes > 0 ? okxAskTotalLoss / okxAskUnfillTimes : 0,
           okxBidAvgLoss: okxBidUnfillTimes > 0 ? okxBidTotalLoss / okxBidUnfillTimes : 0,
+          okxAskLoss,
+          okxBidLoss
         }
       });
     }
