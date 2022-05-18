@@ -229,8 +229,8 @@ export default class depthController {
             }
             // okx
             if (!okxBidFinished && compareItem.okex_ask <= item.okex_bid) {
-              bybitBidFillTimes ++;
-              bybitBidFinished = true;
+              okxBidFillTimes ++;
+              okxBidFinished = true;
             }
             if (!okxAskFinished && compareItem.okex_bid >= item.okex_ask) {
               okxAskFillTimes ++;
