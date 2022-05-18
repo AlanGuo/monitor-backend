@@ -156,10 +156,10 @@ export default class depthController {
     // minute as unit
     const duration = Number(ctx.query.duration);
     const now = new Date().getTime();
-    if (isNaN(duration)) {
+    if (isNaN(duration) || isNaN(period)) {
       ctx.body = jsonResponse({ 
         code: RESPONSE_CODE.ERROR,
-        msg: "duration must be a number(minute as unit)"
+        msg: "duration and period must be number"
       });
     } else {
       let filter = { symbol: ctx.params.symbol } as any;
