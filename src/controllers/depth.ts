@@ -208,29 +208,29 @@ export default class depthController {
           // 一定周期内
           if (compareItem.ts - item.ts > duration * 60 * 1000) {
             // binance
-            if (compareItem.binance_ask && !binanceBidFinished) {
+            if (compareItem.binance_ask && item.binance_bid && !binanceBidFinished) {
               binanceBidUnfillTimes ++;
               binanceBidTotalLoss += (compareItem.binance_ask - item.binance_bid) / item.binance_bid;
             }
-            if (compareItem.binance_ask && !binanceAskFinished) {
+            if (compareItem.binance_ask && item.binance_bid && !binanceAskFinished) {
               binanceAskUnfillTimes ++;
               binanceAskTotalLoss += (item.binance_ask - compareItem.binance_bid) / item.binance_ask;
             }
             // bybit
-            if (compareItem.bybit_ask && !bybitBidFinished) {
+            if (compareItem.bybit_ask && item.bybit_bid && !bybitBidFinished) {
               bybitBidUnfillTimes ++;
               bybitBidTotalLoss += (compareItem.bybit_ask - item.bybit_bid) / item.bybit_bid;
             }
-            if (compareItem.bybit_ask && !bybitAskFinished) {
+            if (compareItem.bybit_ask && item.bybit_ask && !bybitAskFinished) {
               bybitAskUnfillTimes ++;
               bybitAskTotalLoss += (item.bybit_ask - compareItem.bybit_bid) / item.bybit_ask;
             }
             // okx
-            if (compareItem.okex_ask && !okxBidFinished) {
+            if (compareItem.okex_ask && item.okex_bid && !okxBidFinished) {
               okxBidUnfillTimes ++;
               okxBidTotalLoss += (compareItem.okex_ask - item.okex_bid) / item.okex_bid;
             }
-            if (compareItem.okex_ask && !okxAskFinished) {
+            if (compareItem.okex_ask && item.okex_ask && !okxAskFinished) {
               okxAskUnfillTimes ++;
               okxAskTotalLoss += (item.okex_ask - compareItem.okex_bid) / item.okex_ask;
             }
