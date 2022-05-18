@@ -260,6 +260,7 @@ export default class depthController {
           }
         }
       }
+      console.log(binanceAskTotalLoss, binanceBidTotalLoss, bybitAskTotalLoss, bybitBidTotalLoss, okxAskTotalLoss, okxBidTotalLoss)
       ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
         data: {
           binanceAllTimes,
