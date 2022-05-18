@@ -145,4 +145,118 @@ export default class depthController {
       }
     });
   }
+
+  @GET("/:symbol/fluctuation")
+  async getFluctuationRate(ctx: IRouterContext) {
+    // minute as unit
+    const duration = Number(ctx.query.duration);
+    if (isNaN(duration)) {
+      ctx.body = jsonResponse({ 
+        code: RESPONSE_CODE.ERROR,
+        msg: "duration must be a number(minute as unit)"
+      });
+    } else {
+      const depthRes = await depthModel.find({
+        symbol: ctx.params.symbol
+      });
+      // binance
+      let binanceAskFillTimes = 0;
+      let binanceAskUnfillTimes = 0;
+      let binanceBidFillTimes = 0;
+      let binanceBidUnfillTimes = 0;
+      // bybit
+      let bybitAskFillTimes = 0;
+      let bybitAskUnfillTimes = 0;
+      let bybitBidFillTimes = 0;
+      let bybitBidUnfillTimes = 0;
+      // okx
+      let okxAskFillTimes = 0;
+      let okxAskUnfillTimes = 0;
+      let okxBidFillTimes = 0;
+      let okxBidUnfillTimes = 0;
+      for(let i=0;i<depthRes.length;i++) {
+        const item = depthRes[i];
+        let binanceBidFinished = false;
+        let binanceAskFinished = false;
+        let bybitBidFinished = false;
+        let bybitAskFinished = false;
+        let okxBidFinished = false;
+        let okxAskFinished = false;
+        for(let j=i+1;j<depthRes.length;j++) {
+          const compareItem = depthRes[j];
+          // 一定周期内
+          if (compareItem.ts - item.ts > duration * 60 * 1000) {
+            // binance
+            if (!binanceBidFinished) {
+              binanceBidUnfillTimes ++;
+            }
+            if (!binanceAskFinished) {
+              binanceAskUnfillTimes ++;
+            }
+            // bybit
+            if (!bybitBidFinished) {
+              bybitBidUnfillTimes ++;
+            }
+            if (!bybitAskFinished) {
+              bybitAskUnfillTimes ++;
+            }
+            // okx
+            if (!okxBidFinished) {
+              okxBidUnfillTimes ++;
+            }
+            if (!okxAskFinished) {
+              okxAskUnfillTimes ++;
+            }
+            break;
+          } else {
+            // binance
+            if (!binanceBidFinished && compareItem.binance_ask <= item.binance_bid) {
+              binanceBidFillTimes ++;
+              binanceBidFinished = true;
+            }
+            if (!binanceAskFinished && compareItem.binance_bid >= item.binance_ask) {
+              binanceAskFillTimes ++;
+              binanceAskFinished = true;
+            }
+            // bybit
+            if (!bybitBidFinished && compareItem.bybit_ask <= item.bybit_bid) {
+              bybitBidFillTimes ++;
+              bybitBidFinished = true;
+            }
+            if (!bybitAskFinished && compareItem.bybit_bid >= item.bybit_ask) {
+              bybitAskFillTimes ++;
+              bybitAskFinished = true;
+            }
+            // okx
+            if (!okxBidFinished && compareItem.okex_ask <= item.okex_bid) {
+              bybitBidFillTimes ++;
+              bybitBidFinished = true;
+            }
+            if (!okxAskFinished && compareItem.okex_bid >= item.okex_ask) {
+              okxAskFillTimes ++;
+              okxAskFinished = true;
+            }
+          }
+        }
+      }
+      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
+        data: {
+          binanceAskFillTimes,
+          binanceAskUnfillTimes,
+          binanceBidFillTimes,
+          binanceBidUnfillTimes,
+          // bybit
+          bybitAskFillTimes,
+          bybitAskUnfillTimes,
+          bybitBidFillTimes,
+          bybitBidUnfillTimes,
+          // okx
+          okxAskFillTimes,
+          okxAskUnfillTimes,
+          okxBidFillTimes,
+          okxBidUnfillTimes
+        }
+      });
+    }
+  }
 }
