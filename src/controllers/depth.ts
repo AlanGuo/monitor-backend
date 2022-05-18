@@ -214,7 +214,7 @@ export default class depthController {
             }
             if (compareItem.binance_ask && !binanceAskFinished) {
               binanceAskUnfillTimes ++;
-              binanceAskTotalLoss += (compareItem.binance_bid - item.binance_ask) / item.binance_ask;
+              binanceAskTotalLoss += (item.binance_ask - compareItem.binance_bid) / item.binance_ask;
             }
             // bybit
             if (compareItem.bybit_ask && !bybitBidFinished) {
@@ -223,7 +223,7 @@ export default class depthController {
             }
             if (compareItem.bybit_ask && !bybitAskFinished) {
               bybitAskUnfillTimes ++;
-              bybitAskTotalLoss += (compareItem.bybit_bid - item.bybit_ask) / item.bybit_ask;
+              bybitAskTotalLoss += (item.bybit_ask - compareItem.bybit_bid) / item.bybit_ask;
             }
             // okx
             if (compareItem.okex_ask && !okxBidFinished) {
@@ -232,7 +232,7 @@ export default class depthController {
             }
             if (compareItem.okex_ask && !okxAskFinished) {
               okxAskUnfillTimes ++;
-              okxAskTotalLoss += (compareItem.okex_bid - item.okex_ask) / item.okex_ask;
+              okxAskTotalLoss += (item.okex_ask - compareItem.okex_bid) / item.okex_ask;
             }
             break;
           } else {
@@ -265,20 +265,20 @@ export default class depthController {
           binanceAllTimes,
           binanceAskUnfillTimes,
           binanceBidUnfillTimes,
-          binanceAskAvgLoss: binanceAskTotalLoss / binanceAllTimes,
-          binanceBidAvgLoss: binanceBidTotalLoss / binanceAllTimes,
+          binanceAskAvgLoss: binanceAllTimes > 0 ? binanceAskTotalLoss / binanceAllTimes : 0,
+          binanceBidAvgLoss: binanceAllTimes > 0 ? binanceBidTotalLoss / binanceAllTimes : 0,
           // bybit
           bybitAllTimes,
           bybitAskUnfillTimes,
           bybitBidUnfillTimes,
-          bybitAskAvgLoss: bybitAskTotalLoss / bybitAllTimes,
-          bybitBidAvgLoss: bybitBidTotalLoss / bybitAllTimes,
+          bybitAskAvgLoss: bybitAllTimes > 0 ? bybitAskTotalLoss / bybitAllTimes : 0,
+          bybitBidAvgLoss: bybitAllTimes > 0 ? bybitBidTotalLoss / bybitAllTimes : 0,
           // okx
           okxAllTimes,
           okxAskUnfillTimes,
           okxBidUnfillTimes,
-          okxAskAvgLoss: okxAskTotalLoss / okxAllTimes,
-          okxBidAvgLoss: okxBidTotalLoss / okxAllTimes,
+          okxAskAvgLoss: okxAllTimes > 0 ? okxAskTotalLoss / okxAllTimes : 0,
+          okxBidAvgLoss: okxAllTimes >0 ? okxBidTotalLoss / okxAllTimes : 0,
         }
       });
     }
