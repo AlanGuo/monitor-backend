@@ -187,52 +187,52 @@ export default class depthController {
           // 一定周期内
           if (compareItem.ts - item.ts > duration * 60 * 1000) {
             // binance
-            if (!binanceBidFinished) {
+            if (compareItem.binance_ask && !binanceBidFinished) {
               binanceBidUnfillTimes ++;
             }
-            if (!binanceAskFinished) {
+            if (compareItem.binance_ask && !binanceAskFinished) {
               binanceAskUnfillTimes ++;
             }
             // bybit
-            if (!bybitBidFinished) {
+            if (compareItem.bybit_ask && !bybitBidFinished) {
               bybitBidUnfillTimes ++;
             }
-            if (!bybitAskFinished) {
+            if (compareItem.bybit_ask && !bybitAskFinished) {
               bybitAskUnfillTimes ++;
             }
             // okx
-            if (!okxBidFinished) {
+            if (compareItem.okex_ask && !okxBidFinished) {
               okxBidUnfillTimes ++;
             }
-            if (!okxAskFinished) {
+            if (compareItem.okex_ask && !okxAskFinished) {
               okxAskUnfillTimes ++;
             }
             break;
           } else {
             // binance
-            if (!binanceBidFinished && compareItem.binance_ask <= item.binance_bid) {
+            if (compareItem.binance_ask && !binanceBidFinished && compareItem.binance_ask <= item.binance_bid) {
               binanceBidFillTimes ++;
               binanceBidFinished = true;
             }
-            if (!binanceAskFinished && compareItem.binance_bid >= item.binance_ask) {
+            if (compareItem.binance_ask && !binanceAskFinished && compareItem.binance_bid >= item.binance_ask) {
               binanceAskFillTimes ++;
               binanceAskFinished = true;
             }
             // bybit
-            if (!bybitBidFinished && compareItem.bybit_ask <= item.bybit_bid) {
+            if (compareItem.bybit_ask && !bybitBidFinished && compareItem.bybit_ask <= item.bybit_bid) {
               bybitBidFillTimes ++;
               bybitBidFinished = true;
             }
-            if (!bybitAskFinished && compareItem.bybit_bid >= item.bybit_ask) {
+            if (compareItem.bybit_ask && !bybitAskFinished && compareItem.bybit_bid >= item.bybit_ask) {
               bybitAskFillTimes ++;
               bybitAskFinished = true;
             }
             // okx
-            if (!okxBidFinished && compareItem.okex_ask <= item.okex_bid) {
+            if (compareItem.okex_ask && !okxBidFinished && compareItem.okex_ask <= item.okex_bid) {
               okxBidFillTimes ++;
               okxBidFinished = true;
             }
-            if (!okxAskFinished && compareItem.okex_bid >= item.okex_ask) {
+            if (compareItem.okex_ask && !okxAskFinished && compareItem.okex_bid >= item.okex_ask) {
               okxAskFillTimes ++;
               okxAskFinished = true;
             }
