@@ -148,17 +148,25 @@ export default class depthController {
 
   @GET("/:symbol/fluctuation")
   async getFluctuationRate(ctx: IRouterContext) {
+    // hour as unit
+    let period = 0;
+    if (ctx.query.period) {
+      period = Number(ctx.query.period);
+    }
     // minute as unit
     const duration = Number(ctx.query.duration);
+    const now = new Date().getTime();
     if (isNaN(duration)) {
       ctx.body = jsonResponse({ 
         code: RESPONSE_CODE.ERROR,
         msg: "duration must be a number(minute as unit)"
       });
     } else {
-      const depthRes = await depthModel.find({
-        symbol: ctx.params.symbol
-      });
+      let filter = { symbol: ctx.params.symbol } as any;
+      if (period) {
+        filter.ts = {$gt: now - period * 3600 * 1000};
+      }
+      const depthRes = await depthModel.find(filter);
       // binance
       let binanceAskFillTimes = 0;
       let binanceAskUnfillTimes = 0;
