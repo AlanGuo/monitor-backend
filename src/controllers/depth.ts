@@ -187,6 +187,15 @@ export default class depthController {
         let bybitAskFinished = false;
         let okxBidFinished = false;
         let okxAskFinished = false;
+        if (item.binance_ask) {
+          binanceAllTimes ++;
+        }
+        if (item.bybit_ask) {
+          bybitAllTimes ++;
+        }
+        if (item.okex_ask) {
+          okxAllTimes ++;
+        }
         for(let j=i+1;j<depthRes.length;j++) {
           const compareItem = depthRes[j];
           // 一定周期内
@@ -214,15 +223,6 @@ export default class depthController {
             }
             break;
           } else {
-            if (compareItem.binance_ask) {
-              binanceAllTimes ++;
-            }
-            if (compareItem.bybit_ask) {
-              bybitAllTimes ++;
-            }
-            if (compareItem.okex_ask) {
-              okxAllTimes ++;
-            }
             // binance
             if (compareItem.binance_ask && !binanceBidFinished && compareItem.binance_ask <= item.binance_bid) {
               binanceBidFinished = true;
