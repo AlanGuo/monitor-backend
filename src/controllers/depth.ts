@@ -168,19 +168,16 @@ export default class depthController {
       }
       const depthRes = await depthModel.find(filter);
       // binance
-      let binanceAskFillTimes = 0;
+      let binanceAllTimes = 0;
       let binanceAskUnfillTimes = 0;
-      let binanceBidFillTimes = 0;
       let binanceBidUnfillTimes = 0;
       // bybit
-      let bybitAskFillTimes = 0;
+      let bybitAllTimes = 0;
       let bybitAskUnfillTimes = 0;
-      let bybitBidFillTimes = 0;
       let bybitBidUnfillTimes = 0;
       // okx
-      let okxAskFillTimes = 0;
+      let okxAllTimes= 0;
       let okxAskUnfillTimes = 0;
-      let okxBidFillTimes = 0;
       let okxBidUnfillTimes = 0;
       for(let i=0;i<depthRes.length;i++) {
         const item = depthRes[i];
@@ -217,31 +214,34 @@ export default class depthController {
             }
             break;
           } else {
+            if (compareItem.binance_ask) {
+              binanceAllTimes ++;
+            }
+            if (compareItem.bybit_ask) {
+              bybitAllTimes ++;
+            }
+            if (compareItem.okex_ask) {
+              okxAllTimes ++;
+            }
             // binance
             if (compareItem.binance_ask && !binanceBidFinished && compareItem.binance_ask <= item.binance_bid) {
-              binanceBidFillTimes ++;
               binanceBidFinished = true;
             }
             if (compareItem.binance_ask && !binanceAskFinished && compareItem.binance_bid >= item.binance_ask) {
-              binanceAskFillTimes ++;
               binanceAskFinished = true;
             }
             // bybit
             if (compareItem.bybit_ask && !bybitBidFinished && compareItem.bybit_ask <= item.bybit_bid) {
-              bybitBidFillTimes ++;
               bybitBidFinished = true;
             }
             if (compareItem.bybit_ask && !bybitAskFinished && compareItem.bybit_bid >= item.bybit_ask) {
-              bybitAskFillTimes ++;
               bybitAskFinished = true;
             }
             // okx
             if (compareItem.okex_ask && !okxBidFinished && compareItem.okex_ask <= item.okex_bid) {
-              okxBidFillTimes ++;
               okxBidFinished = true;
             }
             if (compareItem.okex_ask && !okxAskFinished && compareItem.okex_bid >= item.okex_ask) {
-              okxAskFillTimes ++;
               okxAskFinished = true;
             }
           }
@@ -249,19 +249,16 @@ export default class depthController {
       }
       ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL,
         data: {
-          binanceAskFillTimes,
+          binanceAllTimes,
           binanceAskUnfillTimes,
-          binanceBidFillTimes,
           binanceBidUnfillTimes,
           // bybit
-          bybitAskFillTimes,
+          bybitAllTimes,
           bybitAskUnfillTimes,
-          bybitBidFillTimes,
           bybitBidUnfillTimes,
           // okx
-          okxAskFillTimes,
+          okxAllTimes,
           okxAskUnfillTimes,
-          okxBidFillTimes,
           okxBidUnfillTimes
         }
       });
