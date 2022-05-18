@@ -171,14 +171,20 @@ export default class depthController {
       let binanceAllTimes = 0;
       let binanceAskUnfillTimes = 0;
       let binanceBidUnfillTimes = 0;
+      let binanceBidTotalLoss = 0;
+      let binanceAskTotalLoss = 0;
       // bybit
       let bybitAllTimes = 0;
       let bybitAskUnfillTimes = 0;
       let bybitBidUnfillTimes = 0;
+      let bybitBidTotalLoss = 0;
+      let bybitAskTotalLoss = 0;
       // okx
       let okxAllTimes= 0;
       let okxAskUnfillTimes = 0;
       let okxBidUnfillTimes = 0;
+      let okxBidTotalLoss = 0;
+      let okxAskTotalLoss = 0;
       for(let i=0;i<depthRes.length;i++) {
         const item = depthRes[i];
         let binanceBidFinished = false;
@@ -187,6 +193,7 @@ export default class depthController {
         let bybitAskFinished = false;
         let okxBidFinished = false;
         let okxAskFinished = false;
+        
         if (item.binance_ask) {
           binanceAllTimes ++;
         }
@@ -203,23 +210,29 @@ export default class depthController {
             // binance
             if (compareItem.binance_ask && !binanceBidFinished) {
               binanceBidUnfillTimes ++;
+              binanceBidTotalLoss += (compareItem.binance_ask - item.binance_bid) / item.binance_bid;
             }
             if (compareItem.binance_ask && !binanceAskFinished) {
               binanceAskUnfillTimes ++;
+              binanceAskTotalLoss += (compareItem.binance_bid - item.binance_ask) / item.binance_ask;
             }
             // bybit
             if (compareItem.bybit_ask && !bybitBidFinished) {
               bybitBidUnfillTimes ++;
+              bybitBidTotalLoss += (compareItem.bybit_ask - item.bybit_bid) / item.bybit_bid;
             }
             if (compareItem.bybit_ask && !bybitAskFinished) {
               bybitAskUnfillTimes ++;
+              bybitAskTotalLoss += (compareItem.bybit_bid - item.bybit_ask) / item.bybit_ask;
             }
             // okx
             if (compareItem.okex_ask && !okxBidFinished) {
               okxBidUnfillTimes ++;
+              okxBidTotalLoss += (compareItem.okex_ask - item.okex_bid) / item.okex_bid;
             }
             if (compareItem.okex_ask && !okxAskFinished) {
               okxAskUnfillTimes ++;
+              okxAskTotalLoss += (compareItem.okex_bid - item.okex_ask) / item.okex_ask;
             }
             break;
           } else {
@@ -252,14 +265,20 @@ export default class depthController {
           binanceAllTimes,
           binanceAskUnfillTimes,
           binanceBidUnfillTimes,
+          binanceAskAvgLoss: binanceAskTotalLoss / binanceAllTimes,
+          binanceBidAvgLoss: binanceBidTotalLoss / binanceAllTimes,
           // bybit
           bybitAllTimes,
           bybitAskUnfillTimes,
           bybitBidUnfillTimes,
+          bybitAskAvgLoss: bybitAskTotalLoss / bybitAllTimes,
+          bybitBidAvgLoss: bybitBidTotalLoss / bybitAllTimes,
           // okx
           okxAllTimes,
           okxAskUnfillTimes,
-          okxBidUnfillTimes
+          okxBidUnfillTimes,
+          okxAskAvgLoss: okxAskTotalLoss / okxAllTimes,
+          okxBidAvgLoss: okxBidTotalLoss / okxAllTimes,
         }
       });
     }
