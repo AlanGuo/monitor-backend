@@ -27,5 +27,5 @@ function loanDBConnect(test = false): Connection {
   });
 }
 
-export const arbitrageDBConn = arbitrageDBConnect();
+export const arbitrageDBConn = { model: () => {}};
 export const loanDBConn = loanDBConnect();
