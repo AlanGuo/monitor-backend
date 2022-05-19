@@ -345,6 +345,7 @@ export default class depthController {
       exchange: ex.toUpperCase(),
       ts: {$in: pointsArr}
     };
+    console.log(filter);
     const fundingRateRes = await fundingRateModel.find(filter);
     console.log("fundingRateRes: ", fundingRateRes);
     for(const timeItem of pointsArr) {
