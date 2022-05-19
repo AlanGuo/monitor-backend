@@ -24,12 +24,12 @@ module.exports = {
 
   MONGODB: {
     arbitrage: {
-      Name: "dev",
+      Name: "abtg",
       DB: "abtg-perp-prod-2022-04-01",
       Connection_String_URI: "mongodb://localhost:27017"
     },
     loan: {
-      Name: "dev",
+      Name: "loan",
       DB: "crypto-loan-2022-04-15",
       Connection_String_URI: "mongodb://localhost:27017"
     }
