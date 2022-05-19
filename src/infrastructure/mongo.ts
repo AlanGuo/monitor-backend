@@ -28,4 +28,4 @@ function loanDBConnect(test = false): Connection {
 }
 
 export const arbitrageDBConn = arbitrageDBConnect();
-export const loanDBConn = arbitrageDBConnect();
+export const loanDBConn = loanDBConnect();
