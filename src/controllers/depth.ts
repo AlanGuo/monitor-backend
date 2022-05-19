@@ -342,8 +342,7 @@ export default class depthController {
     const filter = { 
       symbol: ctx.params.symbol,
       currency,
-      exchange: ex.toUpperCase(),
-      ts: {$in: pointsArr}
+      exchange: ex.toUpperCase()
     };
     console.log(filter);
     const fundingRateRes = await fundingRateModel.find(filter);
@@ -353,6 +352,9 @@ export default class depthController {
         return item.ts === timeItem
       });
       console.log("fundingRateItem: ", fundingRateItem);
+      if (!fundingRateItem) {
+        break;
+      }
       const depthFrom = timeItem - ahead * 60 * 1000;
       const filter = { symbol: ctx.params.symbol,  ts: {$gt: depthFrom} };
       const depthRes = await depthModel.find(filter);
