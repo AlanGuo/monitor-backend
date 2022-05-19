@@ -20,7 +20,8 @@ const fundingRateModel: Schema = new Schema({
   funding_rate: {type: Number, required},
   next_funding_rate: {type: Number, required},
 }, {
-  timestamps: false
+  timestamps: false,
+  collection: "fundingrate"
 });
 
 export default loanDBConn.model<IFundingRate>("fundingrate", fundingRateModel);

@@ -21,11 +21,11 @@ function loanDBConnect(test = false): Connection {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
-    useCreateIndex: true,
+    useCreateIndex: false,
     autoCreate: false,
     dbName: conf.db,
   });
 }
 
 export const loanDBConn = loanDBConnect();
-export const arbitrageDBConn = { model: () => {}};
+export const arbitrageDBConn = arbitrageDBConnect();
