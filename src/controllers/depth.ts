@@ -368,8 +368,12 @@ export default class depthController {
         const item = depthRes[i];
         let shortFinished = false;
         let longFinished = false;
-        const askField = ex + "_ask";
-        const bidField = ex + "_bid";
+        let exMap = ex;
+        if (exMap === "okx") {
+          exMap = "okex";
+        }
+        const askField = exMap + "_ask";
+        const bidField = exMap + "_bid";
         if (item.get(askField)) {
           longTotalTimes ++;
         }
