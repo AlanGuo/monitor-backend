@@ -347,17 +347,17 @@ export default class depthController {
     };
     console.log(filter);
     const fundingRateRes = await fundingRateModel.find(filter);
-    console.log("fundingRateRes:", fundingRateRes);
+    console.log("fundingRateRes length", fundingRateRes.length);
     for(const timeItem of pointsArr) {
       const fundingRateItem = fundingRateRes.find(item => {
         return item.ts === timeItem
       });
-      console.log("fundingRateItem: ", fundingRateItem);
       if (!fundingRateItem) {
         break;
       }
       const depthFrom = timeItem - ahead * 60 * 1000;
-      const filter = { symbol: ctx.params.symbol,  ts: {$gt: depthFrom} };
+      const depthEnd = timeItem + duration * 60 * 1000;
+      const filter = { symbol: ctx.params.symbol,  ts: {$gte: depthFrom, $lte: depthEnd} };
       const depthRes = await depthModel.find(filter);
       let longTotalTimes = 0;
       let longUnfillTimes = 0;
@@ -369,6 +369,10 @@ export default class depthController {
       const longDetails = [] as any[];
       for(let i=0;i<depthRes.length;i++) {
         const item = depthRes[i];
+        // 只能结算之前开单
+        if (item.ts >= timeItem) {
+          break;
+        }
         let shortFinished = false;
         let longFinished = false;
         let exMap = ex;
@@ -385,8 +389,8 @@ export default class depthController {
         }
         for(let j=i+1;j<depthRes.length;j++) {
           const compareItem = depthRes[j];
-          // 一定周期内
           if (compareItem.ts - item.ts > duration * 60 * 1000) {
+             // 超出时长了
             if (compareItem.get(askField) && item.get(bidField)) {
               if (shortFinished) {
                 shortDetails.push({
