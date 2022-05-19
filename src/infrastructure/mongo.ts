@@ -17,6 +17,7 @@ function arbitrageDBConnect(test = false): Connection {
 function loanDBConnect(test = false): Connection {
   const conf = config.MONGODB.loan;
   const url = conf.Connection_String_URI;
+  console.log(conf)
   return createConnection(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
