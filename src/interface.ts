@@ -122,11 +122,20 @@ export interface Config {
     bnbPrice: number
   },
   MONGODB: {
-    Name: string,
-    DB: string,
-    ReplicaSet: string
-    Connection_String_URI: string,
-    Connection_String_URI_Test: string
+    arbitrage: {
+      Name: string,
+      DB: string,
+      ReplicaSet: string
+      Connection_String_URI: string,
+      Connection_String_URI_Test: string
+    },
+    loan: {
+      Name: string,
+      DB: string,
+      ReplicaSet: string
+      Connection_String_URI: string,
+      Connection_String_URI_Test: string
+    }
   },
   HOST: string
 }

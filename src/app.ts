@@ -5,10 +5,9 @@ import logger from "koa-logger";
 import bodyParser from "koa-bodyparser";
 import serve from "koa-static";
 import {routerLoader} from "@src/infrastructure/router/loader";
-import {dbConnect} from "./infrastructure/mongo";
+// import { arbitrageDBConnect, loanDBConnect } from "./infrastructure/mongo";
 import {logger as serviceLogger} from "./infrastructure/logger";
 async function bootstrap() {
-  await dbConnect();
   const app = new Koa();
 
   /** Middlewares */

@@ -303,4 +303,9 @@ export default class depthController {
       });
     }
   }
+
+  @GET("/:symbol/fr2")
+  async getFr2(ctx: IRouterContext) {
+    
+  }
 }

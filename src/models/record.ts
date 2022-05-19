@@ -1,4 +1,5 @@
-import {Schema, model, Document} from "mongoose";
+import {Schema, Document} from "mongoose";
+import { arbitrageDBConn } from "@src/infrastructure/mongo";
 
 const required = true;
 
@@ -108,4 +109,4 @@ const recordModel: Schema = new Schema({
   timestamps: false
 });
 
-export default model<IRecord>("record", recordModel);
+export default arbitrageDBConn.model<IRecord>("record", recordModel);

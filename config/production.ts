@@ -25,9 +25,16 @@ module.exports = {
   },
 
   MONGODB: {
-    Name: "prod",
-    DB: "abtg-perp-prod-2022-04-01",
-    Connection_String_URI: "mongodb://localhost:27017"
+    arbitrage: {
+      Name: "dev",
+      DB: "abtg-perp-prod-2022-04-01",
+      Connection_String_URI: "mongodb://localhost:27017"
+    },
+    loan: {
+      Name: "dev",
+      DB: "crypto-loan-2022-04-15",
+      Connection_String_URI: "mongodb://localhost:27017"
+    }
   },
   HOST: "https://monitor.openholder.com"
 };

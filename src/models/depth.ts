@@ -1,4 +1,5 @@
-import {Schema, Types, model, Document} from "mongoose";
+import {Schema, Document} from "mongoose";
+import { arbitrageDBConn } from "@src/infrastructure/mongo";
 
 const required = true;
 
@@ -26,4 +27,4 @@ const depthModel: Schema = new Schema({
   timestamps: false
 });
 
-export default model<IDepth>("depth", depthModel);
+export default arbitrageDBConn.model<IDepth>("depth", depthModel);

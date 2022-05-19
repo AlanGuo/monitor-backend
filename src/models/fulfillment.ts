@@ -1,4 +1,5 @@
-import {Schema, Types, model, Document} from "mongoose";
+import {Schema, Types, Document} from "mongoose";
+import { arbitrageDBConn } from "@src/infrastructure/mongo";
 
 const required = true;
 
@@ -35,4 +36,4 @@ const fulfillmentModel: Schema = new Schema({
   timestamps: false
 });
 
-export default model<IFulfillment>("fulfillment", fulfillmentModel);
+export default arbitrageDBConn.model<IFulfillment>("fulfillment", fulfillmentModel);
