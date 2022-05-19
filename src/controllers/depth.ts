@@ -347,7 +347,8 @@ export default class depthController {
     };
     console.log(filter);
     const fundingRateRes = await fundingRateModel.find();
-    console.log("fundingRateRes: ", fundingRateRes);
+    const depthRes = await depthModel.find();
+    console.log("fundingRateRes: ", fundingRateRes, "depthRes: ", depthRes);
     for(const timeItem of pointsArr) {
       const fundingRateItem = fundingRateRes.find(item => {
         return item.ts === timeItem
