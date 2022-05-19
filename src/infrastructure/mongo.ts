@@ -3,29 +3,29 @@ import { Connection, createConnection } from "mongoose";
 
 function arbitrageDBConnect(test = false): Connection {
   const conf = config.MONGODB.arbitrage;
-  const url = conf.Connection_String_URI;
+  const url = conf.connectionString;
   return createConnection(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
     useCreateIndex: true,
     autoCreate: false,
-    dbName: conf.DB,
+    dbName: conf.db,
   });
 }
 
 function loanDBConnect(test = false): Connection {
   const conf = config.MONGODB.loan;
-  const url = conf.Connection_String_URI;
+  const url = conf.connectionString;
   return createConnection(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
     useCreateIndex: true,
     autoCreate: false,
-    dbName: conf.DB,
+    dbName: conf.db,
   });
 }
 
-export const arbitrageDBConn = loanDBConnect();
+export const arbitrageDBConn = arbitrageDBConnect();
 export const loanDBConn = loanDBConnect();

@@ -123,18 +123,14 @@ export interface Config {
   },
   MONGODB: {
     arbitrage: {
-      Name: string,
-      DB: string,
-      ReplicaSet: string
-      Connection_String_URI: string,
-      Connection_String_URI_Test: string
+      name: string,
+      db: string,
+      connectionString: string
     },
     loan: {
-      Name: string,
-      DB: string,
-      ReplicaSet: string
-      Connection_String_URI: string,
-      Connection_String_URI_Test: string
+      name: string,
+      db: string,
+      connectionString: string
     }
   },
   HOST: string
