@@ -4,6 +4,8 @@ import depthModel, { IDepth } from "@src/models/depth";
 import { jsonResponse } from "@src/infrastructure/utils";
 import { RESPONSE_CODE } from "@src/infrastructure/utils/constants";
 import config from "@src/infrastructure/utils/config";
+import fundingRateModel from "@src/models/fundingrate";
+import ts from "typescript";
 
 @Controller({ prefix: "/depths" })
 export default class depthController {
@@ -306,6 +308,148 @@ export default class depthController {
 
   @GET("/:symbol/fr2")
   async getFr2(ctx: IRouterContext) {
-    
+    // 判断最近一周，交割时间点开单进去，然后原价平仓出掉赚取资金费率的可能性
+    // 仓位最多拿多久
+    const duration = Number(ctx.query.duration);
+    // 提前多少分钟开单
+    const ahead = Number(ctx.query.ahead);
+    // 交易所
+    const ex = ctx.query.exchange;
+    const currency = ctx.query.currency || "usdt";
+    // 结算时间点
+    const settleTimePoint = ctx.query.settle;
+    const settlePointsArr = settleTimePoint.split(",")
+    // 默认7天，单位是小时
+    let period = 168;
+    if (ctx.query.period) {
+      period = Number(ctx.query.period);
+    }
+    const now = new Date().getTime();
+    const pointsArr: number[] = [];
+    let from  =  now - period * 3600 * 1000;
+    while(from < now) {
+      settlePointsArr.forEach((element: string) => {
+        const timePoint = new Date(from);
+        timePoint.setHours(Number(element));
+        timePoint.setMinutes(0);
+        timePoint.setSeconds(0);
+        timePoint.setMilliseconds(0);
+        pointsArr.push(timePoint.getTime());
+      });
+      // + 24h
+      from += 24 * 3600 * 1000;
+    }
+    const filter = { 
+      symbol: ctx.params.symbol,
+      currency,
+      exchange: ex.toUpperCase(),
+      ts: {$in: pointsArr}
+    };
+    const fundingRateRes = await fundingRateModel.find(filter);
+    console.log("fundingRateRes: ", fundingRateRes);
+    for(const timeItem of pointsArr) {
+      const fundingRateItem = fundingRateRes.find(item => {
+        return item.ts === timeItem
+      });
+      console.log("fundingRateItem: ", fundingRateItem);
+      const depthFrom = timeItem - ahead * 60 * 1000;
+      const filter = { symbol: ctx.params.symbol,  ts: {$gt: depthFrom} };
+      const depthRes = await depthModel.find(filter);
+      let longTotalTimes = 0;
+      let longUnfillTimes = 0;
+      let longTotalLoss = 0;
+      let shortTotalTimes = 0;
+      let shortUnfillTimes = 0;
+      let shortTotalLoss = 0;
+      const shortDetails = [] as any[];
+      const longDetails = [] as any[];
+      for(let i=0;i<depthRes.length;i++) {
+        const item = depthRes[i];
+        let shortFinished = false;
+        let longFinished = false;
+        const askField = ex + "_ask";
+        const bidField = ex + "_bid";
+        if (item.get(askField)) {
+          longTotalTimes ++;
+        }
+        if (item.get(bidField)) {
+          shortTotalTimes ++;
+        }
+        for(let j=i+1;j<depthRes.length;j++) {
+          const compareItem = depthRes[j];
+          // 一定周期内
+          if (compareItem.ts - item.ts > duration * 60 * 1000) {
+            if (compareItem.get(askField) && item.get(bidField)) {
+              if (shortFinished) {
+                shortDetails.push({
+                  fundingRate: fundingRateItem,
+                  in: item,
+                  op: "short",
+                  out: compareItem,
+                  status: "success"
+                });
+              } else {
+                shortUnfillTimes ++;
+                const loss = (compareItem.get(askField) - item.get(bidField)) / item.get(bidField);
+                shortTotalLoss += loss;
+                shortDetails.push({
+                  fundingRate: fundingRateItem,
+                  in: item,
+                  op: "short",
+                  out: compareItem,
+                  loss,
+                  status: "failure"
+                });
+              }
+            }
+            if (compareItem.get(askField) && item.get(bidField)) {
+              if (longFinished) {
+                longDetails.push({
+                  fundingRate: fundingRateItem,
+                  in: item,
+                  op: "long",
+                  out: compareItem,
+                  status: "success"
+                });
+              } else {
+                longUnfillTimes ++;
+                const loss = (item.get(askField) - compareItem.get(bidField)) / item.get(askField);
+                longTotalLoss += loss;
+                longDetails.push({
+                  fundingRate: fundingRateItem,
+                  ts: ts,
+                  in: item,
+                  op: "long",
+                  out: compareItem,
+                  loss,
+                  status: "failure"
+                });
+              }
+            }
+            break;
+          } else {
+            // sell short
+            if (compareItem.get(askField) && !shortFinished && compareItem.get(askField) <= item.get(bidField)) {
+              shortFinished = true;
+            }
+            // buy long
+            if (compareItem.get(askField) && !longFinished && compareItem.get(bidField) >= item.get(askField)) {
+              longFinished = true;
+            }
+          }
+        }
+      }
+
+      ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {
+        longTotalTimes,
+        longUnfillTimes,
+        longTotalLoss,
+        shortTotalTimes,
+        shortUnfillTimes,
+        shortTotalLoss,
+        longDetails,
+        shortDetails
+      }});
+    }
   }
 }

@@ -35,7 +35,7 @@ db.fulfillments.aggregate([
   },
 ]);
 
-db.fulfillments.find({exchange: "BINANCE", position: "long", side: "sell", fill:{$gt: 0},task_id: ObjectId("6274158aed7d492f4646eed5")}).sort({datetime: -1});
+db.fulfillments.find({exchange: "OKEX", position: "short", side: "buy", fill:{$gt: 0},task_id: ObjectId("62852071f965ba8176e5b658")}).sort({datetime: -1});
 
 db.fulfillments.find({order_id: "b299ecd8-3334-4c87-960c-acf7023275f9"}).sort({datetime: -1});
 
