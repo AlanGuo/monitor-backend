@@ -378,7 +378,7 @@ export default class depthController {
         if (item.ts >= timeItem) {
           break;
         }
-        console.log("depthRes[i]", item)
+        // console.log("depthRes[i]", item)
         let shortFinished = false;
         let longFinished = false;
         let exMap = ex;
@@ -393,6 +393,9 @@ export default class depthController {
         if (item.get(bidField)) {
           shortTotalTimes ++;
         }
+        let closeItem = item;
+        console.log("sell short at", item.get(bidField));
+        console.log("buy long at", item.get(askField));
         for(let j=i+1;j<depthRes.length;j++) {
           const compareItem = depthRes[j];
           // 从结算之后开始判断
@@ -403,7 +406,6 @@ export default class depthController {
              // 超出时长了
             if (compareItem.get(askField) && item.get(bidField)) {
               if (shortFinished) {
-                console.log("buy short at " + compareItem.get(askField), "success");
                 shortDetails.push({
                   fundingRate: {
                     rate: fundingRateItem.funding_rate,
@@ -414,8 +416,8 @@ export default class depthController {
                     ts: item.ts
                   },
                   out: {
-                    price: compareItem.get(askField),
-                    ts: compareItem.ts
+                    price: closeItem.get(askField),
+                    ts: closeItem.ts
                   },
                   op: "short",
                   status: "success"
@@ -446,7 +448,6 @@ export default class depthController {
             }
             if (compareItem.get(bidField) && item.get(askField)) {
               if (longFinished) {
-                console.log("sell long at " + compareItem.get(bidField), "success");
                 longDetails.push({
                   fundingRate: {
                     rate: fundingRateItem.funding_rate,
@@ -457,8 +458,8 @@ export default class depthController {
                     ts: item.ts
                   },
                   out: {
-                    price: compareItem.get(bidField),
-                    ts: compareItem.ts
+                    price: closeItem.get(bidField),
+                    ts: closeItem.ts
                   },
                   op: "long",
                   status: "success"
@@ -489,14 +490,16 @@ export default class depthController {
             }
             break;
           } else {
-            // sell short
+            // buy short
             if (compareItem.get(askField) && !shortFinished && compareItem.get(askField) <= item.get(bidField)) {
-              console.log("sell short at", item.get(bidField));
+              console.log("buy short at", compareItem.get(askField));
+              closeItem = compareItem
               shortFinished = true;
             }
-            // buy long
+            // sell long
             if (compareItem.get(bidField) && !longFinished && compareItem.get(bidField) >= item.get(askField)) {
-              console.log("buy long at", item.get(askField));
+              console.log("sell long at", compareItem.get(bidField));
+              closeItem = compareItem
               longFinished = true;
             }
           }
