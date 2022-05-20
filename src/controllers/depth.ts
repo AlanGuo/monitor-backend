@@ -346,6 +346,14 @@ export default class depthController {
       ts: {$in: pointsArr}
     };
     const fundingRateRes = await fundingRateModel.find(filter);
+    let longTotalTimes = 0;
+    let longUnfillTimes = 0;
+    let longTotalLoss = 0;
+    let shortTotalTimes = 0;
+    let shortUnfillTimes = 0;
+    let shortTotalLoss = 0;
+    const shortDetails = [] as any[];
+    const longDetails = [] as any[];
     for(let x=0;x<pointsArr.length;x++) {
       const timeItem = pointsArr[x];
       const depthFrom = timeItem - ahead * 60 * 1000;
@@ -364,14 +372,6 @@ export default class depthController {
         break;
       }
       console.log("fundingRateItem1", fundingRateItem)
-      let longTotalTimes = 0;
-      let longUnfillTimes = 0;
-      let longTotalLoss = 0;
-      let shortTotalTimes = 0;
-      let shortUnfillTimes = 0;
-      let shortTotalLoss = 0;
-      const shortDetails = [] as any[];
-      const longDetails = [] as any[];
       for(let i=0;i<depthRes.length;i++) {
         const item = depthRes[i];
         // 只能结算之前开单
