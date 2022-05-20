@@ -352,11 +352,15 @@ export default class depthController {
       const depthEnd = timeItem + duration * 60 * 1000;
       const filter = { symbol: ctx.params.symbol,  ts: {$gte: depthFrom, $lte: depthEnd} };
       const depthRes = await depthModel.find(filter);
+      if (!depthRes.length) {
+        console.error("no depths for ts " + timeItem, depthFrom, depthEnd);
+        continue;
+      }
       const fundingRateItem = fundingRateRes.find(item => {
         return item.ts === timeItem
       });
       if (!fundingRateItem) {
-        console.error("fundingRateItem not found for ts" + timeItem)
+        console.error("fundingRateItem not found for ts " + timeItem)
         break;
       }
       console.log("fundingRateItem1", fundingRateItem, "depthRes:", depthRes)
