@@ -394,7 +394,10 @@ export default class depthController {
             if (compareItem.get(askField) && item.get(bidField)) {
               if (shortFinished) {
                 shortDetails.push({
-                  fundingRate: fundingRateItem,
+                  fundingRate: {
+                    fundingRate: fundingRateItem.funding_rate,
+                    ts: fundingRateItem.ts
+                  },
                   in: {
                     price: item.get(bidField),
                     ts: item.ts
@@ -411,7 +414,10 @@ export default class depthController {
                 const loss = (compareItem.get(askField) - item.get(bidField)) / item.get(bidField);
                 shortTotalLoss += loss;
                 shortDetails.push({
-                  fundingRate: fundingRateItem,
+                  fundingRate: {
+                    fundingRate: fundingRateItem.funding_rate,
+                    ts: fundingRateItem.ts
+                  },
                   in: {
                     price: item.get(bidField),
                     ts: item.ts
@@ -429,7 +435,10 @@ export default class depthController {
             if (compareItem.get(bidField) && item.get(askField)) {
               if (longFinished) {
                 longDetails.push({
-                  fundingRate: fundingRateItem,
+                  fundingRate: {
+                    fundingRate: fundingRateItem.funding_rate,
+                    ts: fundingRateItem.ts
+                  },
                   in: {
                     price: item.get(askField),
                     ts: item.ts
@@ -446,7 +455,10 @@ export default class depthController {
                 const loss = (item.get(askField) - compareItem.get(bidField)) / item.get(askField);
                 longTotalLoss += loss;
                 longDetails.push({
-                  fundingRate: fundingRateItem,
+                  fundingRate: {
+                    fundingRate: fundingRateItem.funding_rate,
+                    ts: fundingRateItem.ts
+                  },
                   in: {
                     price: item.get(askField),
                     ts: item.ts
