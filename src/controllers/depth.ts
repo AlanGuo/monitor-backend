@@ -394,8 +394,8 @@ export default class depthController {
           shortTotalTimes ++;
         }
         let closeItem = item;
-        console.log("open short at", item.get(bidField), item.ts);
-        console.log("open long at", item.get(askField), item.ts);
+        console.log("open short at", item.get(bidField), new Date(item.ts));
+        console.log("open long at", item.get(askField), new Date(item.ts));
         for(let j=i+1;j<depthRes.length;j++) {
           const compareItem = depthRes[j];
           // 从结算之后开始判断
@@ -423,7 +423,7 @@ export default class depthController {
                   status: "success"
                 });
               } else {
-                console.log("buy short at " + compareItem.get(askField), compareItem.ts, "fail");
+                console.log("buy short at " + compareItem.get(askField), new Date(compareItem.ts), "fail");
                 shortUnfillTimes ++;
                 const loss = (compareItem.get(askField) - item.get(bidField)) / item.get(bidField);
                 shortTotalLoss += loss;
@@ -465,7 +465,7 @@ export default class depthController {
                   status: "success"
                 });
               } else {
-                console.log("sell long at " + compareItem.get(bidField), compareItem.ts, "fail");
+                console.log("sell long at " + compareItem.get(bidField), new Date(compareItem.ts), "fail");
                 longUnfillTimes ++;
                 const loss = (item.get(askField) - compareItem.get(bidField)) / item.get(askField);
                 longTotalLoss += loss;
@@ -492,13 +492,13 @@ export default class depthController {
           } else {
             // buy short
             if (compareItem.get(askField) && !shortFinished && compareItem.get(askField) <= item.get(bidField)) {
-              console.log("close short at", compareItem.get(askField), compareItem.ts);
+              console.log("close short at", compareItem.get(askField), new Date(compareItem.ts));
               closeItem = compareItem
               shortFinished = true;
             }
             // sell long
             if (compareItem.get(bidField) && !longFinished && compareItem.get(bidField) >= item.get(askField)) {
-              console.log("close long at", compareItem.get(bidField), compareItem.ts);
+              console.log("close long at", compareItem.get(bidField), new Date(compareItem.ts));
               closeItem = compareItem
               longFinished = true;
             }
