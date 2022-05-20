@@ -387,6 +387,7 @@ export default class depthController {
         if (item.get(bidField)) {
           shortTotalTimes ++;
         }
+        console.log("fundingRateItem", fundingRateItem)
         for(let j=i+1;j<depthRes.length;j++) {
           const compareItem = depthRes[j];
           if (compareItem.ts - item.ts > duration * 60 * 1000) {
