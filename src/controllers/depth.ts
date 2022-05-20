@@ -455,10 +455,10 @@ export default class depthController {
       ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {
         longTotalTimes,
         longUnfillTimes,
-        longTotalLoss,
+        longAvgLoss: longTotalLoss > 0 ? longTotalLoss / longTotalTimes : 0,
         shortTotalTimes,
         shortUnfillTimes,
-        shortTotalLoss,
+        shortAvgLoss: shortTotalLoss > 0 ? shortTotalLoss / shortTotalTimes : 0,
         longDetails,
         shortDetails
       }});
