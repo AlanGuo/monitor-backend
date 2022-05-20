@@ -348,16 +348,17 @@ export default class depthController {
     const fundingRateRes = await fundingRateModel.find(filter);
     for(let x=0;x<pointsArr.length;x++) {
       const timeItem = pointsArr[x];
-      const fundingRateItem = fundingRateRes.find(item => {
-        return item.ts === timeItem
-      });
-      if (!fundingRateItem) {
-        break;
-      }
       const depthFrom = timeItem - ahead * 60 * 1000;
       const depthEnd = timeItem + duration * 60 * 1000;
       const filter = { symbol: ctx.params.symbol,  ts: {$gte: depthFrom, $lte: depthEnd} };
       const depthRes = await depthModel.find(filter);
+      const fundingRateItem = fundingRateRes.find(item => {
+        return item.ts === timeItem
+      });
+      if (!fundingRateItem) {
+        console.error("fundingRateItem not found for ts" + timeItem)
+        break;
+      }
       let longTotalTimes = 0;
       let longUnfillTimes = 0;
       let longTotalLoss = 0;
@@ -414,7 +415,7 @@ export default class depthController {
                 shortTotalLoss += loss;
                 shortDetails.push({
                   fundingRate: {
-                    fundingRate: fundingRateItem.funding_rate,
+                    rate: fundingRateItem.funding_rate,
                     ts: fundingRateItem.ts
                   },
                   in: {
@@ -435,7 +436,7 @@ export default class depthController {
               if (longFinished) {
                 longDetails.push({
                   fundingRate: {
-                    fundingRate: fundingRateItem.funding_rate,
+                    rate: fundingRateItem.funding_rate,
                     ts: fundingRateItem.ts
                   },
                   in: {
@@ -455,7 +456,7 @@ export default class depthController {
                 longTotalLoss += loss;
                 longDetails.push({
                   fundingRate: {
-                    fundingRate: fundingRateItem.funding_rate,
+                    rate: fundingRateItem.funding_rate,
                     ts: fundingRateItem.ts
                   },
                   in: {
