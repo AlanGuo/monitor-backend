@@ -395,9 +395,15 @@ export default class depthController {
               if (shortFinished) {
                 shortDetails.push({
                   fundingRate: fundingRateItem,
-                  in: item,
+                  in: {
+                    price: item.get(bidField),
+                    ts: item.ts
+                  },
                   op: "short",
-                  out: compareItem,
+                  out: {
+                    price: compareItem.get(askField),
+                    ts: compareItem.ts
+                  },
                   status: "success"
                 });
               } else {
@@ -406,21 +412,33 @@ export default class depthController {
                 shortTotalLoss += loss;
                 shortDetails.push({
                   fundingRate: fundingRateItem,
-                  in: item,
+                  in: {
+                    price: item.get(bidField),
+                    ts: item.ts
+                  },
                   op: "short",
-                  out: compareItem,
+                  out: {
+                    price: compareItem.get(askField),
+                    ts: compareItem.ts
+                  },
                   loss,
                   status: "failure"
                 });
               }
             }
-            if (compareItem.get(askField) && item.get(bidField)) {
+            if (compareItem.get(bidField) && item.get(askField)) {
               if (longFinished) {
                 longDetails.push({
                   fundingRate: fundingRateItem,
-                  in: item,
+                  in: {
+                    price: item.get(askField),
+                    ts: item.ts
+                  },
+                  out: {
+                    price: compareItem.get(bidField),
+                    ts: compareItem.ts
+                  },
                   op: "long",
-                  out: compareItem,
                   status: "success"
                 });
               } else {
@@ -429,10 +447,15 @@ export default class depthController {
                 longTotalLoss += loss;
                 longDetails.push({
                   fundingRate: fundingRateItem,
-                  ts: ts,
-                  in: item,
+                  in: {
+                    price: item.get(askField),
+                    ts: item.ts
+                  },
+                  out: {
+                    price: compareItem.get(bidField),
+                    ts: compareItem.ts
+                  },
                   op: "long",
-                  out: compareItem,
                   loss,
                   status: "failure"
                 });
