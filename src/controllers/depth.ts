@@ -345,13 +345,12 @@ export default class depthController {
       exchange: ex.toUpperCase(),
       ts: {$in: pointsArr}
     };
-    console.log(filter);
     const fundingRateRes = await fundingRateModel.find(filter);
-    console.log("fundingRateRes length", fundingRateRes.length);
     for(const timeItem of pointsArr) {
       const fundingRateItem = fundingRateRes.find(item => {
         return item.ts === timeItem
       });
+      console.log("timeItem: ", timeItem, "fundingRateItem: ", fundingRateItem)
       if (!fundingRateItem) {
         break;
       }
@@ -395,18 +394,18 @@ export default class depthController {
               if (shortFinished) {
                 shortDetails.push({
                   fundingRate: {
-                    fundingRate: fundingRateItem.funding_rate,
+                    rate: fundingRateItem.funding_rate,
                     ts: fundingRateItem.ts
                   },
                   in: {
                     price: item.get(bidField),
                     ts: item.ts
                   },
-                  op: "short",
                   out: {
                     price: compareItem.get(askField),
                     ts: compareItem.ts
                   },
+                  op: "short",
                   status: "success"
                 });
               } else {
@@ -422,11 +421,11 @@ export default class depthController {
                     price: item.get(bidField),
                     ts: item.ts
                   },
-                  op: "short",
                   out: {
                     price: compareItem.get(askField),
                     ts: compareItem.ts
                   },
+                  op: "short",
                   loss,
                   status: "failure"
                 });
