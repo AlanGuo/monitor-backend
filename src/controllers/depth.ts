@@ -359,6 +359,7 @@ export default class depthController {
         console.error("fundingRateItem not found for ts" + timeItem)
         break;
       }
+      console.log("fundingRateItem1", fundingRateItem)
       let longTotalTimes = 0;
       let longUnfillTimes = 0;
       let longTotalLoss = 0;
@@ -387,7 +388,7 @@ export default class depthController {
         if (item.get(bidField)) {
           shortTotalTimes ++;
         }
-        console.log("fundingRateItem", fundingRateItem)
+        console.log("fundingRateItem2", fundingRateItem)
         for(let j=i+1;j<depthRes.length;j++) {
           const compareItem = depthRes[j];
           if (compareItem.ts - item.ts > duration * 60 * 1000) {
