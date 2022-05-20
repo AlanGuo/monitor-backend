@@ -395,7 +395,6 @@ export default class depthController {
         }
         for(let j=i+1;j<depthRes.length;j++) {
           const compareItem = depthRes[j];
-          console.log("depthRes[j]", compareItem)
           if (compareItem.ts - item.ts > duration * 60 * 1000) {
              // 超出时长了
             if (compareItem.get(askField) && item.get(bidField)) {
