@@ -394,8 +394,8 @@ export default class depthController {
           shortTotalTimes ++;
         }
         let closeItem = item;
-        console.log("sell short at", item.get(bidField));
-        console.log("buy long at", item.get(askField));
+        console.log("open short at", item.get(bidField));
+        console.log("open long at", item.get(askField));
         for(let j=i+1;j<depthRes.length;j++) {
           const compareItem = depthRes[j];
           // 从结算之后开始判断
@@ -492,13 +492,13 @@ export default class depthController {
           } else {
             // buy short
             if (compareItem.get(askField) && !shortFinished && compareItem.get(askField) <= item.get(bidField)) {
-              console.log("buy short at", compareItem.get(askField));
+              console.log("close short at", compareItem.get(askField));
               closeItem = compareItem
               shortFinished = true;
             }
             // sell long
             if (compareItem.get(bidField) && !longFinished && compareItem.get(bidField) >= item.get(askField)) {
-              console.log("sell long at", compareItem.get(bidField));
+              console.log("close long at", compareItem.get(bidField));
               closeItem = compareItem
               longFinished = true;
             }
