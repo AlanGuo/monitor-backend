@@ -359,7 +359,7 @@ export default class depthController {
         console.error("fundingRateItem not found for ts" + timeItem)
         break;
       }
-      console.log("fundingRateItem1", fundingRateItem)
+      console.log("fundingRateItem1", fundingRateItem, "depthRes:", depthRes)
       let longTotalTimes = 0;
       let longUnfillTimes = 0;
       let longTotalLoss = 0;
