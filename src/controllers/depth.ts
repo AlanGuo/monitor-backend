@@ -371,7 +371,6 @@ export default class depthController {
         console.error("fundingRateItem not found for ts " + timeItem)
         break;
       }
-      console.log("fundingRateItem1", fundingRateItem)
       for(let i=0;i<depthRes.length;i++) {
         const item = depthRes[i];
         // 只能结算之前开单
