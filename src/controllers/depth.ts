@@ -505,14 +505,19 @@ export default class depthController {
           }
         }
       }
-
+      const longAvgLoss = longUnfillTimes > 0 ? longTotalLoss / longUnfillTimes : 0;
+      const longProfit = longUnfillTimes / longTotalTimes * longAvgLoss;
+      const shortAvgLoss = shortUnfillTimes > 0 ? shortTotalLoss / shortUnfillTimes : 0;
+      const shortProfit = shortUnfillTimes / shortTotalTimes * shortAvgLoss;
       ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {
         longTotalTimes,
         longUnfillTimes,
-        longAvgLoss: longUnfillTimes > 0 ? longTotalLoss / longUnfillTimes : 0,
+        longAvgLoss,
+        longProfit,
         shortTotalTimes,
         shortUnfillTimes,
-        shortAvgLoss: shortUnfillTimes > 0 ? shortTotalLoss / shortUnfillTimes : 0,
+        shortAvgLoss,
+        shortProfit,
         longDetails,
         shortDetails
       }});
