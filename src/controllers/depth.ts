@@ -506,18 +506,18 @@ export default class depthController {
         }
       }
       const longAvgLoss = longUnfillTimes > 0 ? longTotalLoss / longUnfillTimes : 0;
-      const longProfit = longUnfillTimes / longTotalTimes * longAvgLoss;
+      const longLoss = longUnfillTimes / longTotalTimes * longAvgLoss;
       const shortAvgLoss = shortUnfillTimes > 0 ? shortTotalLoss / shortUnfillTimes : 0;
-      const shortProfit = shortUnfillTimes / shortTotalTimes * shortAvgLoss;
+      const shortLoss = shortUnfillTimes / shortTotalTimes * shortAvgLoss;
       ctx.body = jsonResponse({ code: RESPONSE_CODE.NORMAL, data: {
         longTotalTimes,
         longUnfillTimes,
         longAvgLoss,
-        longProfit,
+        longLoss,
         shortTotalTimes,
         shortUnfillTimes,
         shortAvgLoss,
-        shortProfit,
+        shortLoss,
         longDetails,
         shortDetails
       }});
