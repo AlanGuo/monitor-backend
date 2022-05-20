@@ -374,6 +374,7 @@ export default class depthController {
       const longDetails = [] as any[];
       for(let i=0;i<depthRes.length;i++) {
         const item = depthRes[i];
+        console.log("depthRes[i]", item)
         // 只能结算之前开单
         if (item.ts >= timeItem) {
           break;
@@ -394,10 +395,7 @@ export default class depthController {
         }
         for(let j=i+1;j<depthRes.length;j++) {
           const compareItem = depthRes[j];
-          if (!compareItem) {
-            console.error("no compareItem");
-            break;
-          }
+          console.log("depthRes[j]", compareItem)
           if (compareItem.ts - item.ts > duration * 60 * 1000) {
              // 超出时长了
             if (compareItem.get(askField) && item.get(bidField)) {
