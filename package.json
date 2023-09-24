@@ -1,5 +1,5 @@
 {
-  "name": "ff-abtg-monitor-backend",
+  "name": "abtg-funding-fee-monitor-backend",
   "version": "0.7.5-beta",
   "description": "",
   "main": "index.js",

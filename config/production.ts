@@ -36,5 +36,5 @@ module.exports = {
       connectionString: "mongodb://localhost:27017"
     }
   },
-  HOST: "https://monitor.openholder.com"
+  HOST: "https://abtg-funding-fee.openholder.com"
 };
