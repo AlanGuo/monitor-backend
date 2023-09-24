@@ -1,7 +1,7 @@
 {
   "apps" : [
     {
-      "name"      : "monitor-backend",
+      "name"      : "abtg-funding-fee-monitor-backend",
       "instance_var":"monitor-backend",
       "script": "ts-node",
       "args": " -r tsconfig-paths/register ./src/app.ts",
@@ -9,8 +9,8 @@
       "exec_mode" : "cluster",
       "watch"     : false,
       "ignore_watch" : ["logs"],
-      "error_file":"logs/monitor-backend.stderr.log",
-      "out_file"  :"logs/monitor-backend.stdout.log",
+      "error_file":"logs/abtg-funding-fee-monitor-backend.stderr.log",
+      "out_file"  :"logs/abtg-funding-fee-monitor-backend.stdout.log",
       "log_date_format": "MM-DD HH:mm:ss",
       "env": {
         "NODE_ENV": "production"
