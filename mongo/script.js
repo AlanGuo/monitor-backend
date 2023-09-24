@@ -19,20 +19,13 @@ db.fulfillments.aggregate([
 db.fulfillments.aggregate([
   {
     $match: {
-      task_id: ObjectId("6274158aed7d492f4646eed5"),
-      exchange: "BYBIT",
-      position: "short",
+      task_id: ObjectId("62cbf8b6581fbd0e7ee6cbe0"),
+      side: "SELL",
+      position: "LONG",
       fill:{$gt: 0}
     },
   },
-  {$project:{fill:1, total: { $multiply: [ "$trade_avg_price", "$fill" ] }}},
-  {
-    $group: {
-      _id: null,
-      totalFill: { $sum: "$fill" },
-      totalPrice:{$sum:"$total"}
-    },
-  },
+  { $group: { _id: null, symbol: {$first: "$symbol"}, totalFill: { $avg: "$fill" }, avgPrice: { $sum: "$trade_avg_price" } } }
 ]);
 
 db.fulfillments.find({exchange: "OKEX", position: "short", side: "buy", fill:{$gt: 0},task_id: ObjectId("62852071f965ba8176e5b658")}).sort({datetime: -1});

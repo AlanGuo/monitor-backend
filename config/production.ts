@@ -27,7 +27,7 @@ module.exports = {
   MONGODB: {
     arbitrage: {
       name: "abtg",
-      db: "abtg-perp-prod-2022-04-01",
+      db: "abtg-funding-fee-2023-09-24",
       connectionString: "mongodb://localhost:27017"
     },
     loan: {
